@@ -1,6 +1,6 @@
-// v11.0
+// v11.1
 (function () {
-	var _scriptVersion = 11.0;
+	var _scriptVersion = 11.1;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -826,6 +826,7 @@
 	                /// <field name="maxImageSize" type="Number">Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size.</field>
 	                /// <field name="recordQuality" type="Number">Gets or sets the record quality for audio/video recordings.</field>
 	                /// <field name="allowChooseVideo" type="Boolean">Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.</field>
+	                /// <field name="allowMultipleFiles" type="Boolean">Indicates whether to allow multiple files for DocumentActions SelectPhoto and SelectFile.[Not implemented on iOS.]</field>
 	            },
 	            AudioRecorder: function () {
 	                /// <summary>[v10.0] Represents a service for recording an audio.</summary>
@@ -905,18 +906,33 @@
 	        }
 	    };
 
-	    /************************/
-	    // Prototypes & Statics //
-	    /************************/
-
-	    // MobileCRM.UI._MediaTab
-	    MobileCRM.UI.MediaTab.prototype._onCommand = function (commandIndex, errorCallback) {
-	        /// <summary>Executes the MediaTab command by index.</summary>
-	        /// <param name="commandIndex" type="Number">Specifies the command index.</param>
-	        var mediaTab = MobileCRM.bridge.exposeObjectAsync("EntityForm.Controllers.get_Item", [this.index]);
-	        mediaTab.invokeMethodAsync("View.ExecuteAction", [commandIndex], function () { }, errorCallback);
-	        mediaTab.release();
-	    };
+		/************************/
+		// Prototypes & Statics //
+		/************************/
+		// MobileCRM.UI._MediaTab
+		MobileCRM.UI.MediaTab.prototype._onCommand = function (commandIndex, errorCallback) {
+			/// <summary>Executes the MediaTab command by index.</summary>
+			/// <param name="commandIndex" type="Number">Specifies the command index.</param>
+			///	<param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			var mediaTab = MobileCRM.bridge.exposeObjectAsync("EntityForm.Controllers.get_Item", [this.index]);
+			mediaTab.invokeMethodAsync("View.ExecuteAction", [commandIndex], function () { }, errorCallback);
+			mediaTab.release();
+		};
+		MobileCRM.UI.MediaTab.prototype.setEditable = function (editable, errorCallback) {
+			/// <summary>[v11.1] Marks the MediaTab as editable.</summary>
+			/// <param name="editable" type="Boolean">Indicates whether to mark MediaTab as editable.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			var mediaTab = MobileCRM.bridge.exposeObjectAsync("EntityForm.Controllers.get_Item", [this.index]);
+			mediaTab.invokeMethodAsync("set_IsEditable", [editable], function () { }, errorCallback);
+			mediaTab.release();
+		};
+		MobileCRM.UI.MediaTab.prototype.setCommandsMask = function (commandMask, errorCallback) {
+			/// <summary>[v11.1] Sets the mask of allowed document actions.</summary>
+			/// <param name="commandMask" type="Number">Specifies the mask of allowed commands.</param>
+			var mediaTab = MobileCRM.bridge.exposeObjectAsync("EntityForm.Controllers.get_Item", [this.index]);
+			mediaTab.invokeMethodAsync("set_CommandsMask", [commandMask], function () { }, errorCallback);
+			mediaTab.release();
+		};
 	    MobileCRM.AboutInfo.requestObject = function (callback,errorCallback,scope) {
 	        /// <summary>[v8.2] Asynchronously gets the AboutInfo object with branding information.</summary>
 	        /// <param name="callback" type="function(Object)">The callback function that is called asynchronously with the about info object.</param>
@@ -954,6 +970,18 @@
 	        /// <summary>Clears the content of this media tab.</summary>
 	        this._onCommand(0x1000, errorCallback);
 	    };
+	    MobileCRM.UI.MediaTab.prototype.open = function (errorCallback) {
+	        /// <summary>Opens the loaded document in a external application. Which application is platform specific.</summary>
+	        this._onCommand(0x4000, errorCallback);
+	    }
+	    MobileCRM.UI.MediaTab.prototype.export = function (errorCallback) {
+	        /// <summary>Saves to file to disk.</summary>
+	        this._onCommand(0x8000000, errorCallback);
+	    }
+	    MobileCRM.UI.MediaTab.prototype.print = function (errorCallback) {
+	        /// <summary>Prints the document.</summary>
+	        this._onCommand(0x80000, errorCallback);
+	    }
 	    MobileCRM.UI.MediaTab.prototype.getDocumentInfo = function (callback, errorCallback, scope) {
 	        /// <summary>[v8.0.1] Asynchronously gets the media tab view object.</summary>
 	        /// <param name="callback" type="function(Object)">The callback function that is called asynchronously with the document info object.</param>
@@ -3432,20 +3460,39 @@
 	        /// <param name="dataSource" type="MobileCRM.UI.ListDataSource">A data source object implementing the DynamicEntity list loading routine.</param>
 	        MobileCRM.UI.EntityList._dataSource = dataSource;
 	    };
+		MobileCRM.UI.EntityList.setDataSourceFactory = function (dataSourceFactory) {
+			/// <summary>[v11.0.2] Sets the entity list data source replacement factory.</summary>
+			/// <remarks><p>Data source must be set during the document load stage and must not be delayed.</p><p>It is used only if the entity view iFrame is marked as data source provider in Woodford.</p></remarks>
+			/// <param name="dataSourceFactory" type="Function">A function that returns an object implementing the <see cref="MobileCRM.UI.ListDataSource">DynamicEntity list loading routine</see>.</param>
+			MobileCRM.UI.EntityList._dataSourceFactory = dataSourceFactory;
+		};
+	    MobileCRM.UI.EntityList._dataSourceMap = {};
 	    MobileCRM.UI.EntityList._initDataSource = function (chunkReadyCmdId, fetch) {
 	        var result = {};
 	        var dataSource = MobileCRM.UI.EntityList._dataSource;
+
+	        var factory = MobileCRM.UI.EntityList._dataSourceFactory;
+	        if (!dataSource && factory)
+	        	dataSource = factory();
+
 	        if (dataSource) {
 	            dataSource._chunkReadyCmdId = chunkReadyCmdId;
 	            dataSource.fetch = fetch;
 	            result = {
 	                chunkSize: dataSource.chunkSize || 50
 	            };
+	            MobileCRM.UI.EntityList._dataSourceMap[chunkReadyCmdId] = dataSource;
 	        }
 	        return JSON.stringify(result);
 	    };
-	    MobileCRM.UI.EntityList._loadNextChunk = function (page, count) {
-	        var ds = MobileCRM.UI.EntityList._dataSource;
+	    MobileCRM.UI.EntityList._loadNextChunk = function (page, count, chunkReadyCmdId) {
+	    	var ds;
+	    	if (chunkReadyCmdId) {
+	    		ds = MobileCRM.UI.EntityList._dataSourceMap[chunkReadyCmdId];
+	    	}
+	    	if (!ds)
+	    		ds = MobileCRM.UI.EntityList._dataSource;
+
 	        if (ds && typeof ds.loadNextChunk == "function") {
 	            try {
 	                var fetch = ds.fetch;
@@ -3922,8 +3969,13 @@
 	            else
 	                MobileCRM.bridge.invokeMethodAsync("EntityForm", "Form.set_SelectedViewIndex", [index], callback, errorCallback, scope);
 	        }, errorCallback, scope);
-	    };
-
+		};
+		MobileCRM.UI.EntityForm.loadTab = function (tabName, isLoaded, callback, errorCallback, scope) {
+			/// <summary>[v11.1] Reloads a form tab.</summary>
+			/// <param name="tabName" type="String">The name of the tab.</param>
+			/// <param name="isLoaded" type="Boolean">True for re-loaded, false for unload.</param>
+			MobileCRM.bridge.invokeMethodAsync("EntityForm", "LoadView", [tabName, isLoaded], callback, errorCallback, scope);
+		};
 	    MobileCRM.UI.EntityForm.prototype.selectView = function (tabName, viewName) {
 	        /// <summary>Selects the associated entity list view by its name.</summary>
 	        /// <param name="tabName" type="String">The name of the associated entity list tab.</param>
@@ -4376,7 +4428,8 @@
 	            action: action,
 	            maxImageSize: this.maxImageSize,
 	            recordQuality: this.recordQuality,
-	            allowChooseVideo: this.allowChooseVideo
+	            allowChooseVideo: this.allowChooseVideo,
+	            allowMultipleFiles: this.allowMultipleFiles
 	        };
 	        MobileCRM.bridge.command("documentService", JSON.stringify(params), callback, errorCallback, scope);
 	    };
@@ -4435,6 +4488,34 @@
 	        }
 	        MobileCRM.bridge.command("documentService", JSON.stringify(params), null, errorCallback, scope);
 	    };
+	    MobileCRM.Services.DocumentService.prototype.resizeImage = function (filePath, maxWidth, maxHeight, callback, scope) {
+	        /// <summary>[v11.1] Resize image defined by file path.</summary>
+	        /// <param name="filePath" type="String">A file path.</param>
+	        /// <param name="maxWidth" type="Number">Max width.</param>
+	        /// <param name="maxHeight" type="Number">Max height.</param>
+	        /// <param name="callback" type="function(result)">A callback function for asynchronous result. In case of success <b>result</b> argument will be <b>true</b> otherwise <b>false.</b></param>
+	        /// <param name="scope" type="Object">The scope for callbacks.</param>
+	        var params = {
+	            filePath: filePath || "",
+	            maxWidth: maxWidth,
+	            maxHeight: maxHeight,
+	            resizeImage:true
+	        }
+	        MobileCRM.bridge.command("documentService", JSON.stringify(params), callback, null, scope);
+		};
+		MobileCRM.Services.DocumentService.prototype.saveFileDialog = function (fileName, fileData, callback, scope) {
+			/// <summary>[v11.2] Ask to user to choose a location and saves the passed data as a file at that location.</summary>
+			/// <param name="fileName" type="String">A file name.</param>
+			/// <param name="fileData" type="String">Base64 encoded file data.</param>
+			/// <param name="callback" type="function(result)">A callback function for asynchronous result. In case of success <b>result</b> argument will be <b>true</b> otherwise <b>false.</b></param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var params = {
+				fileName: fileName || "",
+				fileData: fileData,
+				saveFileDialog: true
+			}
+			MobileCRM.bridge.command("documentService", JSON.stringify(params), callback, null, scope);
+		};
 	    _inherit(MobileCRM.Services.ChatService, MobileCRM.ObservableObject);
 	    MobileCRM.Services.ChatService.getService = function (callback, errorCallback, scope) {
 	        /// <summary>Asynchronously creates the new instance of the ChatService.</summary>
@@ -4693,11 +4774,21 @@
 			}
 		}
 		else if (typeof CrmBridge !== "undefined") {
-			// Android
-			MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
-				var cmdId = this._createCmdObject(success, failed, scope);
-				CrmBridge.println(cmdId + ';' + command + ':' + params);
-			};
+			if (typeof CrmBridge.processCommand !== "undefined") {
+				MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+					var cmdId = this._createCmdObject(success, failed, scope);
+					CrmBridge.processCommand(cmdId, command, params);
+				};
+				MobileCRM.bridge = new MobileCRM.Bridge('Windows'); // Chromium Enbedded Framework on Win7 Desktop
+			}
+			else {
+				// Android
+				MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+					var cmdId = this._createCmdObject(success, failed, scope);
+					CrmBridge.println(cmdId + ';' + command + ':' + params);
+				};
+				MobileCRM.bridge = new MobileCRM.Bridge('Android');
+			}
 			if (typeof CrmBridge.invoke !== "undefined") {
 				MobileCRM.Bridge.prototype.invoke = function (command, params) {
 					var result = CrmBridge.invoke(command, params);
@@ -4707,7 +4798,6 @@
 						return eval('(' + result + ')');
 				};
 			}
-			MobileCRM.bridge = new MobileCRM.Bridge('Android');
 		}
 		else {
 			if (typeof window.external !== "undefined") {
