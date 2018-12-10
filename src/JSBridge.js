@@ -1,6 +1,6 @@
-// v11.1
+// v11.2
 (function () {
-	var _scriptVersion = 11.1;
+	var _scriptVersion = 11.2;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -525,9 +525,9 @@
 
 	            QuestionnaireForm: function () {
 	                /// <summary>[v10.3] Represents the Javascript equivalent of native questionnaire form object.</summary>
-	                /// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
-	                /// <field name="groups" type="MobileCRM.UI.QuestionnaireForm.Group[]"></field>
-	                /// <field name="questions" type="MobileCRM.UI.QuestionnaireForm.Question[]"></field>
+	                /// <field name="form" type="MobileCRM.UI.Form">Gets the form which hosts the questionnaire.</field>
+	            	/// <field name="groups" type="MobileCRM.UI.QuestionnaireForm.Group[]">A list of <see cref="MobileCRM.UI.QuestionnaireForm.Group">QuestionnaireForm.Group</see> objects.</field>
+	            	/// <field name="questions" type="MobileCRM.UI.QuestionnaireForm.Question[]">A list of <see cref="MobileCRM.UI.QuestionnaireForm.Question">QuestionnaireForm.Question</see> objects.</field>
 	                /// <field name="relationship" type="MobileCRM.Relationship">Gets the relation source and related entity. &quot;null&quot;, if there is no relationship.</field>
 	                MobileCRM.UI.QuestionnaireForm.superproto.constructor.apply(this, arguments);
 	            },
@@ -680,6 +680,11 @@
 	            	MobileCRM.UI.MultiLookupForm.superproto.constructor.apply(this, arguments);
 	                this.dataSource = [];
 	            },
+                TourplanForm: function (props) {
+                    /// <summary>Represents the Javascript equivalent tourplan form object.</summary>
+                    /// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.TourplanForm.requestObject">MobileCRM.UI.TourplanForm.requestObject</see> function.</remarks>
+                    MobileCRM.UI.TourplanForm.superproto.constructor.apply(this, arguments);
+                },
 
 	            _DetailView: function (props) {
 	                /// <summary>Represents the Javascript equivalent of detail view with set of items responsible for fields editing.</summary>
@@ -779,17 +784,27 @@
 	                    /// <param name="name" type="String">Defines the item name.</param>
 	                    /// <param name="label" type="String">Defines the item label.</param>
 	                    /// <field name="listDataSource" type="Object">Gets or sets the object with props and values to be displayed in the combo list (e.g. {&quot;label1&quot;:1, &quot;label2&quot;:2}).</field>
+	                    /// <field name="listDataSourceValueType" type="String">Type of list data source element value. Default is string, allowed int, string.</param></param>
 	                    MobileCRM.UI.DetailViewItems.ComboBoxItem.superproto.constructor.apply(this, arguments);
 	                    this._type = "ComboBox";
 	                },
-	                LinkItem: function (name, label) {
+	                LinkItem: function (name, label, listDropDownFormat) {
 	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> link item.</summary>
 	                    /// <param name="name" type="String">Defines the item name.</param>
 	                    /// <param name="label" type="String">Defines the item label.</param>
+	                    /// <param name="listDropDownFormat" type="MobileCRM.UI.DetailViewItems.DropDownFormat">Defines item&apos;s drop down format.</param>
 	                    /// <field name="isMultiLine" type="Boolean">Gets or sets whether the item is multiline. Default is false.</field>
 	                    MobileCRM.UI.DetailViewItems.LinkItem.superproto.constructor.apply(this, arguments);
 	                    this._type = "Link";
-	                }
+	                    if (listDropDownFormat)
+	                        this.listDropDownFormat = listDropDownFormat;
+	                },
+	                DropDownFormat: {
+	                    StringList: 17,
+	                    StringListInput: 18,
+	                    MultiStringList: 19,
+	                    MultiStringListInput: 20
+	                },
 	            },
 
 	            MediaTab: function (index, name) {
@@ -803,16 +818,18 @@
 	            }
 	        },
 	        Services: {
-	            FileInfo: function (filePath, url, mimeType) {
-	                /// <summary>Carries the result of a DocumentService operation.</summary>
-	                /// <remarks>In case of canceled document service operation, all properties in this object will be set to &quot;null&quot;.</remarks>
-	                /// <field name="filePath" type="String">Gets the full path of the local file.</field>
-	                /// <field name="url" type="String">Gets the local URL of the file which can be used from within this HTML document.</field>
-	                /// <field name="mimeType" type="String">Gets the file MIME type.</field>
-	                this.filePath = filePath;
-	                this.url = url;
-	                this.mimeType = mimeType;
-	            },
+				FileInfo: function (filePath, url, mimeType, nextInfo) {
+					/// <summary>Carries the result of a DocumentService operation.</summary>
+					/// <remarks>In case of canceled document service operation, all properties in this object will be set to &quot;null&quot;.</remarks>
+					/// <field name="filePath" type="String">Gets the full path of the local file.</field>
+					/// <field name="url" type="String">Gets the local URL of the file which can be used from within this HTML document.</field>
+					/// <field name="mimeType" type="String">Gets the file MIME type.</field>
+					/// <field name="nextInfo" type="MobileCRM.Services.FileInfo">Gets the next file info or &quot;null&quot;.</field>
+					this.filePath = filePath;
+					this.url = url;
+					this.mimeType = mimeType;
+					this.nextInfo = nextInfo || null;
+				},
 	            ChatService:function(){
 	                /// <summary>[v9.3] Represents a service for sending instant messages to users or shared channels.</summary>
 	                /// <remarks>Instance of this object cannot be created directly. Use <see cref="MobileCRM.Services.ChatService.getService">MobileCRM.Services.ChatService.getService</see> to create new instance.</remarks>
@@ -902,7 +919,7 @@
 	                /// <field name="stateOrProvince" type="String">Gets or sets the state or province.</field>
 	                /// <field name="country" type="String">Gets or sets the country.</field>
 	                /// <field name="isValid" type="String">Indicates whether the address is valid.</field>
-	            }
+				}
 	        }
 	    };
 
@@ -929,31 +946,32 @@
 		MobileCRM.UI.MediaTab.prototype.setCommandsMask = function (commandMask, errorCallback) {
 			/// <summary>[v11.1] Sets the mask of allowed document actions.</summary>
 			/// <param name="commandMask" type="Number">Specifies the mask of allowed commands.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			var mediaTab = MobileCRM.bridge.exposeObjectAsync("EntityForm.Controllers.get_Item", [this.index]);
 			mediaTab.invokeMethodAsync("set_CommandsMask", [commandMask], function () { }, errorCallback);
 			mediaTab.release();
 		};
-	    MobileCRM.AboutInfo.requestObject = function (callback,errorCallback,scope) {
-	        /// <summary>[v8.2] Asynchronously gets the AboutInfo object with branding information.</summary>
-	        /// <param name="callback" type="function(Object)">The callback function that is called asynchronously with the about info object.</param>
-	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
-	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.AboutForm", "LoadAboutInfo", [], function (res) {
-	            var aboutInfo = new MobileCRM.AboutInfo();
-	            for (var property in res) {
-	                if (aboutInfo.hasOwnProperty(property))
-	                    aboutInfo[property] = res[property];
-	            }
-	            callback.call(scope, aboutInfo);
-	        },errorCallback, scope);
-	    }
-	    MobileCRM.UI.MediaTab.prototype.capturePhoto = function (errorCallback) {
-	        /// <summary>Captures photo on this media tab.</summary>
-	        this._onCommand(2, errorCallback);
-	    };
-	    MobileCRM.UI.MediaTab.prototype.selectPhoto = function (errorCallback) {
-	        /// <summary>Executes the select photo comand on this media tab.</summary>
-	        this._onCommand(4, errorCallback);
-	    };
+		MobileCRM.AboutInfo.requestObject = function (callback, errorCallback, scope) {
+			/// <summary>[v8.2] Asynchronously gets the AboutInfo object with branding information.</summary>
+			/// <param name="callback" type="function(Object)">The callback function that is called asynchronously with the about info object.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.AboutForm", "LoadAboutInfo", [], function (res) {
+				var aboutInfo = new MobileCRM.AboutInfo();
+				for (var property in res) {
+					if (aboutInfo.hasOwnProperty(property))
+						aboutInfo[property] = res[property];
+				}
+				callback.call(scope, aboutInfo);
+			}, errorCallback, scope);
+		};
+		MobileCRM.UI.MediaTab.prototype.capturePhoto = function (errorCallback) {
+			/// <summary>Captures photo on this media tab.</summary>
+			this._onCommand(2, errorCallback);
+		};
+		MobileCRM.UI.MediaTab.prototype.selectPhoto = function (errorCallback) {
+			/// <summary>Executes the select photo comand on this media tab.</summary>
+			this._onCommand(4, errorCallback);
+		};
 	    MobileCRM.UI.MediaTab.prototype.selectFile = function (errorCallback) {
 	        /// <summary>Executes the select file command on this media tab.</summary>
 	        this._onCommand(8, errorCallback);
@@ -1917,7 +1935,7 @@
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 
 	        window.MobileCRM.bridge.command("downloadAttachment", JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
-	    }
+		}
 	    MobileCRM.DynamicEntity.prototype.save = function (callback, forceMode) {
 	        /// <summary>Performs the asynchronous CRM create/modify entity command.</summary>
 	        /// <param name="callback" type="function(err)">A callback function for asynchronous result. The <b>err</b> argument will carry the error message or null in case of success. The callback is called in scope of DynamicEntity object which is being saved.</param>
@@ -2387,7 +2405,14 @@
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.bridge.command("getDeviceInfo", null, success, failed, scope);
-	    };
+		};
+		MobileCRM.Platform.getNetworkInfo = function (success, failed, scope) {
+			/// <summary>[v11.2] Gets network information.</summary>
+			/// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> will carry an object with properties <b>connected</b> and <b>fastConnection</b>.</param>
+			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+			MobileCRM.bridge.command("getNetworkInfo", null, success, failed, scope);
+		};
 	    MobileCRM.Platform.navigateTo = function (latitude, longitude, failed, scope) {
 	        /// <summary>Execute the navigateTo function based on the latitude and longitude.</summary>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
@@ -2478,7 +2503,16 @@
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.bridge.command("checkUserRoles", JSON.stringify(roles), success, failed, scope);
-	    };
+		};
+
+		MobileCRM.Application.setAppColors = function (colors, success, failed, scope) {
+			/// <summary>[v11.2] Sets the application colors.</summary>
+			/// <param name="colors" type="object">Properties of the object define the colors to set. The values must be int in the AARRGGBB format.</param>
+			/// <param name="success" type="function(result)">A callback function for successful asynchronous result.</param>
+			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+			MobileCRM.bridge.command("setAppColors", JSON.stringify(colors), success, failed, scope);
+		};
 
 	    MobileCRM.Application.fileExists = function (path, success, failed, scope) {
 	        /// <summary>Checks whether the file with given path exists in application local data.</summary>
@@ -2678,6 +2712,30 @@
 	        MobileCRM.UI.FormManager.showEditDialog(entityName, null, relationship, options);
 	    }
 
+		_inherit(MobileCRM.UI.TourplanForm, MobileCRM.ObservableObject);
+		MobileCRM.UI.TourplanForm.requestObject = function (callback, errorCallback, scope) {
+			/// <summary>Requests the managed TourplanForm object.</summary>
+			/// <remarks>Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of Platform object. See <see cref="MobileCRM.Bridge.requestObject">MobileCRM.Bridge.requestObject</see> for further details.</remarks>
+			/// <param name="callback" type="function(platform)">The callback function that is called asynchronously with serialized TourplanForm object as argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.requestObject("Tourplan", callback, errorCallback, scope);
+		};
+		MobileCRM.UI.TourplanForm.setDate = function (date, callback, errorCallback) {
+			/// <summary>Sets the current date in calendar view (Tourplan).</summary>
+			/// <param> name="date" type="Date">A date to set.</param>
+			/// <apram name="callback" type="Function">Optional callback called after successfull change.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			MobileCRM.bridge.command("setDate", JSON.stringify(date), callback, errorCallback);
+		};
+		MobileCRM.UI.TourplanForm.setMode = function (mode, callback, errorCallback) {
+			/// <summary>Sets the calendar view (Tourplan) mode.</summary>
+			/// <param> name="mode" type="MobileCRM.UI.TourplanViewMode">A mode to set.</param>
+			/// <apram name="callback" type="Function">Optional callback called after successfull change.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			MobileCRM.bridge.command("setMode", JSON.stringify(mode), callback, errorCallback);
+		};
+
 	    _inherit(MobileCRM.UI._DetailView, MobileCRM.ObservableObject);
 	    MobileCRM.UI._DetailView.prototype.getItemByName = function (name) {
 	        /// <summary>Returns the <see cref="MobileCRM.UI._DetailItem">MobileCRM.UI._DetailItem</see> with specified name or "null".</summary>
@@ -2763,21 +2821,24 @@
 	        };
 	        MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
 	    };
-	    MobileCRM.UI._DetailView.prototype.updateComboItemDataSource = function (index, listDataSource, defaultValue) {
-	        /// <summary>[v9.1] Changes the data source for CombobBoxitem <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.ComboBoxItem</see>.</summary>
-	        /// <param name="index" type="Number">Item index on the view.</param>
-	        /// <param name="listDataSource" type="Object">The data source object (e.g. {&quot;label1&quot;:1, &quot;label2&quot;:2}).</param>
-	        /// <param name="defaultValue" type="String">New data source default value. If not defined, the first item from listDataSource will be used.</param>
-	        var data = {
-	            action: "updateDataSource",
-	            viewName: this.name,
-	            index: index,
-	            listDataSource: listDataSource
-	        };
-
-	        this.items[index].value = defaultValue !== undefined ? defaultValue : listDataSource[Object.keys(listDataSource)[0]];
-	        MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
-	    };
+		MobileCRM.UI._DetailView.prototype.updateComboItemDataSource = function (index, listDataSource, defaultValue, valueType) {
+			/// <summary>[v9.1] Changes the data source for CombobBoxitem <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.ComboBoxItem</see>.</summary>
+			/// <param name="index" type="Number">Item index on the view.</param>
+			/// <param name="listDataSource" type="Object">The data source object (e.g. {&quot;label1&quot;:1, &quot;label2&quot;:2}).</param>
+			/// <param name="valueType" type="String">Type of list data source element value. Default is string, allowed int, string.</param>
+			/// <param name="defaultValue" type="String">New data source default value. If not defined, the first item from listDataSource will be used.</param>
+			var data = {
+				action: "updateDataSource",
+				viewName: this.name,
+				index: index,
+				listDataSource: listDataSource,
+				value: defaultValue || listDataSource[Object.keys(listDataSource)[0]],
+				listDataSourceValueType: valueType
+			};
+			// Code used in version < 11.2
+			//this.items[index].value = defaultValue !== undefined ? defaultValue : listDataSource[Object.keys(listDataSource)[0]];
+			MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
+		};
 	    MobileCRM.UI._DetailView.prototype.updateLinkItemViews = function (index, dialogSetup, inlinePickSetup, dialogOnly) {
 	        /// <summary>[v10.1] Changes the <see cref="MobileCRM.UI.DetailViewItems.ComboBoxItem">ComboBoxItem</see> views and/or filters.</summary>
 	        /// <param name="index" type="Number">Item index on the view.</param>
@@ -3234,6 +3295,25 @@
 	        var params = { id: id };
 	        MobileCRM.bridge.command("showQuestionnaire", JSON.stringify(params), null, failed, scope);
 	    };
+		function _padTo3digits(num) {
+			var st = "" + num;
+			while (st.length < 3)
+				st = "0" + st;
+			return st;
+		}
+		MobileCRM.Questionnaire.getQuestionName = function (name, repeatIndex) {
+			/// <summary>Generates the real name of question from repeatable group.</summary>
+			/// <param name="name" type="String">Base question name from questionnaire template.</param>
+			/// <param name="repeatIndex" type="Number">Repeat index of the group containing the question.</param>
+			return repeatIndex ? (name + "#" + _padTo3digits(repeatIndex)) : name;
+		}
+		MobileCRM.Questionnaire.getGroupName = function (name, repeatIndex) {
+			/// <summary>Generates the real name of repeatable question group.</summary>
+			/// <param name="name" type="String">Base question group name from questionnaire template.</param>
+			/// <param name="repeatIndex" type="Number">Repeat index of the group.</param>
+			return repeatIndex ? (name + "#" + _padTo3digits(repeatIndex)) : name;
+		}
+
 	    // MobileCRM.UI.IFrameForm
 	    _inherit(MobileCRM.UI.IFrameForm, MobileCRM.ObservableObject);
 
@@ -3595,6 +3675,18 @@
 	    MobileCRM.UI.EntityListCellAction.DirectEdit = 0x4000 | MobileCRM.UI.EntityListCellAction.Editable;
 	    MobileCRM.UI.EntityListCellAction.ActionMask = 0xF000;
 
+        MobileCRM.UI.TourplanViewMode = function () {
+        /// <summary>Enumeration class holding constants for <see cref="MobileCRM.UI.TourplanForm">MobileCRM.UI.TourplanForm</see>.</summary>
+        /// <field name="Agenda" type="Number">Agenda view.</field>
+        /// <field name="Day" type="Number"> Day view.</field>
+        /// <field name="Week" type="Number"> Week view.</field>
+        /// <field name="Month" type="Number"> Month view.</field>
+        }
+        MobileCRM.UI.TourplanViewMode.Agenda = 0;
+        MobileCRM.UI.TourplanViewMode.Day = 1;
+        MobileCRM.UI.TourplanViewMode.Week = 2;
+        MobileCRM.UI.TourplanViewMode.Month = 3;
+
 	    // MobileCRM.UI.ListDataSource
 	    MobileCRM.UI.ListDataSource = function () {
 	        /// <summary>The data source loading routine implementation.</summary>
@@ -3664,6 +3756,21 @@
 	        if (register)
 	            MobileCRM.bridge.command("registerEvents", "onChange");
 	    }
+		MobileCRM.UI.QuestionnaireForm.onAnswerChanged = function (questionName, handler, bind, scope) {
+			/// <summary>[v11.2] Binds or unbinds the handler for specific question change event on QuestionnaireForm.</summary>
+			/// <param name="questionName" type="String">The name of desired question.</param>
+			/// <param name="handler" type="function(questionnaireForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlerName = "onChange:" + questionName;
+			var handlers = MobileCRM.UI.QuestionnaireForm._handlers[handlerName];
+			if (!handlers)
+				MobileCRM.UI.QuestionnaireForm._handlers[handlerName] = handlers = [];
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", handlerName);
+		}
 	    MobileCRM.UI.QuestionnaireForm.onRepeatGroup = function (handler, bind, scope) {
 	        /// <summary>Binds or unbinds the handler for onRepeatGroup event on QuestionnaireForm.</summary>
 	        /// <param name="handler" type="function(questionnaireForm)">The handler function that has to be bound or unbound.</param>
@@ -3836,19 +3943,20 @@
 	        MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "DeleteGroup", [groupId], null, errorCallback, scope);
 	    };
 
-	    MobileCRM.UI.QuestionnaireForm.Group = function () {
-	        /// <field name="id" type="String">Gets the id of this question group.</field>
-	        /// <field name="name" type="String">Gets the name of the question group.</field>
-	        /// <field name="index" type="Number">Gets the index of the question group.</field>
-	        /// <field name="label" type="String">Gets the question group label.</field>
-	        /// <field name="description" type="String">Get the question group description.</field>
-	        /// <field name="templateGroup" type="String">Gets the id of parent group from questionnaire template.</field>
-	        /// <field name="repeatIndex" type="Number">Index of this instance of repeatable group. Zero for non-repeatable groups.</field>
-	        /// <field name="repeatEnabled" type="Boolean">Indicates whether the group is repeatable.</field>
-	        /// <field name="isVisible" type="Boolean">Gets or sets whether the group is visible.</field>
-	        /// <field name="isEnabled" type="Boolean">Gets or sets whether the group is enabled.</field>
-	        MobileCRM.UI.QuestionnaireForm.Group.superproto.constructor.apply(this, arguments);
-	    };
+		MobileCRM.UI.QuestionnaireForm.Group = function () {
+			/// <field name="id" type="String">Gets the id of this question group.</field>
+			/// <field name="name" type="String">Gets the name of the question group.</field>
+			/// <field name="index" type="Number">Gets the index of the question group.</field>
+			/// <field name="label" type="String">Gets the question group label.</field>
+			/// <field name="description" type="String">Get the question group description.</field>
+			/// <field name="templateGroup" type="String">Gets the id of parent group from questionnaire template.</field>
+			/// <field name="repeatIndex" type="Number">Index of this instance of repeatable group. Zero for non-repeatable groups.</field>
+			/// <field name="repeatEnabled" type="Boolean">Indicates whether the group is repeatable.</field>
+			/// <field name="isVisible" type="Boolean">Gets or sets whether the group is visible.</field>
+			/// <field name="isEnabled" type="Boolean">Gets or sets whether the group is enabled.</field>
+			/// <field name="isExpanded" type="Boolean">Gets or sets whether the group is expanded (true) or collapsed (false).</field>
+			MobileCRM.UI.QuestionnaireForm.Group.superproto.constructor.apply(this, arguments);
+		};
 	    _inherit(MobileCRM.UI.QuestionnaireForm.Group, MobileCRM.ObservableObject);
 	    MobileCRM.UI.QuestionnaireForm.Group.prototype.repeatGroup = function (copyValues, errorCallback, scope) {
 	        ///<summary>Duplicates repeatable group with all its questions. The name of the group will contain the lowest available repeatIndex and suffix in form #00X.</summary>
@@ -3895,6 +4003,13 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.UI.QuestionnaireForm.focusQuestion(this.name, errorCallback, scope);
 	    };
+		MobileCRM.UI.QuestionnaireForm.getQuestionnaireEntity = function (callback, errorCallback, scope) {
+			/// <summary>Requests the Questionnaire entity.</summary>
+			/// <param name="callback" type="function(entity)">The callback function that is called asynchronously with a DynamicEntity object representing currently opened questionnaire. Callback should return true to apply changed properties.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "get_Questionnaire", [], callback, errorCallback, scope);
+		};
 
 	    // MobileCRM.UI.EntityForm
 	    _inherit(MobileCRM.UI.EntityForm, MobileCRM.ObservableObject);
@@ -4116,6 +4231,21 @@
 	        if (register)
 	            MobileCRM.bridge.command("registerEvents", "onChange");
 	    }
+		MobileCRM.UI.EntityForm.onItemChange = function (itemName, handler, bind, scope) {
+			/// <summary>[v11.2] Binds or unbinds the handler for specific item change event on EntityForm.</summary>
+			/// <param name="itemName" type="String">The name of desired detail item (mostly logical name of the field).</param>
+			/// <param name="handler" type="function(entityForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlerName = "onChange:" + itemName;
+			var handlers = MobileCRM.UI.EntityForm._handlers[handlerName];
+			if (!handlers)
+				MobileCRM.UI.EntityForm._handlers[handlerName] = handlers = [];
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", handlerName);
+		}
 	    MobileCRM.UI.EntityForm.onPostSave = function (handler, bind, scope) {
 	        /// <summary>[v8.2] Binds or unbinds the handler for onPostSave event on EntityForm.</summary>
 	        /// <param name="handler" type="function(entityForm)">The handler function that has to be bound or unbound.</param>
@@ -4474,7 +4604,14 @@
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        this._executeAction(0x40000, callback, errorCallback, scope);
-	    };
+        };
+		MobileCRM.Services.DocumentService.prototype.selectMultiplePhotos = function (callback, errorCallback, scope) {
+	        /// <summary>[v11.2.3] Asks the user to choose multiple photos and calls the async callback with linked list of file infos (see <see cref="MobileCRM.Services.FileInfo">FileInfo.nextInfo</see>).</summary>
+			/// <param name="callback" type="function(MobileCRM.Services.FileInfo)">The callback function which is called asynchronously with <see cref="MobileCRM.Services.FileInfo">MobileCRM.Services.FileInfo</see> object as an argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			this._executeAction(0x1000000, callback, errorCallback, scope);
+		};
 	    MobileCRM.Services.DocumentService.prototype.print = function (filePath, landscape, errorCallback, scope) {
 	        /// <summary>[v9.1] Prints the document defined by file path.</summary>
 	        /// <param name="filePath" type="String">A file path.</param>
@@ -4715,6 +4852,20 @@
 
 		    this._credentials = JSON.stringify({ "userName": this.userName, "password": this.password });
 		}
+		MobileCRM.Services.Workflow = {};
+		MobileCRM.Services.Workflow.Action = function () {
+			/// <summary>[v11.2] Represents custom workfow action.</summary>
+		};
+		MobileCRM.Services.Workflow.Action.execute = function (actionName, parameters, success, failed, scope) {
+			/// <summary>[v11.2] Asynchronously executes custom workfow action on the server.</summary>
+			/// <param name="actionName" type="String">The unique name of the custom action to execute.</param>
+			/// <param name="parameters" type="Object">The object containing the parameters for the custom action.</param>
+			/// <param name="success" type="function(string)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the serialized response from the server.</param>
+			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+			window.MobileCRM.bridge.command('executeWorkflowAction', JSON.stringify({ actionName: actionName, actionParameters: JSON.stringify(parameters) }), success, failed, scope);
+		};
+
 		/**************************************/
 		// Platform dependent implementation   /
 		// MobileCRM.bridge singleton creation /
@@ -4800,9 +4951,9 @@
 			}
 		}
 		else {
-			if (typeof window.external !== "undefined") {
-				var win10 = typeof window.win10version !== "undefined";
-				if (typeof window.external.notify !== "undefined" || win10) {
+			if ("external" in window && external) {
+				var win10 = "win10version" in window;
+				if ("notify" in external || win10) {
 					// WindowsPhone || WindowsRT || Windows10
 					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
 						var cmdId = this._createCmdObject(success, failed, scope);
@@ -4818,7 +4969,7 @@
 						else
 							return result;
 					};
-					if (typeof window.alert === "undefined") {
+					if (!("alert" in window)) {
 						window.alert = function (text) {
 							MobileCRM.bridge.invoke("alert", text);
 						};
@@ -4832,13 +4983,13 @@
 					var platformName = win10 ? window.win10version : (navigator.userAgent.indexOf("Windows Phone") > 0 ? "WindowsPhone" : "WindowsRT");
 					MobileCRM.bridge = new MobileCRM.Bridge(platformName);
 				}
-				else if (typeof window.external.ProcessCommand !== "undefined") {
+				else if ("ProcessCommand" in external) {
 					// Windows Desktop
 					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
 						var cmdId = this._createCmdObject(success, failed, scope);
-						window.external.ProcessCommand(cmdId, command, params);
+						external.ProcessCommand(cmdId, command, params);
 					};
-					if (typeof window.external.InvokeCommand !== "undefined") {
+					if ("InvokeCommand" in external) {
 						MobileCRM.Bridge.prototype.invoke = function (command, params) {
 							var result = window.external.InvokeCommand(command, params);
 							if (result.length >= 4 && result.substr(0, 4) == 'ERR:')
@@ -4850,7 +5001,7 @@
 					MobileCRM.bridge = new MobileCRM.Bridge('Windows');
 				}
 			}
-			else if (typeof webkit !== "undefined" && typeof webkit.messageHandlers !== "undefined" && typeof webkit.messageHandlers.JSBridge !== "undefined") {
+			else if ("webkit" in window && "messageHandlers" in webkit && "JSBridge" in webkit.messageHandlers) {
 				MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
 					var cmdId = this._createCmdObject(success, failed, scope);
 					var cmdText = cmdId + ';' + command + ':' + params;
