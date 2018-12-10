@@ -1,6 +1,6 @@
-// v10.1
+// v10.2
 (function () {
-	var _scriptVersion = 10.1;
+	var _scriptVersion = 10.2;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -185,6 +185,69 @@
 				/// <field name="storageDirectory" type="String">Gets the root folder of the application storage.</field>
 			},
 
+			CultureInfo: function () {
+				/// <summary>[v10.2] Provides information about current device culture. The information includes the names for the culture, the writing system, the calendar used, and formatting for dates.</summary>
+				/// <field name="name" type="String">Gets the culture name in the format languagecode/region (e.g. &quot;en-US&quot;). languagecode is a lowercase two-letter code derived from ISO 639-1. regioncode is derived from ISO 3166 and usually consists of two uppercase letters.</field>
+				/// <field name="displayName" type="String">Gets the full localized culture name.</field>
+				/// <field name="nativeName" type="String">Gets the culture name, consisting of the language, the country/region, and the optional script, that the culture is set to display.</field>
+				/// <field name="ISOName" type="String">Gets the ISO 639-1 two-letter code for the language of the current CultureInfo.</field>
+				/// <field name="isRightToLeft" type="Boolean">Gets a value indicating whether the current CultureInfo object represents a writing system where text flows from right to left.</field>
+				/// <field name="dateTimeFormat" type="MobileCRM.DateTimeFormat">Gets a DateTimeFormat that defines the culturally appropriate format of displaying dates and times.</field>
+				/// <field name="numberFormat" type="MobileCRM.NumberFormat">Gets a NumberFormat that defines the culturally appropriate format of displaying numbers, currency, and percentage.</field>
+			},
+
+			DateTimeFormat: function () {
+				/// <summary>[v10.2] Provides culture-specific information about the format of date and time values.</summary>
+				/// <field name="abbreviatedDayNames" type="String[]">Gets a string array containing the culture-specific abbreviated names of the days of the week.</field>
+				/// <field name="abbreviatedMonthGenitiveNames" type="String[]">Gets a string array of abbreviated month names associated with the current DateTimeFormat object.</field>
+				/// <field name="abbreviatedMonthNames" type="String[]">Gets a string array that contains the culture-specific abbreviated names of the months.</field>
+				/// <field name="aMDesignator" type="String">Gets the string designator for hours that are "ante meridiem" (before noon).</field>
+				/// <field name="dayNames" type="String[]">Gets a string array that contains the culture-specific full names of the days of the week.</field>
+				/// <field name="firstDayOfWeek" type="Number">Gets the first day of the week (0=Sunday, 1=Monday, ...)</field>
+				/// <field name="fullDateTimePattern" type="String">Gets the custom format string for a long date and long time value.</field>
+				/// <field name="longDatePattern" type="String">Gets the custom format string for a long date value.</field>
+				/// <field name="longTimePattern" type="String">Gets the custom format string for a long time value.</field>
+				/// <field name="monthDayPattern" type="String">Gets the custom format string for a month and day value.</field>
+				/// <field name="monthGenitiveNames" type="String[]">Gets a string array of month names associated with the current DateTimeFormat object.</field>
+				/// <field name="monthNames" type="String[]">Gets a string array containing the culture-specific full names of the months.</field>
+				/// <field name="pMDesignator" type="String">Gets the string designator for hours that are "post meridiem" (after noon).</field>
+				/// <field name="shortDatePattern" type="String">Gets the custom format string for a short date value.</field>
+				/// <field name="shortestDayNames" type="String[]">Gets a string array of the shortest unique abbreviated day names associated with the current DateTimeFormat object.</field>
+				/// <field name="shortTimePattern" type="String">Gets the custom format string for a short time value.</field>
+				/// <field name="sortableDateTimePattern" type="String">Gets the custom format string for a sortable date and time value.</field>
+				/// <field name="universalSortableDateTimePattern" type="String">Gets the custom format string for a universal, sortable date and time string.</field>
+				/// <field name="yearMonthPattern" type="String">Gets the custom format string for a year and month value.</field>
+			},
+
+			NumberFormat: function () {
+				/// <summary>[v10.2] Provides culture-specific information for formatting and parsing numeric values.</summary>
+				/// <field name="currencyDecimalDigits" type="Number">Gets the number of decimal places to use in currency values.</field>
+				/// <field name="currencyDecimalSeparator" type="String">Gets the string to use as the decimal separator in currency values.</field>
+				/// <field name="currencyGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in currency values.</field>
+				/// <field name="currencyGroupSizes" type="Number[]">Gets the number of digits in each group to the left of the decimal in currency values.</field>
+				/// <field name="currencyNegativePattern" type="Number">Gets the format pattern for negative currency values.</field>
+				/// <field name="currencyPositivePattern" type="Number">Gets the format pattern for positive currency values.</field>
+				/// <field name="currencySymbol" type="String">Gets the string to use as the currency symbol.</field>
+				/// <field name="naNSymbol" type="String">Gets the string that represents the IEEE NaN (not a number) value.</field>
+				/// <field name="negativeInfinitySymbol" type="String">Gets the string that represents negative infinity.</field>
+				/// <field name="negativeSign" type="String">Gets the string that denotes that the associated number is negative.</field>
+				/// <field name="numberDecimalDigits" type="Number">Gets the number of decimal places to use in numeric values.</field>
+				/// <field name="numberDecimalSeparator" type="String">Gets the string to use as the decimal separator in numeric values.</field>
+				/// <field name="numberGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in numeric values.</field>
+				/// <field name="numberGroupSizes" type="Number[]"> Gets the number of digits in each group to the left of the decimal in numeric values.</field>
+				/// <field name="numberNegativePattern" type="Number">Gets the format pattern for negative numeric values.</field>
+				/// <field name="percentDecimalDigits" type="Number">Gets the number of decimal places to use in percent values.</field>
+				/// <field name="percentDecimalSeparator" type="String">Gets the string to use as the decimal separator in percent values.</field>
+				/// <field name="percentGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in percent values.</field>
+				/// <field name="percentGroupSizes" type="Number[]">Gets the number of digits in each group to the left of the decimal in percent values.</field>
+				/// <field name="percentNegativePattern" type="Number">Gets the format pattern for negative percent values.</field>
+				/// <field name="percentPositivePattern" type="Number">Gets the format pattern for positive percent values.</field>
+				/// <field name="percentSymbol" type="String">Gets the string to use as the percent symbol.</field>
+				/// <field name="perMilleSymbol" type="String">Gets the string to use as the per mille symbol.</field>
+				/// <field name="positiveInfinitySymbol" type="String">Gets the string that represents positive infinity.</field>
+				/// <field name="positiveSign" type="String">Gets the string that denotes that the associated number is positive.</field>
+			},
+
 			Localization: {
 				stringTable: {},
 				initialized: false
@@ -277,7 +340,7 @@
 				/// <summary>Represents a property (CRM field) metadata.</summary>
 				/// <field name="name" type="String">Gets the field (logical) name.</field>
 				/// <field name="required" type="Number">Gets the attribute requirement level (0=None, 1=SystemRequired, 2=Required, 3=Recommended, 4=ReadOnly).</field>
-				/// <field name="type" type="Number">Gets the attribute CRM type (see http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx ).</field>
+				/// <field name="type" type="Number">Gets the attribute CRM type (see <see cref="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">MS Dynamics SDK</see>).</field>
 				/// <field name="format" type="Number">Gets the attribute display format.</field>
 				/// <field name="isVirtual" type="Boolean">Gets whether the property is virtual (has no underlying storage). State and PartyList properties are virtual.</field>
 				/// <field name="isReference" type="Boolean">Gets whether the property is a reference (lookup) to another entity.</field>
@@ -427,6 +490,9 @@
 			MobileReport: function () {
 				/// <summary>Provides a functionality of mobile reporting.</summary>
 			},
+			Questionnaire: function () {
+				/// <summary>Provides a functionality for questionnaires.</summary>
+			},
 			UI: {
 				FormManager: {
 				},
@@ -455,7 +521,8 @@
 					/// <field name="allowedDocActions" type="Number">Gets or sets a mask of document actions (for Note and Sharepoint document lists).</field>
 					/// <field name="allowSearch" type="Boolean">Gets or sets whether to show the search bar.</field>
 					/// <field name="autoWideWidth" type="String">Gets the view auto width pixel size.</field>
-					/// <field name="context" type="Object">[v10.0] Gets the specific context object for onChange, onSave and onCommand handlers.<p>The onSave context contains property &quot;entities&quot; with the list of all changed entities and property &quot;errorMessage&quot; which can be used to cancel the save process with certain error message.</p><p>The onChange handler context contains &quot;entities&quot; property with the list of currently changed entities (typically just one entity) and property &quot;propertyName&quot; with the field name that was changed.</p><p>Command handler context contains the &quot;cmdParam&quot; property and &quot;entities&quot; property with the list of currently selected entities.</p></field>
+				    /// <field name="context" type="Object">[v10.0] Gets the specific context object for onChange, onSave and onCommand handlers.<p>The onSave context contains property &quot;entities&quot; with the list of all changed entities and property &quot;errorMessage&quot; which can be used to cancel the save process with certain error message.</p><p>The onChange handler context contains &quot;entities&quot; property with the list of currently changed entities (typically just one entity) and property &quot;propertyName&quot; with the field name that was changed.</p><p>Command handler context contains the &quot;cmdParam&quot; property and &quot;entities&quot; property with the list of currently selected entities.</p></field>
+				    /// <field name="currentView" type="String">[v10.0] Gets currently selected entity list view.
 					/// <field name="entityName" type="String">Gets the name of the entities in this list.</field>
 					/// <field name="flipMode" type="Number">Gets or sets the flip configuration (which views to show and which one is the initial).</field>
 					/// <field name="hasMapViews" type="Boolean">Gets whether the list has a view that can be displayed on map.</field>
@@ -1234,6 +1301,350 @@
 				return '';
 			}, errorCallback, scope);
 		};
+	    // MobileCRM._Settings
+		MobileCRM._Settings = {
+		    /// <summary>MobileCRM cofinguration settings class.</summary>
+		    /// <field name="afterSaveReload" type="Number">Gets options for default after save behavior &quot;None = 0, New = 1,Always = 2&quot;</field>
+		    /// <field name="authenticationType" type="Number">Gets possible CRM server authentication methods. &quot;AD = 0, PassPort = 1,SPLA = 2,PassportEMEA = 3,PassportAPAC = 4 &quot;</field>
+		    /// <field name="businessUnitId" type="String">Gets or sets the current user's business unit id.</field>
+		    /// <field name="canUsePassword" type="Boolean">Gets whether there is a valid password and whether it can be used.</field>
+		    /// <field name="crm2011AuthId" type="String">Gets or sets the discovered CRM service authentication server identifier.</field>
+		    /// <field name="crm2011AuthType" type="String">Gets or sets the discovered CRM service authentication server type.</field>
+		    /// <field name="crm2011AuthUrl" type="String">Gets or sets the discovered CRM service authentication server url.</field>
+		    /// <field name="crmOnlineDeviceToken" type="String">Gets or sets the token (cookie) issued by LiveId services identifying this device.</field>
+		    /// <field name="crmOnlineDeviceTokenExpires" type="Date">Gets when CrmOnlineDeviceToken expires (UTC).</field>
+		    /// <field name="crmWebServiceMinorVersion" type="Number">Gets or s: stringets the the discovered CRM service minor version (13 - for CRM 2011 Rollup 13 and up).</field>
+		    /// <field name="crmWebServiceVersion" type="Number">Gets or sets the discovered CRM service version (4,5).</field>
+		    /// <field name="currencyDecimalPrecision" type="Number">Gets or sets the organization Pricing Decimal Precision configuration option (0..4).</field>
+		    /// <field name="currencyDisplayOption" type="Number">Gets or sets the currency field display option 0- Symbol ($), 1 - Code (USD).</field>
+		    /// <field name="currencyFormatCode" type="Number">Gets or sets the currency field display option 0- $123, 1-123$, 2-$ 123, 3-123 $.</field>
+		    /// <field name="customerId" type="MobileCRM.Reference">Gets or sets the customer when application is running in customer mode. <see cref="MobileCRM.Reference">MobileCRM.Reference</see> object instance as argument</field>
+		    /// <field name="customerUserId" type="MobileCRM.Reference">Gets or sets the CustomerUserId when application is running in customer mode. <see cref="MobileCRM.Reference">MobileCRM.Reference</see> object instance as argument</field>
+		    /// <field name="deviceFriendlyName" type="String">Gets or sets the device friendly name e.g. &quot;Steve's iPhone&quot;.</field>
+		    /// <field name="deviceIdentifier" type="String">Gets or sets the hardware unique id.</field>
+		    /// <field name="deviceInfo" type="String">Gets or sets the device system an hardware information e.g. &quot;Hewlett-Packard HP ProBook 6450b\tMicrosoft Windows NT 6.1.7600.0&quot;</field>
+		    /// <field name="internalDeviceId" type="String">Gets the device id.</field>
+		    /// <field name="disableSyncAnalyzer" type="Boolean">Gets or sets whether the synchronization should use the SyncAnalyzer step.</field>
+		    /// <field name="discountCalculationMethod" type="Number">Gets or sets the option for calculating the discount 0 - apply after (Price*Quantity)-Discount , 1- apply before (Price-Discount)*Quantity.</field>
+		    /// <field name="duplicateDetection" type="Number">Gets whether duplicate detection is enabled and whether to detect against the local database, online, or always online. &quot;Disabled = 0, Enabled = 1,AlwaysOnline = 2&quot;</field>
+		    /// <field name="enableAdvancedFind" type="Boolean">Gets or sets whether to enabled advanced find functionality. Default true.</field>
+		    /// <field name="enableListButtons" type="Boolean">Enables list buttons. Default is true.</field>
+		    /// <field name="enableListSearchButtons" type="Boolean">Gets or sets whether to allow list search buttons.</field>
+		    /// <field name="forceCustomizationDownload" type="Boolean">Gets or sets a value indicating whether the customization download is forced.</field>
+		    /// <field name="forcedFullSyncDate" type="Date">Gets or sets the date when the device must be full synced. If the last sync was before this date, the next sync must be full.</field>
+		    /// <field name="forgetPassword" type="Boolean">Gets or sets whether password can be used for next login.</field>
+		    /// <field name="fullScreenForms" type="Boolean">Gets or sets whether to show forms maximized by default. Can be overridden per form in Woodford.</field>
+		    /// <field name="googleEmail" type="String">Gets or sets the Google account email.</field>
+		    /// <field name="gPSAccuracy" type="Number">Gets or sets the default accuracy (in meters) when resolving the current position.</field>
+		    /// <field name="gPSMaxAge" type="Number">Gets or sets the default maximum age (in seconds) of the last result when resolving the current position.</field>
+		    /// <field name="isOnlineCrm" type="Boolean">Gets whether the last login was for a CRM Online instance.</field>
+		    /// <field name="maxAttachmentSize" type="Number">Gets or sets the maximum attachment size to sync (in bytes).</field>
+		    /// <field name="onlineNoLock" type="Boolean">Gets or sets whether to use "no-lock" in fetchXml during online mode.</field>
+		    /// <field name="organizationId" type="String">Gets or sets the current user's organization id (given by the server).</field>
+		    /// <field name="saveBehavior" type="Number">Gets options for default after save behavior &quot;Default = 0, SaveOnly = 1,SaveAndClose = 2&quot;</field>
+		    /// <field name="saveSignatureAsImage" type="Boolean">Gets or sets whether to store signature attachments as SVG (vector) or PNG (image).</field>
+		    /// <field name="serverHostName" type="String">Gets the server host name.</field>
+		    /// <field name="serverSettingsVersion" type="String">Gets the version of the settings file as send with the customization.</field>
+		    /// <field name="serverVersion" type="Number">Gets or sets the server version, either 4 for CRM 4.0 or 5 for CRM 2011.</field>
+		    /// <field name="showPersonalContacts" type="Boolean">Gets or sets whether to show contacts from the user's personal address book.</field>
+		    /// <field name="showSystemCalendars" type="Boolean">Gets or sets whether to show private calendars in calendars.</field>
+		    /// <field name="systemUserId" type="String">Gets or sets the current user id (given by the server).</field>
+		    /// <field name="teams" type="Array<String>">Gets the array of ids of teams the current user is member of.</field>
+		    /// <field name="useCrmEmail" type="Boolean">Gets or sets whether to create a CRM email entity or use the platform email service.</field>
+		    /// <field name="useDatabaseBlobStore" type="Boolean">Gets or sets whether to store attachment blobs in database or in files. If you change this setting you must perform a full sync!</field>
+		    /// <field name="useFlexiForms" type="Boolean">Gets or sets whether flexi forms (New UI).</field>
+			/// <field name="googleApiKey" type="String">Gets or sets the google API key.</field>
+		}
+
+		MobileCRM.CultureInfo.currentCulture = null;
+		MobileCRM.CultureInfo.initialize = function (callback, errorCallback, scope) {
+			/// <summary>[v10.2] Initializes the CultureInfo object.</summary>
+			/// <remarks><p>Method loads the current culture information asynchronously and calls either the <b>errorCallback</b> with error message or the <b>callback</b> with initialized CultureInfo object.</p><p>All other functions will return the default or empty string before the initialization finishes.</p></remarks>
+			/// <param name="callback" type="function(currentCulture)">The callback function that is called asynchronously with initialized CultureInfo object as argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is to be called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("getCultureInfo", '', function (res) {
+				MobileCRM.CultureInfo.currentCulture = res;
+				if (callback)
+					callback.call(scope, res);
+			}, errorCallback, scope);
+		}
+
+		MobileCRM.CultureInfo.load = function (culture, callback, errorCallback, scope) {
+			/// <summary>[v10.2] Asynchronously gets the CultureInfo object for specified language/country.</summary>
+			/// <remarks><p>Method loads specified culture information asynchronously and calls either the <b>errorCallback</b> with error message or the <b>callback</b> with initialized CultureInfo object.</p><p>All other functions will return the default or empty string before the initialization finishes.</p></remarks>
+			/// <param name="culture" type="String">The name of culture that has to be loaded. The culture name is in the format languagecode-country where languagecode is a lowercase two-letter code derived from ISO 639-1. country is derived from ISO 3166 and usually consists of two uppercase letters</param>
+			/// <param name="callback" type="function(cultureInfo)">The callback function that is called asynchronously with initialized CultureInfo object as argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is to be called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("getCultureInfo", culture || '', function (res) {
+				if (callback)
+					callback.call(scope, res);
+			}, errorCallback, scope);
+		};
+
+		MobileCRM.CultureInfo.shortDateString = function (date) {
+			/// <summary>[v10.2] Returns the short date string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			return MobileCRM.CultureInfo.formatDate(date, MobileCRM.CultureInfo.currentCulture.dateTimeFormat.shortDatePattern)
+		};
+
+		MobileCRM.CultureInfo.longDateString = function (date) {
+			/// <summary>[v10.2] Returns the long date string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			return MobileCRM.CultureInfo.formatDate(date, MobileCRM.CultureInfo.currentCulture.dateTimeFormat.longDatePattern)
+		};
+
+		MobileCRM.CultureInfo.shortTimeString = function (date) {
+			/// <summary>[v10.2] Returns the short time string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			return MobileCRM.CultureInfo.formatDate(date, MobileCRM.CultureInfo.currentCulture.dateTimeFormat.shortTimePattern)
+		};
+
+		MobileCRM.CultureInfo.longTimeString = function (date) {
+			/// <summary>[v10.2] Returns the long time string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			return MobileCRM.CultureInfo.formatDate(date, MobileCRM.CultureInfo.currentCulture.dateTimeFormat.longTimePattern)
+		};
+
+		MobileCRM.CultureInfo.fullDateTimeString = function (date) {
+			/// <summary>[v10.2] Returns the date and time string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			return MobileCRM.CultureInfo.formatDate(date, MobileCRM.CultureInfo.currentCulture.dateTimeFormat.fullDateTimePattern)
+		};
+
+		MobileCRM.CultureInfo.monthDayString = function (date) {
+			/// <summary>[v10.2] Returns the month and day string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			return MobileCRM.CultureInfo.formatDate(date, MobileCRM.CultureInfo.currentCulture.dateTimeFormat.monthDayPattern)
+		};
+
+		MobileCRM.CultureInfo.yearMonthString = function (date) {
+			/// <summary>[v10.2] Returns the year and month string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			return MobileCRM.CultureInfo.formatDate(date, MobileCRM.CultureInfo.currentCulture.dateTimeFormat.yearMonthPattern)
+		};
+
+		MobileCRM.CultureInfo.formatDate = function (date, format) {
+			/// <summary>[v10.2] Returns the formatted date/time string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			/// <param name="format" type="String">Custom format string that meets the <see cref="https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings">MSDN Sepcification</see>.</param>
+			var df = MobileCRM.CultureInfo.currentCulture.dateTimeFormat;
+			var zeroPad = function (num, length, dontCut) {
+				var st = "" + num;
+				if (st.length > length)
+					return dontCut ? st : st.substr(0, length);
+				while (st.length < length)
+					st = "0" + st;
+				return st;
+			};
+			var trimDigits = function (num, length) {
+				var st = "" + num;
+				if (st.length > length)
+					return st.substr(0, length);
+				return st;
+			};
+			var hoursTo12h = function (h) {
+				return h <= 12 ? h : (h % 12);
+			};
+			var i = 0;
+			var fLen = format.length;
+			var res = "";
+			while (i < fLen) {
+				var c = format.charAt(i);
+				switch (c) {
+					case 'd': // Day
+						if (format.charAt(++i) === 'd') {
+							if (format.charAt(++i) === 'd') {
+								if (format.charAt(++i) === 'd') {
+									res += df.dayNames[date.getDay()];
+									i++;
+								}
+								else
+									res += df.abbreviatedDayNames[date.getDay()];
+							}
+							else
+								res += zeroPad(date.getDate(), 2, false);
+						} else
+							res += date.getDate();
+						break;
+					case 'f':
+						if (format.charAt(++i) === 'f') {
+							if (format.charAt(++i) === 'f') {
+								if (format.charAt(++i) === 'f') {
+									if (format.charAt(++i) === 'f') {
+										if (format.charAt(++i) === 'f') {
+											if (format.charAt(++i) === 'f') {
+												res += date.getMilliseconds();
+												i++;
+											}
+											else
+												res += date.getMilliseconds();
+										}
+										else
+											res += date.getMilliseconds();
+									}
+									else
+										res += date.getMilliseconds();
+								}
+								else
+									res += date.getMilliseconds();
+							}
+							else
+								res += trimDigits(date.getMilliseconds(), 2);
+						}
+						else
+							res += trimDigits(date.getMilliseconds(), 1);
+						break;
+					case 'F':
+						if (format.charAt(++i) === 'F') {
+							if (format.charAt(++i) === 'F') {
+								if (format.charAt(++i) === 'F') {
+									if (format.charAt(++i) === 'F') {
+										if (format.charAt(++i) === 'F') {
+											if (format.charAt(++i) === 'F') {
+												res += zeroPad(date.getMilliseconds(), 7, false);
+												i++;
+											}
+											else
+												res += zeroPad(date.getMilliseconds(), 6, false);
+										}
+										else
+											res += zeroPad(date.getMilliseconds(), 5, false);
+									}
+									else
+										res += zeroPad(date.getMilliseconds(), 4, false);
+								}
+								else
+									res += zeroPad(date.getMilliseconds(), 3, false);
+							}
+							else
+								res += zeroPad(date.getMilliseconds(), 2, false);
+						}
+						else
+							res += zeroPad(date.getMilliseconds(), 1, false);
+						break;
+					case 'g':
+						if (format.charAt(++i) === 'g') {
+							res += "A.D.";
+							i++;
+						}
+						else
+							res += "AD";
+						break;
+					case 'h':
+						if (format.charAt(++i) === 'h') {
+							res += zeroPad(hoursTo12h(date.getHours()), 2, false);
+							i++;
+						}
+						else
+							res += hoursTo12h(date.getHours());
+						break;
+					case 'H':
+						if (format.charAt(++i) === 'H') {
+							res += zeroPad(date.getHours(), 2, false);
+							i++;
+						}
+						else
+							res += date.getHours();
+						break;
+					case 'K':
+						var o = -date.getTimezoneOffset();
+						res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false) + ":" + zeroPad(o % 60, 2, false);
+						i++;
+						break;
+					case 'm':
+						if (format.charAt(++i) === 'm') {
+							res += zeroPad(date.getMinutes(), 2, false);
+							i++;
+						}
+						else
+							res += date.getMinutes();
+						break;
+					case 's':
+						if (format.charAt(++i) === 's') {
+							res += zeroPad(date.getSeconds(), 2, false);
+							i++;
+						}
+						else
+							res += date.getSeconds();
+						break;
+					case 'M':
+						if (format.charAt(++i) === 'M') {
+							if (format.charAt(++i) === 'M') {
+								if (format.charAt(++i) === 'M') {
+									res += df.monthGenitiveNames[date.getMonth()];
+									i++;
+								}
+								else
+									res += df.abbreviatedMonthGenitiveNames[date.getMonth()];
+							}
+							else
+								res += zeroPad(date.getMonth() + 1, 2, false);
+						} else
+							res += date.getMonth() + 1;
+						break;
+					case 't':
+						if (format.charAt(++i) === 't')
+							i++;
+
+						res += date.getHours() < 12 ? df.aMDesignator : df.pMDesignator;
+						break;
+					case 'y':
+						if (format.charAt(++i) === 'y') {
+							if (format.charAt(++i) === 'y') {
+								if (format.charAt(++i) === 'y') {
+									if (format.charAt(++i) === 'y') {
+										res += zeroPad(date.getFullYear(), 5, true);
+										i++;
+									}
+									else
+										res += zeroPad(date.getFullYear(), 4, true);
+								}
+								else
+									res += zeroPad(date.getFullYear(), 3, true);
+							} else
+								res += zeroPad(date.getFullYear() % 100, 2, false);
+						}
+						else
+							res += date.getFullYear() % 100;
+						break;
+					case 'z':
+						if (format.charAt(++i) === 'z') {
+							var o = -date.getTimezoneOffset();
+							if (format.charAt(++i) === 'z') {
+								res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false) + ":" + zeroPad(o % 60, 2, false);
+								i++;
+							}
+							else 
+								res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false);
+						}
+						else
+							res += -date.getTimezoneOffset() / 60;
+					case '/':
+						res += (typeof (df.dateSeparator) == "string") ? df.dateSeparator : '/';
+						i++;
+						break;
+					case ':':
+						res += (typeof (df.timeSeparator) == "string") ? df.timeSeparator : ':';
+						i++;
+						break;
+					default:
+						res += c;
+						i++;
+						break;
+				}
+			}
+			return res;
+		};
 
 		//MobileCRM.Localization
 		MobileCRM.Localization.initialize = function (callback, errorCallback, scope) {
@@ -1317,39 +1728,39 @@
 			window.MobileCRM.bridge.command('referenceload', JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
 		};
 
-		// MobileCRM.ManyToManyReference
+	    // MobileCRM.ManyToManyReference
 		MobileCRM.ManyToManyReference.addRecord = function (entityName, ref1, ref2, create, success, failed, scope) {
-			/// <summary>Adds or removes an N-N relationship record between the two passed entities.</summary>
-			/// <param name="entityName" type="String">The relationship entity name.</param>
-			/// <param name="ref1" type="MobileCRM.Reference">First entity instance.</param>
-			/// <param name="ref2" type="MobileCRM.Reference">Second entity instance.</param>
-			/// <param name="create" type="Boolean">Whether to create or delete the relationship record.</param>
-			/// <param name="success" type="function(result)">A callback function for successful asynchronous result.</param>
-			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
-			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-			MobileCRM.bridge.command('addManyToManyReference', JSON.stringify({ entityName: entityName, ref1: ref1, ref2: ref2, create: create }), success, failed, scope);
+		    /// <summary>Adds or removes an N-N relationship record between the two passed entities.</summary>
+		    /// <param name="entityName" type="String">The relationship entity name.</param>
+		    /// <param name="ref1" type="MobileCRM.Reference">First entity instance.</param>
+		    /// <param name="ref2" type="MobileCRM.Reference">Second entity instance.</param>
+		    /// <param name="create" type="Boolean">Whether to create or delete the relationship record.</param>
+		    /// <param name="success" type="function(result)">A callback function for successful asynchronous result.</param>
+		    /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+		    /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+		    MobileCRM.bridge.command('addManyToManyReference', JSON.stringify({ entityName: entityName, ref1: ref1, ref2: ref2, create: create }), success, failed, scope);
 		};
 		MobileCRM.ManyToManyReference.create = function (entityName, ref1, ref2, success, failed, scope) {
-			/// <summary>Creates a new N-N relationship between the two passed entities.</summary>
-			/// <remarks>New relationship is created either in local database or using the online request. It depends on current application mode.</remarks>
-			/// <param name="entityName" type="String">The relationship entity name.</param>
-			/// <param name="ref1" type="MobileCRM.Reference">First entity instance.</param>
-			/// <param name="ref2" type="MobileCRM.Reference">Second entity instance.</param>
-			/// <param name="success" type="function(result)">A callback function for successful asynchronous result.</param>
-			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
-			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-			MobileCRM.ManyToManyReference.addRecord(entityName, ref1, ref2, true, success, failed, scope);
+		    /// <summary>Creates a new N-N relationship between the two passed entities.</summary>
+		    /// <remarks>New relationship is created either in local database or using the online request. It depends on current application mode.</remarks>
+		    /// <param name="entityName" type="String">The relationship entity name.</param>
+		    /// <param name="ref1" type="MobileCRM.Reference">First entity instance.</param>
+		    /// <param name="ref2" type="MobileCRM.Reference">Second entity instance.</param>
+		    /// <param name="success" type="function(result)">A callback function for successful asynchronous result.</param>
+		    /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+		    /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+		    MobileCRM.ManyToManyReference.addRecord(entityName, ref1, ref2, true, success, failed, scope);
 		};
 		MobileCRM.ManyToManyReference.remove = function (entityName, ref1, ref2, success, failed, scope) {
-			/// <summary>Removes an existing N-N relationship between the two passed entities.</summary>
-			/// <remarks>Relationship is removed either from local database or using the online request. It depends on current application mode.</remarks>
-			/// <param name="entityName" type="String">The relationship entity name.</param>
-			/// <param name="ref1" type="MobileCRM.Reference">First entity instance.</param>
-			/// <param name="ref2" type="MobileCRM.Reference">Second entity instance.</param>
-			/// <param name="success" type="function(result)">A callback function for successful asynchronous result.</param>
-			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
-			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-			MobileCRM.ManyToManyReference.addRecord(entityName, ref1, ref2, false, success, failed, scope);
+		    /// <summary>Removes an existing N-N relationship between the two passed entities.</summary>
+		    /// <remarks>Relationship is removed either from local database or using the online request. It depends on current application mode.</remarks>
+		    /// <param name="entityName" type="String">The relationship entity name.</param>
+		    /// <param name="ref1" type="MobileCRM.Reference">First entity instance.</param>
+		    /// <param name="ref2" type="MobileCRM.Reference">Second entity instance.</param>
+		    /// <param name="success" type="function(result)">A callback function for successful asynchronous result.</param>
+		    /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+		    /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+		    MobileCRM.ManyToManyReference.addRecord(entityName, ref1, ref2, false, success, failed, scope);
 		};
 
 		// MobileCRM.DynamicEntity
@@ -1834,6 +2245,14 @@
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			MobileCRM.bridge.requestObject("Platform", callback, errorCallback, scope);
 		};
+		MobileCRM.Platform.makeCall = function (telephone, errorCallback, scope) {
+			/// <summary>[v8.0] Opens the platform-specific call application with specified phone number.</summary>
+		    /// <param name="telephone" type="String">Telephone number</param>
+		    /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+		    /// <param name="scope" type="Object">The scope for errorCallback.</param>
+		    var tel = { Address: telephone };
+		    _executePlatformAction(0, tel, function () { }, errorCallback, scope);
+		}
 		MobileCRM.Platform.email = function (address, subject, body, errorCallback, scope) {
 			/// <summary>[v8.1] Opens the platform-specific e-mail message form with pre-filled data.</summary>
 			/// <param name="address" type="String">Recipient&#39;s email address.</param>
@@ -2048,10 +2467,21 @@
 	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> will carry a String object with the file content.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        var reader = MobileCRM.bridge.exposeObjectAsync("MobileCrm.Data:MobileCrm.Configuration.Instance.OpenStorageReader", [path]);
-	        reader.invokeMethodAsync("ReadToEnd", [], success, failed, scope);
-	        reader.invokeMethodAsync("Dispose", [], undefined, failed, scope);
-	        reader.release();
+			  if (MobileCRM.bridge.platform === "WebClient") {
+				  // MR: we have to branch the code here :/ (its always better not to branch the code like this) 
+				  // otherwise it throws 3 object not exposed and method not found errors on web client 
+				  // we want to show one nicer message instead.
+				  // in future: lets not go mad with all those exposings of C# objects and lets use the single method invocations or javascriptcallbacks
+				  if (failed) {
+					  failed.call(scope || this, "You cannot read a file on the Web Client");
+				  }
+			  }
+			  else {
+				  var reader = MobileCRM.bridge.exposeObjectAsync("MobileCrm.Data:MobileCrm.Configuration.Instance.OpenStorageReader", [path]);
+				  reader.invokeMethodAsync("ReadToEnd", [], success, failed, scope);
+				  reader.invokeMethodAsync("Dispose", [], undefined, failed, scope);
+				  reader.release();
+			  }
 	    };
 
 	    MobileCRM.Application.writeFile = function (path, text, append, success, failed, scope) {
@@ -2063,10 +2493,18 @@
 	        /// <param name="success" type="function(result)">A callback function which is called in case of successful asynchronous result.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        var reader = MobileCRM.bridge.exposeObjectAsync("MobileCrm.Data:MobileCrm.Configuration.Instance.OpenStorageWriter", [path, append]);
-	        reader.invokeMethodAsync("Write", [text], success, failed, scope);
-	        reader.invokeMethodAsync("Dispose", [], undefined, failed, scope);
-	        reader.release();
+			  if (MobileCRM.bridge.platform === "WebClient") {
+				  // MR: see comment in readFile function
+				  if (failed) {
+					  failed.call(scope || this, "You cannot write to a file on the Web Client");
+				  }
+			  }
+			  else {
+				  var reader = MobileCRM.bridge.exposeObjectAsync("MobileCrm.Data:MobileCrm.Configuration.Instance.OpenStorageWriter", [path, append]);	// MR: same comment as in function above
+				  reader.invokeMethodAsync("Write", [text], success, failed, scope);
+				  reader.invokeMethodAsync("Dispose", [], undefined, failed, scope);
+				  reader.release();
+			  }
 	    };
 
 	    MobileCRM.Application.writeFileWithEncoding = function (path, text, encoding, append, success, failed, scope) {
@@ -2078,10 +2516,18 @@
 	    	/// <param name="success" type="function(result)">A callback function which is called in case of successful asynchronous result.</param>
 	    	/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	    	/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	    	var reader = MobileCRM.bridge.exposeObjectAsync("MobileCrm.Data:MobileCrm.Configuration.Instance.OpenStorageWriterEnc", [path, append, (encoding || null)]);
-	    	reader.invokeMethodAsync("Write", [text], success, failed, scope);
-	    	reader.invokeMethodAsync("Dispose", [], undefined, failed, scope);
-	    	reader.release();
+			  if (MobileCRM.bridge.platform === "WebClient") {
+				  // MR: see comment in readFile function
+				  if (failed) {
+					  failed.call(scope || this, "You cannot write to a file on the Web Client");
+				  }
+			  }
+			  else {
+				  var reader = MobileCRM.bridge.exposeObjectAsync("MobileCrm.Data:MobileCrm.Configuration.Instance.OpenStorageWriterEnc", [path, append, (encoding || null)]);	// MR: same comment as in function above
+				  reader.invokeMethodAsync("Write", [text], success, failed, scope);
+				  reader.invokeMethodAsync("Dispose", [], undefined, failed, scope);
+				  reader.release();
+			  }
 	    };
 
 	    MobileCRM.Application.readFileAsBase64 = function (path, success, failed, scope) {
@@ -2262,6 +2708,7 @@
 		};
 		MobileCRM.UI.DetailViewItems.LookupSetup = function () {
 			/// <summary>Represents a configuration for lookup and inline lookup.</summary>
+			/// <remarks>Defines the lookup records filter for <see cref="MobileCRM.UI._DetailView.updateLinkItemViews">updateLinkItemViews</see></remarks>
 			this._views = [];
 			this._filters = null;
 			this.dialogOnly = false;
@@ -2371,9 +2818,9 @@
 			/// <param name="processRef" type="MobileCRM.Reference">A reference to the workflow entity defining the process to use, or null to disable BusinessProcessFlow.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callback.</param>
-	        var controller = MobileCRM.bridge.exposeObjectAsync("EntityForm.GetController", [this.view.name]);
-	        controller.invokeMethodAsync("ChangeProcessTo", [processRef], function () { }, errorCallback, scope);
-	        controller.release();
+			var controller = MobileCRM.bridge.exposeObjectAsync("EntityForm.GetController", [this.view.name]);
+			controller.invokeMethodAsync("ChangeProcessTo", [processRef], function () { }, errorCallback, scope);
+			controller.release();
 		};
 		
 		// MobileCRM.UI.ViewDefinition
@@ -2395,19 +2842,31 @@
 			MobileCRM.bridge.command("messageBox", JSON.stringify(this), success, failed, scope);
 		};
 
-	    // MobileCRM.UI.LookupForm
+		MobileCRM.UI.MessageBox.sayText = function (text, success, failed, scope) {
+			/// <summary>Shows a simple popup window with a multi-line text.</summary>
+			/// <param name="text" type="String">A text to be shown.</param>
+			/// <param name="success" type="function">The callback function that is called after user closes the message box.</param>
+			/// <param name="failed" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var mb = new MobileCRM.UI.MessageBox(text);
+			mb.items = ["OK"];
+			mb.multiLine = true;
+			mb.show(success, failed, scope);
+		};
+
+		// MobileCRM.UI.LookupForm
 		MobileCRM.UI.LookupForm.prototype.addView = function (entityName, viewName, isDefault) {
-		    /// <summary>Appends an entity view to the list of allowed views.</summary>
-		    /// <param name="entityName" type="string">Entity logical name.</param>
-		    /// <param name="viewName" type="string">A name of the view.</param>
-		    /// <param name="isDefault" type="Boolean">true, if the view should be set as default.</param>
-		    this._views.push({
-		    	entity: entityName, view: viewName, isDefault: isDefault
-		    });
+			/// <summary>Appends an entity view to the list of allowed views.</summary>
+			/// <param name="entityName" type="string">Entity logical name.</param>
+			/// <param name="viewName" type="string">A name of the view.</param>
+			/// <param name="isDefault" type="Boolean">true, if the view should be set as default.</param>
+			this._views.push({
+				entity: entityName, view: viewName, isDefault: isDefault
+			});
 		};
 		MobileCRM.UI.LookupForm.prototype.addEntityFilter = function (entityName, filterXml) {
-		    /// <summary>Defines a fetch XML filter for entity records.</summary>
-		    /// <param name="entityName" type="string">Entity logical name.</param>
+			/// <summary>Defines a fetch XML filter for entity records.</summary>
+			/// <param name="entityName" type="string">Entity logical name.</param>
 			/// <param name="filterXml" type="string">A string defining the fetch XML which has to be applied as filter for entity records.</param>
 			if (!this._filters)
 				this._filters = {};
@@ -2422,7 +2881,7 @@
 		};
 		MobileCRM.UI.LookupForm.prototype._constructParams = function () {
 			var _escape = function (st) {
-				var xml_special_to_escaped_one_map = { '<': '&lt;', '>': '&gt;' };
+				var xml_special_to_escaped_one_map = { '<': '&lt;', '>': '&gt;' };				
 				return st.replace(/([<>])/g, function (str, item) {
 					return xml_special_to_escaped_one_map[item];
 				});
@@ -2542,6 +3001,31 @@
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.ShowHomeItemByName", [name], null, errorCallback, scope);
 		};
+		MobileCRM.UI.HomeForm.openHomeGroupItemAsync = function (items, errorCallback, scope) {
+			/// <summary>[v10.1.1] Opens the specified HomeItem in specific group.</summary>
+			/// <param name="items" type="Array">A list of group and subgroups representing the path to the home item.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var path = "";
+			for (var i in items)
+				path += "\\" + items[i];
+
+			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.ShowHomeGroupItem", [path], null, errorCallback, scope);
+		};
+		MobileCRM.UI.HomeForm.updateHomeItemAsync = function (items, title, subTitle, badge, errorCallback, scope) {
+			/// <summary>[v10.2] Opens the specified HomeItem in specific group.</summary>
+			/// <param name="items" type="Array">A list of group and subgroups representing the path to the home item.</param>
+			/// <param name="title" type="String">The title for the home item.</param>
+			/// <param name="subTitle" type="String">The title for the home item.</param>
+			/// <param name="badge" type="String">The title for the home item.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var path = "";
+			for (var i in items)
+				path += "\\" + items[i];
+
+			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.UpdateHomeItem", [path, title, subTitle, badge], null, errorCallback, scope);
+		};
 		MobileCRM.UI.HomeForm.closeHomeItemAsync = function (name, errorCallback, scope) {
 			/// <summary>[v8.0] Close the specified HomeItem.</summary>
 			/// <param name="name" type="String">The name of the HomeItem to be opened. It can be either the entity logical name (e.g. &quot;contact&quot;) or one of following special forms names: &quot;@Dashboard&quot;, &quot;@Map&quot;, &quot;@activity&quot;, &quot;@Tourplan&quot;,&quot;@CallImport&quot;,&quot;@Setup&quot;,&quot;@About&quot;.</param>
@@ -2634,6 +3118,15 @@
 			var params = { fetchXml: fetchXml, entityName: entityName, source: source };
 			MobileCRM.bridge.command("showMobileReportForm", JSON.stringify(params), null, failed, scope);
 		};
+		// MobileCRM.UI.Questionnaire
+		MobileCRM.Questionnaire.showForm = function(id, failed, scope) {
+			/// <summary>[v10.2] Shows the questionnaire form.</summary>
+			/// <param name="id" type="String">Id (guid) of the questionnaire.</param>
+			/// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var params = { id: id };
+			MobileCRM.bridge.command("showQuestionnaire", JSON.stringify(params), null, failed, scope);
+		};
 		// MobileCRM.UI.IFrameForm
 		_inherit(MobileCRM.UI.IFrameForm, MobileCRM.ObservableObject);
 
@@ -2700,7 +3193,7 @@
 		var _pendingIFrameSaveId = 0;
 		MobileCRM.UI.IFrameForm.prototype.suspendSave = function () {
 			/// <summary>[v10.0] Suspends current &quot;onSave&quot; process and allows performing asynchronous tasks to save the data.</summary>
-			/// <returns type="Object">A request object with single function &quot;resumeSave&quot; which has to be called with the result (either error message string or &quot;null&quot; in case of success).</returns>
+			/// <returns type="Object">A request object with single method &quot;resumeSave&quot; which has to be called with the result (either error message string or &quot;null&quot; in case of success). To cancel the validation without any message, pass "#NoMessage#" text to this method.</returns>
 			var cmdId = "IFramePendingValidation" + (++_pendingIFrameSaveId);
 			var self = this;
 			self.context.pendingSaveCommand = cmdId;
@@ -2851,7 +3344,7 @@
 			/// <param name="cellIndex" type="Number">The index of the cell.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callback.</param>
-			MobileCRM.bridge.invokeMethodAsync("EntityList", "StartListEdit", [rowIndex, cellIndex, saveImmediately ? MobileCRM.UI.EntityListCellAction.Clickable : 0, binding], null, errorCallback, scope);
+			MobileCRM.bridge.invokeMethodAsync("EntityList", "StartListEdit", [rowIndex, cellIndex, MobileCRM.UI.EntityListCellAction.Clickable, null], null, errorCallback, scope);
 		};
 
 		MobileCRM.UI.EntityList.setDataSource = function (dataSource) {
@@ -2891,7 +3384,7 @@
 		var _pendingListSaveId = 0;
 		MobileCRM.UI.EntityList.prototype.suspendSave = function () {
 			/// <summary>[v10.0] Suspends current &quot;onSave&quot; validation and allows performing another asynchronous tasks to determine the validation result</summary>
-			/// <returns type="Object">A request object with single function &quot;resumeSave&quot; which has to be called with the validation result (either error message string or &quot;null&quot; in case of success).</returns>
+			/// <returns type="Object">A request object with single method &quot;resumeSave&quot; which has to be called with the validation result (either error message string or &quot;null&quot; in case of success). To cancel the validation without any message, pass "#NoMessage#" text to this method.</returns>
 			var cmdId = "EntityListPendingValidation" + (++_pendingListSaveId);
 			var self = this;
 			self.context.pendingSaveCommand = cmdId;
@@ -2956,7 +3449,7 @@
 			/// <field name="binding" type="Number">A binding value.</field>
 			/// <field name="action" type="Number">Click action flags. Use constant from <see cref="MobileCRM.UI.EntityListCellAction">MobileCRM.UI.EntityListCellAction</see> enumeration.</field>
 		};
-		(function (EntityListCellAction) {
+		MobileCRM.UI.EntityListCellAction = function () {
 			/// <summary>Enumeration class holding constants for <see cref="MobileCRM.UI.EntityListClickEvent">MobileCRM.UI.EntityListClickEvent</see>.</summary>
 			/// <field name="Text" type="Number">Cell displaying data bound or constant text.</field>
 			/// <field name="Image" type="Number"> Cell displaying data bound or constant image.</field>
@@ -2966,15 +3459,15 @@
 			/// <field name="Clickable" type="Number"> The cell is clickable. Or together with Text kind.</field>
 			/// <field name="DirectEdit" type="Number"> The cell is editable and will be saved right after change. Or together with Text kind.</field>
 			/// <field name="ActionMask" type="Number"> The cell is editable or clickable.</field>
-			EntityListCellAction.Text = 0;
-			EntityListCellAction.Image = 1;
-			EntityListCellAction.Button = 2;
-			EntityListCellAction.InlineButton = 3;
-			EntityListCellAction.Editable = 0x1000;
-			EntityListCellAction.Clickable = 0x2000;
-			EntityListCellAction.DirectEdit = 0x4000 | EntityListCellAction.Editable;
-			EntityListCellAction.ActionMask = 0xF000;
-		})(MobileCRM.UI.EntityListCellAction || (MobileCRM.UI.EntityListCellAction = {}));
+		};
+		MobileCRM.UI.EntityListCellAction.Text = 0;
+		MobileCRM.UI.EntityListCellAction.Image = 1;
+		MobileCRM.UI.EntityListCellAction.Button = 2;
+		MobileCRM.UI.EntityListCellAction.InlineButton = 3;
+		MobileCRM.UI.EntityListCellAction.Editable = 0x1000;
+		MobileCRM.UI.EntityListCellAction.Clickable = 0x2000;
+		MobileCRM.UI.EntityListCellAction.DirectEdit = 0x4000 | MobileCRM.UI.EntityListCellAction.Editable;
+		MobileCRM.UI.EntityListCellAction.ActionMask = 0xF000;
 
 		// MobileCRM.UI.ListDataSource
 		MobileCRM.UI.ListDataSource = function () {
@@ -3052,14 +3545,22 @@
 			/// <param name="tabName" type="String">The name of the tab.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callback.</param>
-			MobileCRM.bridge.invokeMethodAsync("EntityForm", "FindView", [tabName], function (index) {
-				if (index < 0) {
-					if (errorCallback)
-						errorCallback.call(scope, tabName + " view not found");
-				}
-				else
-					MobileCRM.bridge.invokeMethodAsync("EntityForm", "Form.set_SelectedViewIndex", [index], function () { }, errorCallback, scope);
-			}, errorCallback, scope);
+		    MobileCRM.UI.EntityForm.selectTabEx(tabName, function () { }, errorCallback, scope);
+		};
+
+		MobileCRM.UI.EntityForm.selectTabEx = function (tabName, callback, errorCallback, scope) {
+		    /// <summary>[v8.0] Selects the form tab by its name.</summary>
+		    /// <param name="tabName" type="String">The name of the tab.</param>
+		    /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+		    /// <param name="scope" type="Object">The scope for callback.</param>
+		    MobileCRM.bridge.invokeMethodAsync("EntityForm", "FindView", [tabName], function (index) {
+		        if (index < 0) {
+		            if (errorCallback)
+		                errorCallback.call(scope, tabName + " view not found");
+		        }
+		        else
+		            MobileCRM.bridge.invokeMethodAsync("EntityForm", "Form.set_SelectedViewIndex", [index], callback, errorCallback, scope);
+		    }, errorCallback, scope);
 		};
 
 		MobileCRM.UI.EntityForm.prototype.selectView = function (tabName, viewName) {
@@ -3074,7 +3575,7 @@
 				if (view && view.name == tabName) {
 					var list = MobileCRM.bridge.exposeObjectAsync("EntityForm.Controllers.get_Item", [i]);
 					// Expose the filter item for key 'View'
-					var viewFilter = list.exposeObjectAsync("List.FilterGroup.get_Item", ["View"]);
+					var viewFilter = list.exposeObjectAsync("List.FilterGroup.get_Item", ["View"]); 
 					// Select desired view in filter item
 					viewFilter.invokeMethodAsync("SetSelection", [viewName, false]);
 					// release exposed filter item
@@ -3164,7 +3665,7 @@
 		var _pendingSaveId = 0;
 		MobileCRM.UI.EntityForm.prototype.suspendSave = function () {
 			/// <summary>Suspends current &quot;onSave&quot; validation and allows performing another asynchronous tasks to determine the validation result</summary>
-			/// <returns type="Object">A request object with single function &quot;resumeSave&quot; which has to be called with the validation result (either error message string or &quot;null&quot; in case of success).</returns>
+			/// <returns type="Object">A request object with single method &quot;resumeSave&quot; which has to be called with the validation result (either error message string or &quot;null&quot; in case of success). To cancel the validation without any message, pass "#NoMessage#" text to this method.</returns>
 			var cmdId = "EntityFormPendingValidation" + (++_pendingSaveId);
 			var entityForm = this;
 			entityForm.context.pendingSaveCommand = cmdId;
@@ -3283,7 +3784,8 @@
 			var handlers = MobileCRM.UI.EntityForm._handlers[event];
 			if (handlers && handlers.length > 0) {
 				data.context = context;
-				return _callHandlers(handlers, data);
+				var res = _callHandlers(handlers, data);
+				return typeof (res) == "string" ? res : JSON.stringify(res);
 			}
 			return null;
 		}
@@ -3475,7 +3977,8 @@
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			MobileCRM.bridge.command("addSalesDetailProduct", JSON.stringify(product), function (detailEntity) {
 				detailEntity.update = MobileCRM.UI.EntityForm.DetailCollection._updateDetail;
-				callback(detailEntity);
+				if (typeof callback == "function")
+					callback.call(scope, detailEntity);
 			}, errorCallback, scope);
 		};
 
@@ -3489,7 +3992,8 @@
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			MobileCRM.bridge.command("addSalesDetailProduct", "#" + quantity + ":" + JSON.stringify(product), function (detailEntity) {
 				detailEntity.update = MobileCRM.UI.EntityForm.DetailCollection._updateDetail;
-				callback(detailEntity);
+				if (typeof callback == "function")
+					callback.call(scope, detailEntity);
 			}, errorCallback, scope);
 		};
 
@@ -3586,7 +4090,7 @@
 			/// <param name="callback" type="function(MobileCRM.DynamicEntity)">The callback function which is called asynchronously with <see cref="MobileCRM.DynamicEntity">MobileCRM.DynamicEntity</see> representing newly created resco_chatpost record.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
-			MobileCRM.bridge.command("chatService", JSON.stringify({ method: "postMessage", entityName: regardingEntity.entityName, entityId: regardingEntity.id, text: text }), callback, errorCallback, scope);
+			MobileCRM.bridge.command("chatService", JSON.stringify({ method: "postMessage", entityName: regardingEntity.entityName, entityId: regardingEntity.id, primaryName: regardingEntity.primaryName, text: text }), callback, errorCallback, scope);
 		};
 		MobileCRM.Services.ChatService.prototype.attachNoteToPost = function (postId, filePath, mimeType, subject, callback, errorCallback, scope) {
 			/// <summary>Creates a note (annotation) entity with the file attachment related to specified post.</summary>
@@ -3608,7 +4112,7 @@
 			/// <param name="callback" type="Function">The callback function which is called asynchronously in case of success.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
-			MobileCRM.bridge.command("chatService", JSON.stringify({ method: "subscribe", entityName: regardingEntity.entityName, entityId: regardingEntity.id, subscribe: subscribe }), callback, errorCallback, scope);
+			MobileCRM.bridge.command("chatService", JSON.stringify({ method: "subscribe", entityName: regardingEntity.entityName, entityId: regardingEntity.id, primaryName: regardingEntity.primaryName, subscribe: subscribe }), callback, errorCallback, scope);
 		};
 
 		MobileCRM.Services.AudioRecorder.startRecording = function (callback, errorCallback, scope) {
@@ -3719,7 +4223,61 @@
 		// Platform dependent implementation   /
 		// MobileCRM.bridge singleton creation /
 		/**************************************/
-		if (typeof CrmBridge !== "undefined") {
+		if (document.location.search.indexOf("isWC_MCRM=1") >= 0) {	// when running on webclient, that client appends isWC_MCRM attribute to url
+			var instanceId;
+
+			MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+				if (!this.instanceId) {
+					this.instanceId = getBridgeInstanceId();
+				}
+				var cmdId = this._createCmdObject(success, failed, scope);
+				var cmdText = this.instanceId + ';' + cmdId + ';' + command + ';' + params;
+				parent.window.postMessage(cmdText, "*");
+			};
+			MobileCRM.bridge = new MobileCRM.Bridge('WebClient');
+
+			window.addEventListener("message", receiveMessageFromWebClient, false);
+
+			function receiveMessageFromWebClient(event) {
+				var data = event.data;
+				//alert("JSB: " + data);
+				try {
+					// process invokescript method
+					if (data.indexOf("eval") === 0) {
+						var index = data.indexOf(":");
+						if (index >= 0) {
+							var evalCode = data.substr(index + 1);
+							var evalId = data.substr(0, index).split('|')[1];
+							var result = eval(evalCode);
+							if (evalId) {
+								if (!this.instanceId) {
+									this.instanceId = getBridgeInstanceId();
+								}
+								parent.window.postMessage(this.instanceId + ";" + evalId + ";asyncResponse;" + result, "*");
+							}
+						}
+					}
+				}
+				catch (ex) {
+					alert("JSBridge on Webclient exception: " + ex);
+					console.log(ex);
+				}
+			}
+
+			function getBridgeInstanceId() {
+				args = document.location.search;
+				var index = args.indexOf("bid=");
+				var id = null;
+				if (index > 0) {
+					id = args.substr(index + 4);
+				}
+				if (id === null) {
+					throw "JSBridge not registered."
+				}
+				return id;
+			}
+		}
+		else if (typeof CrmBridge !== "undefined") {
 			// Android
 			MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
 				var cmdId = this._createCmdObject(success, failed, scope);
