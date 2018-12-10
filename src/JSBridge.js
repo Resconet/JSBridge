@@ -1,6 +1,6 @@
-// v10.2
+// v10.3
 (function () {
-	var _scriptVersion = 10.2;
+	var _scriptVersion = 10.3;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -12,6 +12,15 @@
 			return child;
 		};
 	})();
+	var _findInArray = function (arr, property, value) {
+		if (arr) {
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i][property] == value)
+					return arr[i];
+			}
+		}
+		return null;
+	};
 	var _addProperty = function (obj, name, writable, value) {
 		if (!obj._privVals)
 			obj._privVals = {};
@@ -460,7 +469,7 @@
 				/// <field name="screenWidth" type="Number">Gets the current screen width in pixels.</field>
 				/// <field name="screenHeight" type="Number">Gets the current screen width in pixels.</field>
 				/// <field name="screenDensity" type="Number">Gets the screen density (DPI).</field>
-				/// <field name="isTablet" type="Boolean">Indicates whether this device is tablet.</field>
+			    /// <field name="isMultiPanel" type="Boolean">Gets whether the device has tablet or phone UI.</field>
 				/// <field name="customImagePath" type="String">Gets or sets the custom image path that comes from customizations.</field>
 				MobileCRM.Platform.superproto.constructor.apply(this, arguments);
 			},
@@ -512,6 +521,15 @@
 					/// <field name="relationship" type="MobileCRM.Relationship">Defines relationship with parent entity.</field>
 					/// <field name="visible" type="Boolean">Gets whether the underlying form is visible.</field>
 					MobileCRM.UI.EntityForm.superproto.constructor.apply(this, arguments);
+				},
+
+				QuestionnaireForm: function () {
+					/// <summary>[v10.3] Represents the Javascript equivalent of native questionnaire form object.</summary>
+					/// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
+					/// <field name="groups" type="MobileCRM.UI.QuestionnaireForm.Group[]"></field>
+					/// <field name="questions" type="MobileCRM.UI.QuestionnaireForm.Question[]"></field>
+					/// <field name="relationship" type="MobileCRM.Relationship">Gets the relation source and related entity. &quot;null&quot;, if there is no relationship.</field>
+					MobileCRM.UI.QuestionnaireForm.superproto.constructor.apply(this, arguments);
 				},
 
 				EntityList: function (props) {
@@ -1985,14 +2003,7 @@
 			/// <summary>Gets the MetaProperty object describing the CRM attribute (field) properties.</summary>
 			/// <param name="name" type="String">A logical name of the CRM field.</param>
 			/// <returns type="MobileCRM.MetaProperty">An instance of the <see cref="MobileCRM.MetaProperty">MobileCRM.MetaProperty</see> object or "null".</returns>
-			var properties = this.properties;
-			if (properties) {
-				for (var i = 0; i < properties.length; i++) {
-					if (properties[i].name == name)
-						return properties[i];
-				}
-			}
-			return null;
+			return _findInArray(this.properties, "name", name);
 		};
 		MobileCRM.MetaEntity.prototype.canRead = function () {
 			/// <summary>Checks whether the current user has read permission on the entity type.</summary>
@@ -2264,6 +2275,18 @@
 			var emailContent = { Address: address, Subject: subject, Body: body };
 			_executePlatformAction(1, emailContent, null, errorCallback, scope);
 		};
+		MobileCRM.Platform.openDocument = function (path, mimeType, args, errorCallback, scope) {
+			/// <summary>[v8.1] Opens specified document in associated program.</summary>
+			/// <remarks>Apple security policy doesn&amp;t allow this functionality on iOS.</remarks>
+			/// <param name="path" type="String">A path to the document file.</param>
+			/// <param name="mimeType" type="String">Document MIME type (required on Android).</param>
+			/// <param name="args" type="String">Optional arguments for Windows 7 command line.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+			/// <param name="scope" type="Object">The scope for errorCallback.</param>
+
+			var c = { Address: path, Subject: args, MimeType: mimeType };
+			_executePlatformAction(5, c, null, errorCallback, scope);
+		};
 		MobileCRM.Platform.emailWithAttachments = function (address, subject, body, attachments, entity, relationship, errorCallback, scope) {
 			/// <summary>[v9.1] Sends a list of files (full paths or IReferences to blobs) as email attachments.</summary>
 			/// <remarks>This method either open the CRM Email form or the native mail client (depending on application settings).</remarks>
@@ -2355,6 +2378,12 @@
 			/// <remarks>Foreground sync must be done to download the new customization or to display the sync conflicts.</remarks>
 			/// <param name="forceLogin" type="Boolean">if true, the sync dialog with URL and credentials will be opened; otherwise it is opened only if the password is not saved.</param>
 			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.Synchronize", [forceLogin, false]);
+		}
+		MobileCRM.Application.showAppLogin = function () {
+			/// <summary>Starts background/foreground sync if not synchronized or the last sync was before desired limit.</summary>
+			/// <param name="backgroundOnly" type="Boolean">if true, only the background sync is allowed; otherwise it can also run the foreground sync.</param>
+			/// <param name="ifNotSyncedBefore" type="Date">Defines a time limit required for the last sync. Starts the sync only if wasn&quot;t done yet or if it was before this limit. If it is null or undefined, sync is done always.</param>
+			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.SecurityManager", "OpenLoginForm", []);
 		}
 
 		MobileCRM.Application.getAppColor = function (colName, success, failed, scope) {
@@ -3013,7 +3042,7 @@
 			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.ShowHomeGroupItem", [path], null, errorCallback, scope);
 		};
 		MobileCRM.UI.HomeForm.updateHomeItemAsync = function (items, title, subTitle, badge, errorCallback, scope) {
-			/// <summary>[v10.2] Opens the specified HomeItem in specific group.</summary>
+			/// <summary>[v10.2] Updates specified HomeItem in specific group.</summary>
 			/// <param name="items" type="Array">A list of group and subgroups representing the path to the home item.</param>
 			/// <param name="title" type="String">The title for the home item.</param>
 			/// <param name="subTitle" type="String">The title for the home item.</param>
@@ -3025,6 +3054,11 @@
 				path += "\\" + items[i];
 
 			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.UpdateHomeItem", [path, title, subTitle, badge], null, errorCallback, scope);
+		};
+		MobileCRM.UI.HomeForm.updateHomeItems = function (items) {
+			/// <summary>[v10.3] Updates specified home items.</summary>
+			/// <param name="items" type="Array">A list of home item that has to be changed. Each home item is an object with following properties: path, title, subTitle, badge, isVisible.</param>
+			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.UpdateHomeItems", [JSON.stringify(items)]);
 		};
 		MobileCRM.UI.HomeForm.closeHomeItemAsync = function (name, errorCallback, scope) {
 			/// <summary>[v8.0] Close the specified HomeItem.</summary>
@@ -3108,15 +3142,19 @@
 
 			MobileCRM.bridge.command("runMobileReportAsync", JSON.stringify(params), success, failed, scope);
 		};
-		MobileCRM.MobileReport.showForm = function (entityName, source, fetchXml, failed, scope) {
-			/// <summary>[v10.1] Shows new MobileReport form.</summary>
-			/// <param name="entityName" type="String">Logical name of entity to which the report is related to.</param>
-			/// <param name="source" type="MobileCRM.Reference[]">The list of entities that should be source of report.">Array of entity references .</param>
-			/// <param name="reportXML" type="String">The report source query.</param>
-			/// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
-			/// <param name="scope" type="Object">The scope for callbacks.</param>
-			var params = { fetchXml: fetchXml, entityName: entityName, source: source };
-			MobileCRM.bridge.command("showMobileReportForm", JSON.stringify(params), null, failed, scope);
+		MobileCRM.MobileReport.showForm = function (entity, source, fetchXml, failed, scope) {
+		    /// <summary>[v10.1] Shows new MobileReport form.</summary>
+		    /// <param name="entity" type="MobileCRM.Reference">Report Entity reference what the report is related to.</param>
+		    /// <param name="source" type="MobileCRM.Reference[]">The list of entities that should be source of report.">Array of entity references .</param>
+		    /// <param name="reportXML" type="String">The report source query.</param>
+		    /// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
+		    /// <param name="scope" type="Object">The scope for callbacks.</param>
+
+		    if (typeof (entity) == "string")
+		        entity = new MobileCRM.Reference(entity, null, null);
+
+		    var params = { fetchXml: fetchXml, entityName: entity.entityName, entity: entity, source: source };
+		    MobileCRM.bridge.command("showMobileReportForm", JSON.stringify(params), null, failed, scope);
 		};
 		// MobileCRM.UI.Questionnaire
 		MobileCRM.Questionnaire.showForm = function(id, failed, scope) {
@@ -3486,6 +3524,288 @@
 			/// <remarks>Data source enumeration ends when the chunkReady method is called with empty array (no more records are available).</remarks>
 			/// <param name="entities" type="Array[MobileCRM.DynamicEntity]">A chunk (array) of <see cref="MobileCRM.DynamicEntity">DynamicEntities</see> that has to be passed back to the native code to fill in to the list view.</param>
 			MobileCRM.bridge.command(this._chunkReadyCmdId, JSON.stringify(entities));
+		};
+
+		// MobileCRM.UI.QuestionnaireForm
+		_inherit(MobileCRM.UI.QuestionnaireForm, MobileCRM.ObservableObject);
+		MobileCRM.UI.QuestionnaireForm._handlers = { onChange: [], onSave: [], onPostSave: [], onRepeatGroup: [], onDeleteGroup: [] };
+
+		MobileCRM.UI.QuestionnaireForm.prototype.cancelValidation = function (errorMsg) {
+			/// <summary>Stops the onSave validation and optionally causes an error message to be displayed.</summary>
+			/// <param name="errorMsg" type="String">An error message to be displayed or &quot;null&quot; to cancel the validation without message.</param>
+			this.context.errorMessage = errorMsg || "";
+		};
+		var _pendingSaveId = 0;
+		MobileCRM.UI.QuestionnaireForm.prototype.suspendSave = function () {
+			/// <summary>Suspends current &quot;onSave&quot; validation and allows performing another asynchronous tasks to determine the validation result</summary>
+			/// <returns type="Object">A request object with single method &quot;resumeSave&quot; which has to be called with the validation result (either error message string or &quot;null&quot; in case of success). To cancel the validation without any message, pass "#NoMessage#" text to this method.</returns>
+			var cmdId = "QuestionnaireFormPendingValidation" + (++_pendingSaveId);
+			var _this = this;
+			_this.context.pendingSaveCommand = cmdId;
+			return {
+				resumeSave: function (result) {
+					if (_this._inCallback) {
+						// still in "onSave" callback - do not send a command (handler not installed yet)
+						_this.context.errorMessage = result;
+						_this.context.pendingSaveCommand = null;
+					}
+					else
+						MobileCRM.bridge.command(cmdId, result);
+				}
+			};
+		};
+		MobileCRM.UI.QuestionnaireForm.onSave = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for onSave event on QuestionnaireForm.</summary>
+			/// <param name="handler" type="function(questionnaireForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.QuestionnaireForm._handlers.onSave;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onSave");
+		}
+		MobileCRM.UI.QuestionnaireForm.onChange = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for onChange event on QuestionnaireForm.</summary>
+			/// <param name="handler" type="function(questionnaireForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.QuestionnaireForm._handlers.onChange;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onChange");
+		}
+		MobileCRM.UI.QuestionnaireForm.onRepeatGroup = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for onRepeatGroup event on QuestionnaireForm.</summary>
+			/// <param name="handler" type="function(questionnaireForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.QuestionnaireForm._handlers.onRepeatGroup;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onRepeatGroup");
+		}
+		MobileCRM.UI.QuestionnaireForm.onDeleteGroup = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for onDeleteGroup event on QuestionnaireForm.</summary>
+			/// <param name="handler" type="function(questionnaireForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.QuestionnaireForm._handlers.onDeleteGroup;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onDeleteGroup");
+		}
+		MobileCRM.UI.QuestionnaireForm.onPostSave = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for onPostSave event on QuestionnaireForm.</summary>
+			/// <param name="handler" type="function(questionnaireForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.QuestionnaireForm._handlers.onPostSave;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onPostSave");
+		}
+		var _pendingQFPostSaveId = 0;
+		MobileCRM.UI.QuestionnaireForm.prototype.suspendPostSave = function () {
+			/// <summary>Suspends current &quot;onPostSave&quot; operations and allows performing another asynchronous tasks before the form is closed.</summary>
+			/// <returns type="Object">A request object with single method &quot;resumePostSave&quot; which has to be called to resume the post-save operations.</returns>
+			var cmdId = "QuestionnaireFormPendingPostSave" + (++_pendingQFPostSaveId);
+			var _this = this;
+			_this.context.pendingPostSaveCommand = cmdId;
+			return {
+				resumePostSave: function () {
+					if (_this._inCallback) {
+						// still in "onPostSave" callback - do not send a command (handler not installed yet)
+						_this.context.pendingPostSaveCommand = null;
+					}
+					else
+						MobileCRM.bridge.command(cmdId);
+				}
+			};
+		};
+		MobileCRM.UI.QuestionnaireForm.requestObject = function (callback, errorCallback, scope) {
+			/// <summary>Requests the managed QuestionnaireForm object.</summary>
+			/// <remarks>Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of QuestionnaireForm object. See <see cref="MobileCRM.Bridge.requestObject">MobileCRM.Bridge.requestObject</see> for further details.</remarks>
+			/// <param name="callback" type="function(questionnaireForm)">The callback function that is called asynchronously with serialized QuestionnaireForm object as argument. Callback should return true to apply changed properties.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.requestObject("QuestionnaireForm", function (obj) {
+				if (callback.call(scope, obj) != false) {
+					var changed = obj.getChanged();
+					return changed;
+				}
+				return '';
+			}, errorCallback, scope);
+		}
+		MobileCRM.UI.QuestionnaireForm._callHandlers = function (event, data, context) {
+			var handlers = MobileCRM.UI.QuestionnaireForm._handlers[event];
+			if (handlers && handlers.length > 0) {
+				data.context = context;
+				data._inCallback = true;
+				var result = '';
+				if (_callHandlers(handlers, data) != false) {
+					var changed = data.getChanged();
+					result = JSON.stringify(changed);
+				}
+				data._inCallback = false;
+				return result;
+			}
+		};
+
+		MobileCRM.UI.QuestionnaireForm.prototype.findGroupById = function (groupId) {
+			/// <summary>Returns the question group with given id.</summary>
+			/// <param name="name" type="String">An id of the question group.</param>
+			/// <returns type="MobileCRM.UI.QuestionnaireForm.Group"></returns>
+			return _findInArray(this.groups, "id", groupId);
+		};
+		MobileCRM.UI.QuestionnaireForm.prototype.findGroupByName = function (groupName) {
+			/// <summary>Returns the question group with given name.</summary>
+			/// <param name="name" type="String">A name of the question group.</param>
+			/// <returns type="MobileCRM.UI.QuestionnaireForm.Group"></returns>
+			return _findInArray(this.groups, "name", groupName);
+		};
+		MobileCRM.UI.QuestionnaireForm.prototype.findQuestionById = function (id) {
+			/// <summary>Returns the question item with given id.</summary>
+			/// <param name="id" type="String">An id of the question item.</param>
+			/// <returns type="MobileCRM.UI.QuestionnaireForm.Question"></returns>
+			return _findInArray(this.questions, "id", id);
+		};
+		MobileCRM.UI.QuestionnaireForm.prototype.findQuestionByName = function (name) {
+			/// <summary>Returns the question item with given name.</summary>
+			/// <param name="name" type="String">A name of the question item.</param>
+			/// <returns type="MobileCRM.UI.QuestionnaireForm.Question"></returns>
+			return _findInArray(this.questions, "name", name);
+		};
+
+		MobileCRM.UI.QuestionnaireForm.trySetAnswer = function (questionName, answer, errorCallback, scope) {
+			/// <summary>Asynchronously sets the answer value for given question.</summary>
+			/// <param name="questionName" type="String">A name of the question.</param>
+			/// <param name="answer" type="any">A value that has to be set as answer. It must correspond to the type of question.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var val = typeof (answer) == "object" ? JSON.stringify(answer) : answer;
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "TrySetAnswer", [questionName, val], null, errorCallback, scope);
+		};
+		MobileCRM.UI.QuestionnaireForm.focusQuestion = function (questionName, errorCallback, scope) {
+			/// <summary>Asynchronously sets the the focus on given question.</summary>
+			/// <param name="questionName" type="String">A name of the question.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "FocusQuestion", [questionName], null, errorCallback, scope);
+		};
+		MobileCRM.UI.QuestionnaireForm.overridePicklistOptions = function (questionName, allowNull, options, errorCallback, scope) {
+			/// <summary>Overrides the list of options for given picklist question.</summary>
+			/// <param name="questionName" type="String">A name of the picklist question.</param>
+			/// <param name="allowNull" type="Boolean">Indicates whether the empty answer is allowed.</param>
+			/// <param name="options" type="Object">An object with label-to-value mappings, e.g. {&quot;Option 1&quot;:1,&quot;Option 2&quot;:2}.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var optionsSt = "";
+			if (typeof options == "string")
+				optionsSt = options;
+			else {
+				for (var key in options) {
+					if (optionsSt)
+						optionsSt += ";";
+					optionsSt += options[key] + ";" + key;
+				}
+			}
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "OverridePicklistOptions", [questionName, allowNull ? true : false, optionsSt], null, errorCallback, scope);
+		};
+		MobileCRM.UI.QuestionnaireForm.changeLookupQuestionSetup = function (questionName, dialogSetup, inlinePickSetup, dialogOnly, errorCallback, scope) {
+			/// <summary>Sets the views and filters for specified lookup question.</summary>
+			/// <param name="questionName" type="String">A name of the question.</param>
+			/// <param name="dialogSetup" type="MobileCRM.UI.DetailViewItems.LookupSetup">Lookup setup for modal lookup dialog.</param>
+			/// <param name="inlinePickSetup" type="MobileCRM.UI.DetailViewItems.LookupSetup">Optional setup for inline lookup picker. Leave empty to use the same setup as modal dialog.</param>
+			/// <param name="dialogOnly" type="Boolean">Indicates whether to allow the inline picker. Set &quot;true&quot; to disable the inline picker and always use the modal dialog. Set &quot;false&quot; to allow the inline picker.<param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var xml = "<lookup>";
+			xml += dialogSetup._serialize();
+			if (!dialogOnly && inlinePickSetup)
+				xml += inlinePickSetup._serialize();
+			xml += "<dialog>" + (dialogOnly ? 1 : 0) + "</dialog>";
+			xml += "</lookup>";
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "ChangeLookupViews", [questionName, xml], null, errorCallback, scope);
+		};
+		MobileCRM.UI.QuestionnaireForm.repeatGroup = function (groupId, copyValues, errorCallback, scope) {
+			///<summary>Duplicates repeatable group with all its questions. The name of the group will contain the lowest available repeatIndex and suffix in form #00X.</summary>
+			/// <param name="id" type="String">Id of the source group.</param>
+			/// <param name="copyValues" type="Boolean">Optional paramater determining whether the group values should be copied to the new instance of this group.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "RepeatGroup", [groupId, copyValues], null, errorCallback, scope);
+		};
+		MobileCRM.UI.QuestionnaireForm.deleteGroup = function (groupId, errorCallback, scope) {
+			///<summary>Deletes an instance of repeatable group with all its questions and adjusts the repeatIndex for all instances of the same template group with higher index.</summary>
+			/// <param name="id" type="String">Id of the source group.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "DeleteGroup", [groupId], null, errorCallback, scope);
+		};
+
+		MobileCRM.UI.QuestionnaireForm.Group = function () {
+			/// <field name="id" type="String">Gets the id of this question group.</field>
+			/// <field name="name" type="String">Gets the name of the question group.</field>
+			/// <field name="index" type="Number">Gets the index of the question group.</field>
+			/// <field name="label" type="String">Gets the question group label.</field>
+			/// <field name="description" type="String">Get the question group description.</field>
+			/// <field name="templateGroup" type="String">Gets the id of parent group from questionnaire template.</field>
+			/// <field name="repeatIndex" type="Number">Index of this instance of repeatable group. Zero for non-repeatable groups.</field>
+			/// <field name="repeatEnabled" type="Boolean">Indicates whether the group is repeatable.</field>
+			/// <field name="isVisible" type="Boolean">Gets or sets whether the group is visible.</field>
+			/// <field name="isEnabled" type="Boolean">Gets or sets whether the group is enabled.</field>
+			MobileCRM.UI.QuestionnaireForm.Group.superproto.constructor.apply(this, arguments);
+		};
+		_inherit(MobileCRM.UI.QuestionnaireForm.Group, MobileCRM.ObservableObject);
+		MobileCRM.UI.QuestionnaireForm.Group.prototype.repeatGroup = function (copyValues, errorCallback, scope) {
+			///<summary>Duplicates repeatable group with all its questions. The name of the group will contain the lowest available repeatIndex and suffix in form #00X.</summary>
+			/// <param name="copyValues" type="Boolean">Optional paramater determining whether the group values should be copied to the new instance of this group.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.UI.QuestionnaireForm.repeatGroup(this.id, copyValues, errorCallback, scope);
+		};
+		MobileCRM.UI.QuestionnaireForm.Group.prototype.deleteGroup = function (errorCallback, scope) {
+			///<summary>Deletes this instance of repeatable group with all its questions and adjusts the repeatIndex for all instances of the same template group with higher index.</summary>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.UI.QuestionnaireForm.deleteGroup(this.id, errorCallback, scope);
+		};
+
+		MobileCRM.UI.QuestionnaireForm.Question = function () {
+			/// <field name="id" type="String">Gets the id of this question record.</field>
+			/// <field name="name" type="String">Gets the name of the question item.</field>
+			/// <field name="label" type="String">Gets or sets the question item label.</field>
+			/// <field name="index" type="Number">Gets the index of the question item.</field>
+			/// <field name="groupId" type="String">Gets the id of parent question group (may be empty).</field>
+			/// <field name="description" type="String">Get or sets the question item description.</field>
+			/// <field name="type" type="Number">Gets the value type of the question item.</field>
+			/// <field name="value" type="Any">Gets current answer value. To change it, use trySetAnswer method.</field>
+			/// <field name="style" type="String">Gets or sets the question item style name.</field>
+			/// <field name="isVisible" type="Boolean">Indicates whether the item is visible.</field>
+			/// <field name="isEnabled" type="Boolean">Indicates whether the item is enabled.</field>
+			/// <field name="focus" type="Boolean">Set to true to focus the question item.</field>
+			/// <field name="validate" type="Boolean">Indicates whether the item should be validated.</field>
+			/// <field name="errorMessage" type="String">Holds the error message text related to current value of the question item.</field>
+			MobileCRM.UI.QuestionnaireForm.Question.superproto.constructor.apply(this, arguments);
+		};
+		_inherit(MobileCRM.UI.QuestionnaireForm.Question, MobileCRM.ObservableObject);
+		MobileCRM.UI.QuestionnaireForm.Question.prototype.trySetAnswer = function (answer, errorCallback, scope) {
+			/// <summary>Asynchronously sets the answer value for this question.</summary>
+			/// <param name="answer" type="any">A value that has to be set as answer. It must correspond to the type of question (String/Number/Reference/Guid).</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.UI.QuestionnaireForm.trySetAnswer(this.name, answer, errorCallback, scope);
+		};
+		MobileCRM.UI.QuestionnaireForm.Question.prototype.focus = function (errorCallback, scope) {
+			/// <summary>Asynchronously sets the the focus on this question.</summary>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.UI.QuestionnaireForm.focusQuestion(this.name, errorCallback, scope);
 		};
 
 		// MobileCRM.UI.EntityForm
