@@ -1,6 +1,6 @@
-// v11.2
+// v11.3
 (function () {
-	var _scriptVersion = 11.2;
+	var _scriptVersion = 11.3;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -196,7 +196,7 @@
 
 	        CultureInfo: function () {
 	            /// <summary>[v10.2] Provides information about current device culture. The information includes the names for the culture, the writing system, the calendar used, and formatting for dates.</summary>
-	            /// <field name="name" type="String">Gets the culture name in the format languagecode/region (e.g. &quot;en-US&quot;). languagecode is a lowercase two-letter code derived from ISO 639-1. regioncode is derived from ISO 3166 and usually consists of two uppercase letters.</field>
+	            /// <field name="name" type="String">Gets the culture name in the format languageCode/region (e.g. &quot;en-US&quot;). languageCode is a lowercase two-letter code derived from ISO 639-1. regioncode is derived from ISO 3166 and usually consists of two uppercase letters.</field>
 	            /// <field name="displayName" type="String">Gets the full localized culture name.</field>
 	            /// <field name="nativeName" type="String">Gets the culture name, consisting of the language, the country/region, and the optional script, that the culture is set to display.</field>
 	            /// <field name="ISOName" type="String">Gets the ISO 639-1 two-letter code for the language of the current CultureInfo.</field>
@@ -332,7 +332,7 @@
 
 	        MetaEntity: function (props) {
 	            /// <summary>Represents an entity metadata.</summary>
-	            /// <field name="isEnabled" type="Boolean">Indicatess whether an entity is enabled. This field is used for limited runtime customization.</field>
+	            /// <field name="isEnabled" type="Boolean">Indicates whether an entity is enabled. This field is used for limited runtime customization.</field>
 	            /// <field name="isExternal" type="Boolean">Indicates whether an entity stores data from external  sources Exchange/Google.</field>
 	            /// <field name="name" type="String">Gets the entity (logical) name.</field>
 	            /// <field name="objectTypeCode" type="Number">Gets the unique entity type code.</field>
@@ -470,7 +470,7 @@
 	            /// <field name="screenHeight" type="Number">Gets the current screen width in pixels.</field>
 	            /// <field name="screenDensity" type="Number">Gets the screen density (DPI).</field>
 	            /// <field name="isMultiPanel" type="Boolean">Gets whether the device has tablet or phone UI.</field>
-	            /// <field name="customImagePath" type="String">Gets or sets the custom image path that comes from customizations.</field>
+	            /// <field name="customImagePath" type="String">Gets or sets the custom image path that comes from customization.</field>
 	            MobileCRM.Platform.superproto.constructor.apply(this, arguments);
 	        },
 
@@ -589,7 +589,7 @@
 	                /// <field name="isDirty" type="Boolean">[v10.0] Controls whether the form is dirty and requires save, or whether it can be closed.</field>
 	                /// <field name="options" type="Object">Carries the custom parameters that can be specified when opening the form using <see cref="MobileCRM.UI.IFrameForm.show">MobileCRM.UI.IFrameForm.show</see> function.</field>
 	                /// <field name="preventCloseMessage" type="String">[v9.3] Prevents closing the form if non-empty string is set. No other home-item can be opened and synchronization is not allowed to be started. Provided message is shown when user tries to perform those actions.</field>
-	                /// <field name="saveBehavior" type="Number">[v10.0] Controls the behaviour of the Save command on this form (0=Default, 1=SaveOnly, 2=SaveAndClose).</field>
+	                /// <field name="saveBehavior" type="Number">[v10.0] Controls the behavior of the Save command on this form (0=Default, 1=SaveOnly, 2=SaveAndClose).</field>
 	                MobileCRM.UI.IFrameForm.superproto.constructor.apply(this, arguments);
 	            },
 
@@ -683,9 +683,12 @@
                 TourplanForm: function (props) {
                     /// <summary>Represents the Javascript equivalent tourplan form object.</summary>
                     /// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.TourplanForm.requestObject">MobileCRM.UI.TourplanForm.requestObject</see> function.</remarks>
+                    /// <field name="isDirty" type="Boolean">Indicates whether the form has been modified.</field>
+                    /// <field name="isLoaded" type="Boolean">Gets or sets whether the form is loaded.</field>
+                    /// <field name="view" type="MobileCRM.UI._AppointmentView">Gets tourplan form view <see cref="MobileCRM.UI._AppointmentView">MobileCRM.UI.AppointmentView</see>.</field>
                     MobileCRM.UI.TourplanForm.superproto.constructor.apply(this, arguments);
                 },
-
+                
 	            _DetailView: function (props) {
 	                /// <summary>Represents the Javascript equivalent of detail view with set of items responsible for fields editing.</summary>
 	                /// <field name="isDirty" type="Boolean">Indicates whether the value of an item has been modified.</field>
@@ -867,7 +870,7 @@
 	                /// <field name="userName" type="String">The authentication user name.</field>
 	                /// <field name="password" type="name="password" type="String">The authentication password.</field>
 	                /// <field name="method" type="String">The http method to use for the request (e.g. "POST", "GET", "PUT").</field>
-	                /// <field name="headers" type="Object">An object of additional header key/value pairs to send along with requests using the HttpWebReqest.</field>
+	                /// <field name="headers" type="Object">An object of additional header key/value pairs to send along with requests using the HttpWebRequest.</field>
 	                /// <field name="contentType" type="String">The htt request data content type.</field>
 	                /// <field name="allowRedirect" type="Boolean">The http allows servers to redirect a client request to a different location.</field>
 	                /// <field name="responseEncoding" type="String">The http web response encoding type. (default: UTF-8), e.g. Base64, ASCII, UTF-8, Binary in case of blob.</field>
@@ -969,7 +972,7 @@
 			this._onCommand(2, errorCallback);
 		};
 		MobileCRM.UI.MediaTab.prototype.selectPhoto = function (errorCallback) {
-			/// <summary>Executes the select photo comand on this media tab.</summary>
+			/// <summary>Executes the select photo command on this media tab.</summary>
 			this._onCommand(4, errorCallback);
 		};
 	    MobileCRM.UI.MediaTab.prototype.selectFile = function (errorCallback) {
@@ -1963,6 +1966,21 @@
 	        return this;
 	    };
 
+		MobileCRM.DynamicEntity.prototype.saveAsync = function (forceMode) {
+			/// <summary>Performs the asynchronous CRM create/modify entity command.</summary>
+			/// <param name="forceMode" type="Boolean">Optional parameter which forces online/offline mode for saving. Set &quot;true&quot; to save entity online; &quot;false&quot; to save it offline. Any other value (including &quot;undefined&quot;) causes entity to be saved in currently selected application offline/online mode.</param>
+			/// <returns type="Promise&lt;DynamicEntity&gt;">A Promise object which will be resolved with saved DynamicEntity object as result.</returns>
+			var _this = this;
+			return new Promise(function (resolve, reject) {
+				_this.save(function (err) {
+					if (err)
+						reject(err);
+					else
+						resolve(this);
+				}, forceMode);
+			});
+		};
+
 	    // MobileCRM.Metadata
 	    MobileCRM.Metadata.requestObject = function (callback, errorCallback, scope) {
 	        /// <summary>Requests the Metadata object containing the list of MetaEntities which are enabled for current mobile project.</summary>
@@ -2164,6 +2182,22 @@
 	        this.execute("Offline." + output, success, failed, scope);
 	    };
 
+		MobileCRM.FetchXml.Fetch.prototype.executeAsync = function (output, online) {
+	        /// <summary>Performs the asynchronous CRM Fetch request.</summary>
+	        /// <param name="output" type="String">A string defining the output format: Array, JSON, XML or DynamicEntities.</param>
+	        /// <param name="online" type="Boolean">Optional parameter determining whether the fetch should be executed online or offline. If omitted, function respects current online/offline mode of the app.</param>
+	        /// <returns type="Promise&lt;any[]&gt;">A Promise object which will be resolved with array of objects having type specified by <b>output</b> argument.</returns>
+	    	var _this = this;
+	    	return new Promise(function (resolve, reject) {
+	    		var format = "";
+	    		if (online === true && online === false)
+	    			format = online ? "Online." : "Offline.";
+	    		if (output)
+	    			format += output;
+	    		_this.execute(format, resolve, reject);
+	    	});
+	    };
+
 	    MobileCRM.FetchXml.Fetch.deserializeFromXml = function (xml, success, failed, scope) {
 	        /// <summary>Deserializes the Fetch object from XML.</summary>
 	        /// <param name="xml" type="String">A string defining the fetch XML request.</param>
@@ -2183,7 +2217,7 @@
 	    };
 
 	    // MobileCRM.FetchXml.Entity
-	    MobileCRM.FetchXml.Entity.prototype.addAttribute = function (name, alias, agreggate) {
+	    MobileCRM.FetchXml.Entity.prototype.addAttribute = function (name, alias, aggregate) {
 	        /// <summary>Adds an entity attribute to the fetch query.</summary>
 	        /// <param name="name" type="String">The attribute (CRM logical field name) to order by.</param>
 	        /// <param name="alias" type="String">Optional parameter defining an attribute alias.</param>
@@ -2192,8 +2226,8 @@
 	        var attr = new MobileCRM.FetchXml.Attribute(name);
 	        if (alias)
 	            attr.alias = alias;
-	        if (agreggate)
-	            attr.aggregate = agreggate;
+	        if (aggregate)
+	            attr.aggregate = aggregate;
 	        this.attributes.push(attr);
 	        return attr;
 	    };
@@ -2339,6 +2373,15 @@
 	        /// <param name="scope" type="Object">The scope for errorCallback.</param>
 	        var tel = { Address: telephone };
 	        _executePlatformAction(0, tel, function () { }, errorCallback, scope);
+	    }
+	    MobileCRM.Platform.sendSMS = function (phoneNumber, text, errorCallback, scope) {
+	        /// <summary>[v11.2.3] Opens the platform-specific sms application with specified phone number and pre-fill text.</summary>
+	        /// <param name="phoneNumber" type="String">Phone number</param>
+	        /// <param name="text" type="String">SMS text</param>
+	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+	        /// <param name="scope" type="Object">The scope for errorCallback.</param>
+	        var tel = { Address: phoneNumber, Body: text };
+	        _executePlatformAction(2, tel, function () { }, errorCallback, scope);
 	    }
 	    MobileCRM.Platform.email = function (address, subject, body, errorCallback, scope) {
 	        /// <summary>[v8.1] Opens the platform-specific e-mail message form with pre-filled data.</summary>
@@ -2712,7 +2755,7 @@
 	        MobileCRM.UI.FormManager.showEditDialog(entityName, null, relationship, options);
 	    }
 
-		_inherit(MobileCRM.UI.TourplanForm, MobileCRM.ObservableObject);
+	    _inherit(MobileCRM.UI.TourplanForm, MobileCRM.ObservableObject);       
 		MobileCRM.UI.TourplanForm.requestObject = function (callback, errorCallback, scope) {
 			/// <summary>Requests the managed TourplanForm object.</summary>
 			/// <remarks>Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of Platform object. See <see cref="MobileCRM.Bridge.requestObject">MobileCRM.Bridge.requestObject</see> for further details.</remarks>
@@ -2734,6 +2777,41 @@
 			/// <apram name="callback" type="Function">Optional callback called after successfull change.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			MobileCRM.bridge.command("setMode", JSON.stringify(mode), callback, errorCallback);
+		};
+		MobileCRM.UI.TourplanForm.onCreateNew = function (handler, bind, scope) {
+			/// <summary>[v11.3] Binds or unbinds the handler for creating new appointment after long-pressing on calendar.</summary>
+			/// <remarks>Bound handler is called with the TourplanForm object as an argument. The context object contains &quot;start&quot;, &quot;end&quot;, &quot;entityName&quot; properties and optionally &quot;subject&quot; property.</remarks>
+			/// <param name="handler" type="function(tourplanForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.TourplanForm._handlers.onCreateNew;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onCreateNew");
+		}
+		MobileCRM.UI.TourplanForm._callHandlers = function (event, data, context) {
+			var handlers = MobileCRM.UI.TourplanForm._handlers[event];
+			if (handlers && handlers.length > 0) {
+				data.context = context;
+				data._inCallback = true;
+				var result = '';
+				if (_callHandlers(handlers, data) != false) {
+					var changed = data.getChanged();
+					result = JSON.stringify(changed);
+				}
+				data._inCallback = false;
+				return result;
+			}
+		};
+		MobileCRM.UI.TourplanForm._handlers = { onCreateNew: [] };
+
+		MobileCRM.UI._AppointmentView = function () {
+		    /// <summary>Represents the Javascript equivalent view of tourplan form object.</summary>
+		    /// <field name="name" type="String">Gets the name of view.</field>
+		    /// <field name="isVisible" type="Boolean">Gets or sets whether the view is visible.</field>
+		    /// <field name="mode" type="MobileCRM.UI.TourplanViewMode">Gets a view mode <see cref="MobileCRM.UI.TourplanViewMode">MobileCRM.UI.TourplanViewMode</see>.</field>
+		    /// <field name="currentDate" type="Date">Gets the current date of displayed view.</field>
 		};
 
 	    _inherit(MobileCRM.UI._DetailView, MobileCRM.ObservableObject);
@@ -2821,7 +2899,7 @@
 	        };
 	        MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
 	    };
-		MobileCRM.UI._DetailView.prototype.updateComboItemDataSource = function (index, listDataSource, defaultValue, valueType) {
+	    MobileCRM.UI._DetailView.prototype.updateComboItemDataSource = function (index, listDataSource, valueType, defaultValue) {
 			/// <summary>[v9.1] Changes the data source for CombobBoxitem <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.ComboBoxItem</see>.</summary>
 			/// <param name="index" type="Number">Item index on the view.</param>
 			/// <param name="listDataSource" type="Object">The data source object (e.g. {&quot;label1&quot;:1, &quot;label2&quot;:2}).</param>
@@ -3128,7 +3206,14 @@
 	                obj.release();
 	            }
 	        };
-	    };
+		};
+
+		MobileCRM.UI.Form.showToast = function (message, icon) {
+			/// <summary>Shows a toast window over the app window which is dismissed after a few seconds.</summary>
+			/// <param name="message" type="String">A toast content message.</param>
+			/// <param name="icon" type="String">Valid app image name (e.g. Home.Now.png).</param>
+			MobileCRM.bridge.invokeStaticMethodAsync("Resco.UI", "Resco.UI.FormFactory", "ShowToastInfo.Invoke", [message, icon]);
+		};
 
 	    // MobileCRM.UI.HomeForm
 	    _inherit(MobileCRM.UI.HomeForm, MobileCRM.ObservableObject);
@@ -3960,7 +4045,7 @@
 	    _inherit(MobileCRM.UI.QuestionnaireForm.Group, MobileCRM.ObservableObject);
 	    MobileCRM.UI.QuestionnaireForm.Group.prototype.repeatGroup = function (copyValues, errorCallback, scope) {
 	        ///<summary>Duplicates repeatable group with all its questions. The name of the group will contain the lowest available repeatIndex and suffix in form #00X.</summary>
-	        /// <param name="copyValues" type="Boolean">Optional paramater determining whether the group values should be copied to the new instance of this group.</param>
+	        /// <param name="copyValues" type="Boolean">Optional parameter determining whether the group values should be copied to the new instance of this group.</param>
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.UI.QuestionnaireForm.repeatGroup(this.id, copyValues, errorCallback, scope);
