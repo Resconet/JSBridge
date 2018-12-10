@@ -1,6 +1,6 @@
-// v9.3
+// v10.0
 (function () {
-	var _scriptVersion = 9.3;
+	var _scriptVersion = 10.0;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -444,7 +444,8 @@
 					/// <field name="allowCreateNew" type="Boolean">Gets or sets whether create a new entity (or managing the N:N entities in the case of N:N list) is allowed.</field>
 					/// <field name="allowedDocActions" type="Number">Gets or sets a mask of document actions (for Note and Sharepoint document lists).</field>
 					/// <field name="allowSearch" type="Boolean">Gets or sets whether to show the search bar.</field>
-					/// <field name="autoWideWidth" type="String">>Gets the view auto width pixel size.</field>
+					/// <field name="autoWideWidth" type="String">Gets the view auto width pixel size.</field>
+					/// <field name="context" type="Object">[v10.0] Gets the specific context object for onChange, onSave and onCommand handlers.<p>The onSave context contains property &quot;entities&quot; with the list of all changed entities and property &quot;errorMessage&quot; which can be used to cancel the save process with certain error message.</p><p>The onChange handler context contains &quot;entities&quot; property with the list of currently changed entities (typically just one entity) and property &quot;propertyName&quot; with the field name that was changed.</p><p>Command handler context contains the &quot;cmdParam&quot; property and &quot;entities&quot; property with the list of currently selected entities.</p></field>
 					/// <field name="entityName" type="String">Gets the name of the entities in this list.</field>
 					/// <field name="flipMode" type="Number">Gets or sets the flip configuration (which views to show and which one is the initial).</field>
 					/// <field name="hasMapViews" type="Boolean">Gets whether the list has a view that can be displayed on map.</field>
@@ -490,8 +491,10 @@
 				IFrameForm: function () {
 					/// <summary>[v9.0] Represents the iFrame form object.</summary>
 					/// <field name="form" type="MobileCRM.UI.Form">Gets the form hosting the iFrame.</field>
+					/// <field name="isDirty" type="Boolean">[v10.0] Controls whether the form is dirty and requires save, or whether it can be closed.</field>
 					/// <field name="options" type="Object">Carries the custom parameters that can be specified when opening the form using <see cref="MobileCRM.UI.IFrameForm.show">MobileCRM.UI.IFrameForm.show</see> function.</field>
-					/// <field name="preventCloseMessage" type="Boolean">[v9.3] Prevent close message. The form cannot be closed if set. No other home-item can be opened and synchronization is not allowed to be started.</field>
+					/// <field name="preventCloseMessage" type="String">[v9.3] Prevents closing the form if non-empty string is set. No other home-item can be opened and synchronization is not allowed to be started. Provided message is shown when user tries to perform those actions.</field>
+					/// <field name="saveBehavior" type="Number">[v10.0] Controls the behaviour of the Save command on this form (0=Default, 1=SaveOnly, 2=SaveAndClose).</field>
 					MobileCRM.UI.IFrameForm.superproto.constructor.apply(this, arguments);
 				},
 
@@ -726,6 +729,9 @@
 					/// <field name="recordQuality" type="Number">Gets or sets the record quality for audio/video recordings.</field>
 					/// <field name="allowChooseVideo" type="Boolean">Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.</field>
 				},
+				AudioRecorder: function () {
+					/// <summary>[v10.0] Represents a service for recording an audio.</summary>
+				},
 				AddressBookService: function () {
 					/// <summary>[v9.1] Represents a service for accessing the address book.</summary>
 				},
@@ -756,7 +762,7 @@
 					/// <field name="street" type="String">Gets or sets the street.</field>
 					/// <field name="city" type="String">Gets or sets the city.</field>
 					/// <field name="zip" type="String">Gets or sets the zip code.</field>
-					/// <field name="stateOrProvice" type="String">Gets or sets the state or province.</field>
+					/// <field name="stateOrProvince" type="String">Gets or sets the state or province.</field>
 					/// <field name="country" type="String">Gets or sets the country.</field>
 					/// <field name="isValid" type="String">Indicates whether the address is valid.</field>
 				}
@@ -1197,7 +1203,16 @@
 			/// <param name="callback" type="function(config)">The callback function that is called asynchronously with initialized Localization object as argument.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is to be called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
-			MobileCRM.bridge.command("localizationInit", null, function (res) {
+			MobileCRM.Localization.initializeEx(null, callback, errorCallback, scope);
+		};
+		MobileCRM.Localization.initializeEx = function (regularExpression, callback, errorCallback, scope) {
+			/// <summary>[v10.0] Initializes the Localization object.</summary>
+			/// <remarks><p>Method loads the string table asynchronously and calls either the <b>errorCallback</b> with error message or the <b>callback</b> with initialized Localization object.</p><p>All other functions will return the default or empty string before the initialization finishes.</p></remarks>
+			/// <param name="regularExpression" type="string">The regular expression defining a subset of localization keys. Refer to <see cref="https://msdn.microsoft.com/en-us/library/az24scfc(v=vs.110).aspx">Regular Expression Language - Quick Reference</see>. Set to null to obtain whole localization.</param>
+			/// <param name="callback" type="function(config)">The callback function that is called asynchronously with initialized Localization object as argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is to be called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("localizationInit", regularExpression || '', function (res) {
 				MobileCRM.Localization.stringTable = res;
 				MobileCRM.Localization.initialized = true;
 				if (callback)
@@ -1332,6 +1347,19 @@
 			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 			window.MobileCRM.bridge.command('entityload', JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
+		};
+		MobileCRM.DynamicEntity.saveDocumentBody = function (entityId, entityName, relationship, filePath, mimeType, success, failed, scope) {
+			/// <summary>[v10.0]Asynchronously saves the document body for specified entity.</summary>
+			/// <remarks>Function sends an asynchronous request to application, where the locally stored document body (e.g. the annotation.documentbody) is saved.</remarks>
+			/// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
+			/// <param name="entityName" type="String">The logical name of the entity; optional, default is "annotation".</param>
+			/// <param name="relationship" type="MobileCRM.Relationship">The related parent object.</param>
+			/// <param name="filePath" type="String">Path to the file holding the body.</param>
+			/// <param name="mimeType" type="String">MimeType of the content, optional.</param>
+			/// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> argument will carry "null".</param>
+			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+			window.MobileCRM.bridge.command('documentBodysave', JSON.stringify({ entity: entityName, id: entityId, relationship: relationship, filePath: filePath, mimeType: mimeType }), success, failed, scope);
 		};
 		MobileCRM.DynamicEntity.loadDocumentBody = function (entityName, id, success, failed, scope) {
 			/// <summary>Asynchronously loads the document body for specified entity.</summary>
@@ -1581,10 +1609,28 @@
 			this.execute("Offline." + output, success, failed, scope);
 		};
 
+		MobileCRM.FetchXml.Fetch.deserializeFromXml = function (xml, success, failed, scope) {
+			/// <summary>Deserializes the Fetch object from XML.</summary>
+			/// <param name="xml" type="String">A string defining the fetch XML request.</param>
+			/// <param name="success" type="function(result: MobileCRM.FetchXml.Fetch)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the Fetch object.</param>
+			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Data.FetchXml.Fetch", "Deserialize", [xml], success, failed, scope);
+		};
+
+		MobileCRM.FetchXml.Fetch.prototype.serializeToXml = function (success, failed, scope) {
+			/// <summary>[v10.0] Serializes the Fetch object to XML.</summary>
+			/// <param name="success" type="function(String)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the XML representation of the Fetch object.</param>
+			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+			var reqParams = JSON.stringifyNotNull({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate });
+			MobileCRM.bridge.command('fetchToXml', reqParams, success, failed, scope);
+		};
+
 		// MobileCRM.FetchXml.Entity
 		MobileCRM.FetchXml.Entity.prototype.addAttribute = function (name, alias, agreggate) {
 			/// <summary>Adds an entity attribute to the fetch query.</summary>
-			/// <param name="attribute" type="String">The attribute (CRM logical field name) to order by.</param>
+		    /// <param name="name" type="String">The attribute (CRM logical field name) to order by.</param>
 			/// <param name="alias" type="String">Optional parameter defining an attribute alias.</param>
 			/// <param name="aggregate" type="String">Optional parameter defining an aggregation function.</param>
 			/// <returns type="MobileCRM.FetchXml.Attribute">The newly created MobileCRM.FetchXml.Attribute object</returns>
@@ -1602,7 +1648,7 @@
 		};
 		MobileCRM.FetchXml.Entity.prototype.addFilter = function () {
 			/// <summary>Adds a filter for this fetch entity.</summary>
-			/// <returns type="MobileCRM.FetchXml.LinkEntity">Existing or newly created entity filter.</returns>
+			/// <returns type="MobileCRM.FetchXml.Filter">Existing or newly created entity filter.</returns>
 			var filter = this.filter;
 			if (filter)
 				return filter;
@@ -2450,9 +2496,68 @@
 			}, errorCallback, scope);
 		};
 
+		MobileCRM.UI.IFrameForm.setDirty = function (dirty) {
+			/// <summary>[v10.0] Sets the dirty flag which prevents the form being closed. App asks to save the form before saving and if user chooses to save it, it calls the save routine defined in <see cref="MobileCRM.UI.IFrameForm.saveCommand">IFrameForm.saveCommand</see>.</summary>
+			MobileCRM.bridge.invokeMethodAsync("IFrameForm", "set_IsDirty", [dirty === false ? false : true]);
+		};
+
+		MobileCRM.UI.IFrameForm.preventClose = function (message) {
+			/// <summary>[v10.0] Sets the warning message that should be shown when user tries to close the form.</summary>
+			/// <remarks>Set to &quot;null&quot; to allow the form close.</remarks>
+			MobileCRM.bridge.invokeMethodAsync("IFrameForm", "set_PreventCloseMessage", [message]);
+		};
+
+		MobileCRM.UI.IFrameForm._handlers = { onSave: [] };
+		MobileCRM.UI.IFrameForm.onSave = function (handler, bind, scope) {
+			/// <summary>[v10.0] Binds or unbinds the handler for saving content of this iFrame.</summary>
+			/// <remarks><p>Bound handler is called with the IFrameForm object as an argument.</p><p>The IFrameForm context object contains property &quot;errorMessage&quot; that can be used to cancel save with an error.</p><p>Use <see cref="MobileCRM.UI.IFrameForm.suspendSave">suspendSave</see> method to suspend the save process if an asynchronous operation is required.</p></remarks>
+			/// <param name="handler" type="function(IFrameForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.IFrameForm._handlers.onSave;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("InstallSaveCommand");
+		};
+		var _pendingIFrameSaveId = 0;
+		MobileCRM.UI.IFrameForm.prototype.suspendSave = function () {
+			/// <summary>[v10.0] Suspends current &quot;onSave&quot; process and allows performing asynchronous tasks to save the data.</summary>
+			/// <returns type="Object">A request object with single function &quot;resumeSave&quot; which has to be called with the result (either error message string or &quot;null&quot; in case of success).</returns>
+			var cmdId = "IFramePendingValidation" + (++_pendingIFrameSaveId);
+			var self = this;
+			self.context.pendingSaveCommand = cmdId;
+			return {
+				resumeSave: function (result) {
+					if (self._inCallback) {
+						// still in "onSave" callback - do not send a command (handler not installed yet)
+						self.context.errorMessage = result;
+						self.context.pendingSaveCommand = null;
+					}
+					else
+						MobileCRM.bridge.command(cmdId, result);
+				}
+			};
+		}
+
+		MobileCRM.UI.IFrameForm._callHandlers = function (event, data, context) {
+			var handlers = MobileCRM.UI.IFrameForm._handlers[event];
+			if (handlers && handlers.length > 0) {
+				data.context = context;
+				data._inCallback = true;
+				var result = '';
+				if (_callHandlers(handlers, data) != false) {
+					var changed = data.getChanged();
+					result = JSON.stringify(changed);
+				}
+				data._inCallback = false;
+				return result;
+			}
+		};
+
 		// MobileCRM.UI.EntityList
 		_inherit(MobileCRM.UI.EntityList, MobileCRM.ObservableObject);
-		MobileCRM.UI.EntityList._handlers = { onCanExecute: [], onCommand: [] };
+		MobileCRM.UI.EntityList._handlers = { onCanExecute: [], onCommand: [], onSave: [], onChange: [] };
 		MobileCRM.UI.EntityList._callHandlers = function (event, data, context) {
 			var handlers = MobileCRM.UI.EntityList._handlers[event];
 			if (handlers && handlers.length > 0) {
@@ -2466,7 +2571,7 @@
 				data._inCallback = false;
 				return result;
 			}
-		}
+		};
 		MobileCRM.UI.EntityList.requestObject = function (callback, errorCallback, scope) {
 			/// <summary>Requests the EntityList object.</summary>
 			/// <remarks>Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of EntityList object. See <see cref="MobileCRM.Bridge.requestObject">MobileCRM.Bridge.requestObject</see> for further details.</remarks>
@@ -2490,8 +2595,22 @@
 			viewFilter.release();
 			MobileCRM.UI.EntityList.reload();
 		};
+		MobileCRM.UI.EntityList.requestEditedEntities = function (callback, errorCallback, scope) {
+			/// <summary>[v10.0] Asynchronously gets the list of entities that were changed on the list.</summary>
+			/// <param name="callback" type="function(DynamicEntity[])">Callback obtaining an array of <see cref="MobileCRM.DynamicEntity">dynamic entities</see> that were changed on the list.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.requestObject("EditedEntities", function (entities) {
+			    if (callback.call(scope, entities.items) != false) {
+			        var changed = entities.getChanged();
+					return changed;
+				}
+				return '';
+			}, errorCallback);
+		};
 		MobileCRM.UI.EntityList.onCommand = function (command, handler, bind, scope) {
 			/// <summary>Binds or unbinds the handler for EntityList command.</summary>
+			/// <remarks>Bound handler is called with the EntityList object as an argument. The EntityList context object contains the &quot;cmdParam&quot; property and &quot;entities&quot; property with the list of currently selected entities.</remarks>
 			/// <param name="command" type="String">The name of the EntityList command.</param>
 			/// <param name="handler" type="function(entityList)">The handler function that has to be bound or unbound.</param>
 			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
@@ -2507,6 +2626,8 @@
 			/// <summary>Executes the list/button command attached to this entity list.</summary>
 			/// <param name="commandName" type="String">A name of the command. It can be either custom command or one of following predefined commands: </param>
 			/// <param name="parameter" type="Number">A command parameter (e.g. the status code value for ChangeStatus command).</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callback.</param>
 			MobileCRM.bridge.invokeMethodAsync("EntityList", "RunCommand", [commandName, parameter], null, errorCallback, scope);
 		};
 		MobileCRM.UI.EntityList.reload = function () {
@@ -2554,6 +2675,51 @@
 			return "Invalid ListDataSource";
 		};
 
+		var _pendingListSaveId = 0;
+		MobileCRM.UI.EntityList.prototype.suspendSave = function () {
+			/// <summary>[v10.0] Suspends current &quot;onSave&quot; validation and allows performing another asynchronous tasks to determine the validation result</summary>
+			/// <returns type="Object">A request object with single function &quot;resumeSave&quot; which has to be called with the validation result (either error message string or &quot;null&quot; in case of success).</returns>
+			var cmdId = "EntityListPendingValidation" + (++_pendingListSaveId);
+			var self = this;
+			self.context.pendingSaveCommand = cmdId;
+			return {
+				resumeSave: function (result) {
+					if (self._inCallback) {
+						// still in "onSave" callback - do not send a command (handler not installed yet)
+						self.context.errorMessage = result;
+						self.context.pendingSaveCommand = null;
+					}
+					else
+						MobileCRM.bridge.command(cmdId, result);
+				}
+			};
+		};
+		MobileCRM.UI.EntityList.onSave = function (handler, bind, scope) {
+			/// <summary>[v10.0] Binds or unbinds the handler for onSave event on EntityList.</summary>
+			/// <remarks>Bound handler is called with the EntityList object as an argument. The EntityList context object contains &quot;entities&quot; property with the list of all changed entities and property &quot;errorMessage&quot; that can be used to cancel save with an error.</remarks>
+			/// <param name="handler" type="function(entityList)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.EntityList._handlers.onSave;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onSave");
+		}
+		MobileCRM.UI.EntityList.onChange = function (handler, bind, scope) {
+			/// <summary>[v10.0] Binds or unbinds the handler for onChange event on EntityList.</summary>
+			/// <remarks>Bound handler is called with the EntityList object as an argument. The EntityList context object contains &quot;entities&quot; property with the list of currently changed entities (typically just one entity) and property &quot;propertyName&quot; with the field name that was changed.</remarks>
+			/// <param name="handler" type="function(entityList)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.EntityList._handlers.onChange;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onChange");
+		}
+
+		// MobileCRM.UI.ListDataSource
 		MobileCRM.UI.ListDataSource = function () {
 			/// <summary>The data source loading routine implementation.</summary>
 			/// <remarks><p>An instance of this object can be used to supply the data source for <see cref="MobileCRM.UI.EntityList.setDataSource">MobileCRM.UI.EntityList.setDataSource</see> function.</p><p>The instance of this object is valid only if the method loadNextChunk is implemented. See example <see cref="MobileCRM.UI.EntityList.setDataSource">here</see>.</p></remarks>
@@ -3048,6 +3214,20 @@
 			}, errorCallback, scope);
 		};
 
+		MobileCRM.UI.EntityForm.DetailCollection.addProductWithQuantity = function (product, quantity, callback, errorCallback, scope) {
+			/// <summary>[v10.0] Appends the product into sales order collection.</summary>
+			/// <remarks>Resulting <see cref="MobileCRM.DynamicEntity">MobileCRM.DynamicEntity</see> object implements method &quot;update&quot; which can be used to update the entity properties in the sales detail collection.</remarks>
+			/// <param name="product" type="MobileCRM.Reference">A reference of the product to be appended.</param>
+			/// <param name="quantity" type="Number">Product quantity.</param>
+			/// <param name="callback" type="function(MobileCRM.DynamicEntity)">The callback function which is called asynchronously with <see cref="MobileCRM.DynamicEntity">MobileCRM.DynamicEntity</see> object as an argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("addSalesDetailProduct", "#" + quantity + ":" + JSON.stringify(product), function (detailEntity) {
+				detailEntity.update = MobileCRM.UI.EntityForm.DetailCollection._updateDetail;
+				callback(detailEntity);
+			}, errorCallback, scope);
+		};
+
 		MobileCRM.UI.EntityForm.DetailCollection.onChange = function (handler, bind, scope) {
 			/// <summary>[v8.2] Binds or unbinds the handler which is called when the list of sales details changes.</summary>
 			/// <param name="handler" type="function(entityForm)">The handler function that has to be bound or unbound.</param>
@@ -3164,6 +3344,39 @@
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			MobileCRM.bridge.command("chatService", JSON.stringify({ method: "subscribe", entityName: regardingEntity.entityName, entityId: regardingEntity.id, subscribe: subscribe }), callback, errorCallback, scope);
+		};
+
+		MobileCRM.Services.AudioRecorder.startRecording = function (callback, errorCallback, scope) {
+			/// <summary>[v10.0] Starts recording audio from microphone</summary>
+			/// <param name="callback" type="function">The callback function which is called asynchronously in case of success.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("audioRecorder", "startRecording", callback, errorCallback, scope);
+			return new MobileCRM.Services.AudioRecorder();
+		};
+
+		MobileCRM.Services.AudioRecorder.prototype.stopRecording = function (callback, errorCallback, scope) {
+			/// <summary>[v10.0] Stops recording audio from microphone</summary>
+			/// <param name="callback" type="function">The callback function which is called asynchronously in case of success.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("audioRecorder", "stopRecording", callback, errorCallback, scope);
+		};
+
+		MobileCRM.Services.AudioRecorder.prototype.getRecordBase64 = function (callback, errorCallback, scope) {
+			/// <summary>[v10.0] Returns recorded audio from microphone as base64 string</summary>
+			/// <param name="callback" type="function(String)">The callback function that is called asynchronously with the base64-encoded recording data.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("audioRecorder", "getRecordBase64", callback, errorCallback, scope);
+		};
+
+		MobileCRM.Services.AudioRecorder.prototype.getRecordFilePath = function (callback, errorCallback, scope) {
+			/// <summary>[v10.0] Returns absolute path to the file containing the record</summary>
+			/// <param name="callback" type="function(String)">The callback function that is called asynchronously with the file path.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("audioRecorder", "getRecordFilePath", callback, errorCallback, scope);
 		};
 
 		MobileCRM.Services.AddressBookService.getService = function (errorCallback, scope) {
