@@ -1,1 +1,3 @@
-# The boilerplate need to get started with OfflineHTML development
+# Empty VS Solution
+Empty Offline HTML Visual Studio solution.  
+
