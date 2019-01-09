@@ -12,3 +12,17 @@ https://www.resco.net/downloads/JSBridge.js
 **Develop & Debug**  
 Guide describing how to debug and work with an offline HTML solution.  
 https://www.resco.net/debugging-offline-html-solution/
+
+# What's here  
+
+**MobileCRM**  
+This folder contains the debugging/development build(s) of the Resco Mobile CRM application
+
+**docs**  
+Documentation for JSBridge
+
+**src**
+The JSBridge API file.
+
+**tools**  
+Additionation debugging/development tools.
