@@ -12,7 +12,7 @@ Per platform application packages are available.
 
 **docs**  
 Description of the methods and objects defined in Resco JavaScript Bridge.  
-[Latest Reference](https://github.com/Resconet/JSBridge/blob/master/docs/JSBridgeReference.html)  
+[Latest Reference](https://www.resco.net/javascript-bridge-reference/)  
 
 **src**  
 Download the latest and version of Resco JavaScript Bridge file to use in your projects.  
