@@ -16,6 +16,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installation
 
 To run this sample code you have to set-up Woodford environment properly.
+
 	- Create new project in Woodford or use existing
 	- Download the files in this folder to your local machine.
 	- Import files from this folder to OfflineHTML section in Woodford project
@@ -29,6 +30,7 @@ NOTE! - don't UNCHECK 'Delay Load' box, because this event must be registered du
 ## Runninig test
 
 Run Resco MobileCRM application and sync with valid organization url, that refers to project where you installed this sample.
+
 	- Synchronize
 	- Navigate to 'Contacts' entities list
 	- Select any record or tap on '+' (Create new)
@@ -43,11 +45,11 @@ This sample is compatible with version 11.3 or newer.
 
 Here you can find useful references
 
-Webinars : https://www.youtube.com/watch?v=cplZLC_mAc0&list=PLPMCnAPD5b56XNEiGTcy5VBxdP8rcB86b&index=12%20%20 (watch second part as well)
-Woodford: http://www.resco.net/MobileCRM/support/Woodford_Guide.html#__RefHeading__6015_1627906509
-Reference: http://www.resco.net/mobilecrm/support/jsbridge.aspx
-Guide: https://www.resco.net/support/jsbridge-guide
-OfflineHTML solution: https://www.resco.net/debugging-offline-html-solution/
+	* **Webinars:** https://www.youtube.com/watch?v=cplZLC_mAc0&list=PLPMCnAPD5b56XNEiGTcy5VBxdP8rcB86b&index=12%20%20 (watch second part as well)
+	* **Woodford:** http://www.resco.net/MobileCRM/support/Woodford_Guide.html#__RefHeading__6015_1627906509
+	* **Reference:** http://www.resco.net/mobilecrm/support/jsbridge.aspx
+	* **Guide:** https://www.resco.net/support/jsbridge-guide
+	* **OfflineHTML solution:** https://www.resco.net/debugging-offline-html-solution/
 
 ## Contributing
 
