@@ -18,7 +18,7 @@ export function onChange2() {
                         else { MobileCRM.bridge.alert("Parent customer successfully updated."); }
                     });
                 }
-            }, (err) => { MobileCRM.bridge.alert("Failed to load parentcustomer " + MobileCRM.bridge.alert(JSON.stringify(parentcustomerRef) + "\n\nErr: " + err)); }, null);
+            }, (err) => { MobileCRM.bridge.alert("Failed to load parentcustomer " + JSON.stringify(parentcustomerRef) + "\n\nErr: " + err); }, null);
         }
     }, true, null);
 }

@@ -22,7 +22,7 @@ function onChange2() {
                         }
                     });
                 }
-            }, function (err) { MobileCRM.bridge.alert("Failed to load parentcustomer " + MobileCRM.bridge.alert(JSON.stringify(parentcustomerRef_1) + "\n\nErr: " + err)); }, null);
+            }, function (err) { MobileCRM.bridge.alert("Failed to load parentcustomer " + JSON.stringify(parentcustomerRef_1) + "\n\nErr: " + err); }, null);
         }
     }, true, null);
 }
