@@ -1,6 +1,5 @@
-"use strict";
 /// <reference path="JSBridge.d.ts"/>
-Object.defineProperty(exports, "__esModule", { value: true });
+
 /** Handle on post save event and create cloned record */
 function onPostSaveCreate() {
     MobileCRM.UI.EntityForm.onPostSave(function (entityForm) {
@@ -22,5 +21,3 @@ function onPostSaveCreate() {
         });
     }, true, null);
 }
-exports.onPostSaveCreate = onPostSaveCreate;
-//# sourceMappingURL=EntityForm_postSaveHandler.js.map

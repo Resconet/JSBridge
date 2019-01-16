@@ -1,6 +1,4 @@
-"use strict";
 /// <reference path="JSBridge.d.ts"/>
-Object.defineProperty(exports, "__esModule", { value: true });
 /** Handle on command click and create assoiciated task with open status, if record is new.*/
 function onCommandCreateTask() {
     MobileCRM.UI.EntityForm.onCommand("custom_createTask", function (entityForm) {
@@ -27,5 +25,3 @@ function onCommandCreateTask() {
         }
     }, true, null);
 }
-exports.onCommandCreateTask = onCommandCreateTask;
-//# sourceMappingURL=EntityForm_onCommand.js.map

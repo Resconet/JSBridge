@@ -1,7 +1,7 @@
 ﻿/// <reference path="JSBridge.d.ts"/>
 
 /** Handle on post save event and create cloned record */
-export function onPostSaveCreate() {
+function onPostSaveCreate() {
     MobileCRM.UI.EntityForm.onPostSave((entityForm) => {
         // call suspend post save method to allow another asynchronous method execution.
         let postSaveHandler = entityForm.suspendPostSave();

@@ -1,7 +1,7 @@
 ﻿/// <reference path="JSBridge.d.ts"/>
 
 /** Handle onChange event of 'parentcustomerid' to set the phone number from current record to parent*/
-export function onChange2() {
+function onChange2() {
     MobileCRM.UI.EntityForm.onChange((entityForm) => {
         let context = entityForm.context as MobileCRM.UI.IFormChangeContext;
         if (context.changedItem == "parentcustomerid") {

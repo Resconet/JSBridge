@@ -1,6 +1,4 @@
-"use strict";
 /// <reference path="JSBridge.d.ts"/>
-Object.defineProperty(exports, "__esModule", { value: true });
 /** Handle onChange event of 'parentcustomerid' to set the phone number from current record to parent*/
 function onChange2() {
     MobileCRM.UI.EntityForm.onChange(function (entityForm) {
@@ -26,5 +24,3 @@ function onChange2() {
         }
     }, true, null);
 }
-exports.onChange2 = onChange2;
-//# sourceMappingURL=EntityForm_onChange2.js.map

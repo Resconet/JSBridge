@@ -1,7 +1,7 @@
 ﻿/// <reference path="JSBridge.d.ts"/>
 
 /** During onSave event suspend save and call asynchronous fetch method. */
-export function onSaveHandler() {
+function onSaveHandler() {
     MobileCRM.UI.EntityForm.onSave((entityForm) => {
         /// Get email field value for validation.
         let editedAccount = entityForm.entity;

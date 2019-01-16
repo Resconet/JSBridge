@@ -56,6 +56,7 @@
     <TypeScriptSourceRoot />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="EntityForm_onItemChange1.js" />
     <Content Include="JSBridge.js" />
     <Content Include="README_EntityForm_onChange1.md" />
     <None Include="Web.Debug.config">
@@ -66,12 +67,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app.css" />
     <Content Include="index.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="EntityForm_onItemChange1.ts" />
     <TypeScriptCompile Include="JSBridge.d.ts" />
   </ItemGroup>

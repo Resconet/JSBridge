@@ -1,6 +1,5 @@
-"use strict";
 /// <reference path="JSBridge.d.ts"/>
-Object.defineProperty(exports, "__esModule", { value: true });
+
 /** During onSave event suspend save and call asynchronous fetch method. */
 function onSaveHandler() {
     MobileCRM.UI.EntityForm.onSave(function (entityForm) {
@@ -25,5 +24,3 @@ function onSaveHandler() {
         }, function (err) { MobileCRM.bridge.alert("Error fetching contact for account.\n\nErr: " + err); }, null);
     }, true, null);
 }
-exports.onSaveHandler = onSaveHandler;
-//# sourceMappingURL=EntityForm_saveHandler.js.map

@@ -1,7 +1,7 @@
 ﻿/// <reference path="JSBridge.d.ts"/>
 
 /** Handle on command click and create assoiciated task with open status, if record is new.*/
-export function onCommandCreateTask() {
+function onCommandCreateTask() {
     MobileCRM.UI.EntityForm.onCommand("custom_createTask", (entityForm) => {
         if (!entityForm.entity.isNew) {
             var props = entityForm.entity.properties;
