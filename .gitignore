@@ -9,3 +9,11 @@
 /.vs
 /samples/Empty
 /samples/UI/EntityForm/EntityForm_onChange2/EntityForm_onChange2.js.map
+/samples/UI/EntityForm/onLoad/Debug/.vs
+/samples/UI/EntityForm/onLoad/Debug/obj/Debug/onLoad.csprojAssemblyReference.cache
+/samples/UI/EntityForm/onLoad/Debug/obj/Debug/onLoad.csproj.CoreCompileInputs.cache
+/samples/UI/EntityForm/onLoad/Debug/obj/Release/onLoad.csproj.CoreCompileInputs.cache
+/samples/UI/EntityForm/onLoad_method/Debug/.vs
+/samples/UI/EntityForm/onLoad_method/Debug/obj/Debug/onLoad.csproj.CoreCompileInputs.cache
+/samples/UI/EntityForm/onLoad_method/Debug/obj/Debug/onLoad.csprojAssemblyReference.cache
+/samples/UI/EntityForm/onLoad_method/Debug/obj/Release/onLoad.csproj.CoreCompileInputs.cache
