@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>EntityForm_saveHandler</title>
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <!-- JSBridge must be explicitly included, otherwise the bridge is not accessible from Javascript. -->
+    <script type='text/javascript' src='JSBridge.js'></script>
+</head>
+<body>
+    <script>
+        /** During onSave event suspend save and call asynchronous fetch method. */
+        MobileCRM.UI.EntityForm.onSave(function (entityForm) {
+            var editedAccount = entityForm.entity;
+            // call 'suspendSave' method to allow another asynchronous method execution.
+            var saveHandler = entityForm.suspendSave();
+            // create asynchronous fetch object
+            var fetchEntity = new MobileCRM.FetchXml.Entity("contact");
+            var attribute = new MobileCRM.FetchXml.Attribute("contactid");
+            attribute.aggregate = "count";
+            attribute.alias = "Contact_cnt";
+            fetchEntity.filter = new MobileCRM.FetchXml.Filter();
+            fetchEntity.filter.where("parentcustomerid", "eq", editedAccount.id);
+            var fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
+            fetch.aggregate = true;
+            fetch.execute("DynamicEntities", function (res) {
+                if (res[0] > 0)
+                    saveHandler.resumeSave();
+                else
+                    saveHandler.resumeSave("At least one contact is required");
+            }, function (err) { MobileCRM.bridge.alert("Error fetching contact for account.\n\nErr: " + err); }, null);
+        }, true, null);
+    </script>
+    <h3>Welcome to sample page.</h3>
+    <p>Main page for 'EntityForm saveHandler' sample.</p>
+    Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
+</body>
+</html>
