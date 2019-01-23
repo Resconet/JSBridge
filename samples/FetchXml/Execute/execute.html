@@ -71,14 +71,15 @@
                 }
             }, MobileCRM.bridge.alert, null);
         }
-        function fetchAppointments(resultFormat, online) {
+        function fetchAppointments(online) {
             var starDate = new Date("January,28 2019 11:00");
             var endDate = new Date("February,30 2019 11:00");
             var entity = new MobileCRM.FetchXml.Entity('appointment');
             // add all attributes to fetch
             entity.addAttributes();
             // get activity attribute to set group by
-            var activity = entity.attributes["activityid"];
+            var activity = new MobileCRM.FetchXml.Attribute("activityid");
+            entity.attributes.push(activity);
             activity.groupby = true;
             activity.alias = "activity";
             var mainFIlter2 = new MobileCRM.FetchXml.Filter();
@@ -86,7 +87,7 @@
             var cnd2 = new MobileCRM.FetchXml.Condition();
             cnd2.attribute = "address_city1";
             cnd2.operator = "like";
-            cnd2.values = ["Boston", "Capecode"];
+            cnd2.values = ["Boston", "Cape-code"];
             mainFIlter2.conditions.push(cnd2);
             // === Create filter for data ===
             var dates = new Array();
@@ -106,19 +107,37 @@
             entity.filter.filters.push(filter);
             var fetch = new MobileCRM.FetchXml.Fetch(entity);
             fetch.aggregate = true;
+
+            var emptyResultInfo = "Not suitable appointment with address Boston or Cape-Code between January,28 2019 11:00 - February,30 2019 11:00 was found."
+
             if (online) {
-                fetch.executeOnline(resultFormat.toString(), function (res) { }, MobileCRM.bridge.alert, null);
+                fetch.executeOnline("DynamicEntities", function (res) {
+                    if (res.length < 1) {
+                        MobileCRM.bridge.alert(emptyResultInfo);
+                    }
+                    else {
+                        var info = "Appointments: ";
+                        for (var i in res) {
+                            info += "\n Name: " + res[i].properties.subject;
+                        }
+                        MobileCRM.bridge.alert(info);
+                    }
+                }, MobileCRM.bridge.alert, null);
             }
             else
-                fetch.executeOffline(resultFormat.toString(), function (res) { }, MobileCRM.bridge.alert, null);
+                fetch.executeOffline("DynamicEntities", function (res) {
+                    if (res.length < 1) {
+                        MobileCRM.bridge.alert(emptyResultInfo);
+                    }
+                    else {
+                        var info = "Appointments: ";
+                        for (var i in res) {
+                            info += "\n Name: " + res[i].properties.subject;
+                        }
+                        MobileCRM.bridge.alert(info);
+                    }
+                }, MobileCRM.bridge.alert, null);
         }
-        var fetchResultFormat;
-        (function (fetchResultFormat) {
-            fetchResultFormat[fetchResultFormat["Array"] = 0] = "Array";
-            fetchResultFormat[fetchResultFormat["JSON"] = 1] = "JSON";
-            fetchResultFormat[fetchResultFormat["DynamicEntities"] = 2] = "DynamicEntities";
-        })(fetchResultFormat || (fetchResultFormat = {}));
-        ;
 
     </script>
     <h3>Welcome to sample page for fetchXml method.</h3>
@@ -128,5 +147,8 @@
     <button onclick="executeFromXml('Array')">ExecuteXml to Array</button>
     <button onclick="executeFromXml('JSON')">ExecuteXml to Json</button>
     <button onclick="executeFromXml('DynamicEntities')">ExecuteXml to DynamicEntities</button>
+    <h4>Fetch appointments</h4>
+    <button onclick="fetchAppointments()">Fetch to DynamicEntities</button> <b>offline</b><br />
+    <button onclick="fetchAppointments()">Fetch to DynamicEntities</button>  <b>online</b>
 </body>
 </html>

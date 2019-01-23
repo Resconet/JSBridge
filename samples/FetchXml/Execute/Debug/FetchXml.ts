@@ -61,7 +61,7 @@ function executeFromXml(resultFormat: string) {
 }
 
 
-function fetchAppointments(resultFormat: string, online: boolean) {
+function fetchAppointments(online: boolean) {
 
     var starDate = new Date("January,28 2019 11:00");
     var endDate = new Date("February,30 2019 11:00");
@@ -109,10 +109,33 @@ function fetchAppointments(resultFormat: string, online: boolean) {
     var fetch = new MobileCRM.FetchXml.Fetch(entity);
     fetch.aggregate = true;
 
+    let emptyResultInfo = "Not suitable appointment with address Boston or Cape-Code between January,28 2019 11:00 - February,30 2019 11:00 was found.";
+
     if (online) {
-        fetch.executeOnline(resultFormat, (res) => { }, MobileCRM.bridge.alert, null);
+        fetch.executeOnline("DynamicEntities", (res) => {
+            if (res.length < 1) {
+                MobileCRM.bridge.alert(emptyResultInfo);
+            }
+            else {
+                var info = "Appointments: ";
+                for (var i in res) {
+                    info += "\n Name: " + res[i].properties.subject;
+                }
+                MobileCRM.bridge.alert(info);
+            }
+        }, MobileCRM.bridge.alert, null);
     }
     else
-        fetch.executeOffline(resultFormat, (res) => { }, MobileCRM.bridge.alert, null);
-
+        fetch.executeOffline("DynamicEntities", (res) => {
+            if (res.length < 1) {
+                MobileCRM.bridge.alert(emptyResultInfo);
+            }
+            else {
+                var info = "Appointments: ";
+                for (var i in res) {
+                    info += "\n Name: " + res[i].properties.subject;
+                }
+                MobileCRM.bridge.alert(info);
+            }
+        }, MobileCRM.bridge.alert, null);
 }
