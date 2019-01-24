@@ -43,7 +43,7 @@ This sample is compatible with version 11.3 or newer.
 
 ## References
 
-Here you can find useful references [Readme.md](https://github.com/Resconet/JSBridge/blob/master/README.md) we used in this sample.
+Here you can find useful references we used in this sample: [References Readme.md](https://github.com/Resconet/JSBridge/blob/master/README.md) 
 
 ## Authors
 
