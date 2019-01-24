@@ -13,23 +13,24 @@ Each solution demonstrates usage of methods stated in JSBridge Reference documen
 
  - **Setting iFrame for entity form:**
  
- 4.	open required entity form
- 5.	add iFrame tab and browse for the html file you have created / uploaded in 'Offline HTML' section
+ 	- open required entity form
+ 	- add iFrame tab and browse for the html file you have created / uploaded in 'Offline HTML' section
 	
 - **Setting iFrame for entity view**
 
- 4.	open required entity view
- 5.	click on iFrame and browse for the html file you have created / uploaded in 'Offline HTML' section
+	- open required entity view
+ 	- click on iFrame and browse for the html file you have created / uploaded in 'Offline HTML' section
 
 - **Setting iFrame for home form**
 
- 4.	open the home editor (home form)
- 5.	add iFrame tab and browse for the html file you have created / uploaded in 'Offline HTML' section
+	- open the home editor (home form)
+	- add iFrame tab and browse for the html file you have created / uploaded in 'Offline HTML' section
+
 
 **Running the sample code**
 
-6. save changes and publish project
-7. synchronize the application
-8. navigate to your iFrame
+4. save changes and publish project
+5. synchronize the application
+6. navigate to your iFrame
 
 **Every example contains own README.md file providing detailed information**
