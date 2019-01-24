@@ -71,72 +71,68 @@
                 }
             }, MobileCRM.bridge.alert, null);
         }
-        function fetchAppointments(online) {
-            var starDate = new Date("January,28 2019 11:00");
-            var endDate = new Date("February,30 2019 11:00");
-            var entity = new MobileCRM.FetchXml.Entity('appointment');
-            // add all attributes to fetch
-            entity.addAttributes();
-            // get activity attribute to set group by
-            var activity = new MobileCRM.FetchXml.Attribute("activityid");
-            entity.attributes.push(activity);
-            activity.groupby = true;
-            activity.alias = "activity";
-            var mainFIlter2 = new MobileCRM.FetchXml.Filter();
-            mainFIlter2.type = "or";
-            var cnd2 = new MobileCRM.FetchXml.Condition();
-            cnd2.attribute = "address_city1";
-            cnd2.operator = "like";
-            cnd2.values = ["Boston", "Cape-code"];
-            mainFIlter2.conditions.push(cnd2);
-            // === Create filter for data ===
-            var dates = new Array();
-            dates.push(starDate, endDate);
+
+        function executeFetch(online) {
+            var fetchEntity = new MobileCRM.FetchXml.Entity("salesorder");
+            fetchEntity.addAttribute("name");
+            fetchEntity.addAttribute("shipto_city");
+            fetchEntity.addAttribute("totalamount");
+
             var filter = new MobileCRM.FetchXml.Filter();
             filter.type = "and";
-            var betweenCondition = new MobileCRM.FetchXml.Condition();
-            betweenCondition.attribute = 'scheduledstart';
-            betweenCondition.operator = 'between';
-            betweenCondition.values = dates;
-            var priorityCondition = new MobileCRM.FetchXml.Condition();
-            priorityCondition.operator = "eq";
-            priorityCondition.attribute = "prioritycode";
-            priorityCondition.value = "1";
-            filter.conditions.push(priorityCondition, betweenCondition);
-            entity.filter = new MobileCRM.FetchXml.Filter();
-            entity.filter.filters.push(filter);
-            var fetch = new MobileCRM.FetchXml.Fetch(entity);
-            fetch.aggregate = true;
 
-            var emptyResultInfo = "Not suitable appointment with address Boston or Cape-Code between January,28 2019 11:00 - February,30 2019 11:00 was found."
+            var cond1 = new MobileCRM.FetchXml.Condition();
+            cond1.attribute = "name";
+            cond1.operator = "like";
+            cond1.value = "Bike%";
+
+            var cond2 = new MobileCRM.FetchXml.Condition();
+            cond2.attribute = "totalamount";
+            cond2.operator = "gt"
+            cond2.value = "1500%";
+
+            filter.conditions.push(cond1, cond2);
+
+            fetchEntity.filter = filter;
+
+            var fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
+
+            var info = "Info [Missing ship - to address]: \n";
 
             if (online) {
-                fetch.executeOnline("DynamicEntities", function (res) {
-                    if (res.length < 1) {
-                        MobileCRM.bridge.alert(emptyResultInfo);
+                fetch.executeOnline("DynamicEntities", function (result) {
+                    if (result.length < 1) {
+                        MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
                     }
                     else {
-                        var info = "Appointments: ";
-                        for (var i in res) {
-                            info += "\n Name: " + res[i].properties.subject;
+                        for (var i in result) {
+                            /// Deserialize json object
+                            var entity = result[i];
+                            var shipToCity = entity.properties.shipto_city;
+                            var shipToAddress = entity.properties.shipto_line1;
+                            if (!(shipToAddress && shipToCity))
+                                info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
                         }
-                        MobileCRM.bridge.alert(info);
                     }
                 }, MobileCRM.bridge.alert, null);
             }
-            else
-                fetch.executeOffline("DynamicEntities", function (res) {
-                    if (res.length < 1) {
-                        MobileCRM.bridge.alert(emptyResultInfo);
+            else {
+                fetch.executeOffline("DynamicEntities", function (result) {
+                    if (result.length < 1) {
+                        MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
                     }
                     else {
-                        var info = "Appointments: ";
-                        for (var i in res) {
-                            info += "\n Name: " + res[i].properties.subject;
+                        for (var i in result) {
+                            /// Deserialize json object
+                            var entity = result[i];
+                            var shipToCity = entity.properties.shipto_city;
+                            var shipToAddress = entity.properties.shipto_line1;
+                            if (!(shipToAddress && shipToCity))
+                                info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
                         }
-                        MobileCRM.bridge.alert(info);
                     }
                 }, MobileCRM.bridge.alert, null);
+            }
         }
 
     </script>
@@ -147,8 +143,8 @@
     <button onclick="executeFromXml('Array')">ExecuteXml to Array</button>
     <button onclick="executeFromXml('JSON')">ExecuteXml to Json</button>
     <button onclick="executeFromXml('DynamicEntities')">ExecuteXml to DynamicEntities</button>
-    <h4>Fetch appointments</h4>
-    <button onclick="fetchAppointments()">Fetch to DynamicEntities</button> <b>offline</b><br />
-    <button onclick="fetchAppointments(true)">Fetch to DynamicEntities</button>  <b>online</b>
+
+    <button onclick="executeFetch()">Fetch to DynamicEntities</button> <b>offline</b><br />
+    <button onclick="executeFetch(true)">Fetch to DynamicEntities</button>  <b>online</b>
 </body>
 </html>

@@ -59,81 +59,63 @@ function executeFromXml(resultFormat: string) {
 }
 
 
-function fetchAppointments(online: boolean) {
+function executeFetch(online) {
+    var fetchEntity = new MobileCRM.FetchXml.Entity("salesorder");
+    fetchEntity.addAttribute("name");
+    fetchEntity.addAttribute("shipto_city");
+    fetchEntity.addAttribute("totalamount");
 
-    var starDate = new Date("January,28 2019 11:00");
-    var endDate = new Date("February,30 2019 11:00");
-
-    let entity = new MobileCRM.FetchXml.Entity('appointment');
-    // add all attributes to fetch
-    entity.addAttributes();
-    // get activity attribute to set group by
-    let activity = entity.attributes["activityid"];
-    activity.groupby = true;
-    activity.alias = "activity";
-
-    let mainFIlter2 = new MobileCRM.FetchXml.Filter();
-    mainFIlter2.type = "or";
-
-    let cnd2 = new MobileCRM.FetchXml.Condition();
-    cnd2.attribute = "address_city1";
-    cnd2.operator = "like";
-    cnd2.values = ["Boston", "Capecode"]
-
-    mainFIlter2.conditions.push(cnd2);
-
-    // === Create filter for data ===
-    let dates = new Array();
-    dates.push(starDate, endDate);
-
-    let filter = new MobileCRM.FetchXml.Filter();
+    var filter = new MobileCRM.FetchXml.Filter();
     filter.type = "and";
 
-    let betweenCondition = new MobileCRM.FetchXml.Condition();
-    betweenCondition.attribute = 'scheduledstart';
-    betweenCondition.operator = 'between';
-    betweenCondition.values = dates;
+    var cond1 = new MobileCRM.FetchXml.Condition();
+    cond1.attribute = "name";
+    cond1.operator = "like";
+    cond1.value = "Bike%";
 
-    let priorityCondition = new MobileCRM.FetchXml.Condition();
-    priorityCondition.operator = "eq";
-    priorityCondition.attribute = "prioritycode";
-    priorityCondition.value = "1";
+    var cond2 = new MobileCRM.FetchXml.Condition();
+    cond2.attribute = "totalamount";
+    cond2.operator = "gt"
+    cond2.value = "1500%";
 
-    filter.conditions.push(priorityCondition, betweenCondition);
+    filter.conditions.push(cond1, cond2);
 
-    entity.filter = new MobileCRM.FetchXml.Filter();
-    entity.filter.filters.push(filter);
+    fetchEntity.filter = filter;
 
-    var fetch = new MobileCRM.FetchXml.Fetch(entity);
-    fetch.aggregate = true;
-
-    let emptyResultInfo = "Not suitable appointment with address Boston or Cape-Code between January,28 2019 11:00 - February,30 2019 11:00 was found.";
-
+    var fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
+    let info = "Info [Missing ship - to address]: \n";
     if (online) {
-        fetch.executeOnline("DynamicEntities", (res) => {
-            if (res.length < 1) {
-                MobileCRM.bridge.alert(emptyResultInfo);
+        fetch.executeOnline("DynamicEntities", function (result) {
+            if (result.length < 1) {
+                MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
             }
             else {
-                var info = "Appointments: ";
-                for (var i in res) {
-                    info += "\n Name: " + res[i].properties.subject;
+                for (var i in result) {
+                    /// Deserialize json object
+                    var entity = result[i];
+                    var shipToCity = entity.properties.shipto_city;
+                    var shipToAddress = entity.properties.shipto_line1;
+                    if (!(shipToAddress && shipToCity))
+                        info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
                 }
-                MobileCRM.bridge.alert(info);
             }
         }, MobileCRM.bridge.alert, null);
     }
-    else
-        fetch.executeOffline("DynamicEntities", (res) => {
-            if (res.length < 1) {
-                MobileCRM.bridge.alert(emptyResultInfo);
+    else {
+        fetch.executeOffline("DynamicEntities", function (result) {
+            if (result.length < 1) {
+                MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
             }
             else {
-                var info = "Appointments: ";
-                for (var i in res) {
-                    info += "\n Name: " + res[i].properties.subject;
+                for (var i in result) {
+                    /// Deserialize json object
+                    var entity = result[i];
+                    var shipToCity = entity.properties.shipto_city;
+                    var shipToAddress = entity.properties.shipto_line1;
+                    if (!(shipToAddress && shipToCity))
+                        info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
                 }
-                MobileCRM.bridge.alert(info);
             }
         }, MobileCRM.bridge.alert, null);
+    }
 }
