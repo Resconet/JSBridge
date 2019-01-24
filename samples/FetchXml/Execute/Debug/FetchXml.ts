@@ -34,7 +34,6 @@ function executeFromXml(resultFormat: string) {
                     break;
                 case "JSON":
                     for (let i in result) {
-                        /// Deserialize json object
                         let entity = result[i];
 
                         let shipToCity = entity.shipto_city
@@ -45,7 +44,6 @@ function executeFromXml(resultFormat: string) {
                     break;
                 default: //DynamicEntities
                     for (let i in result) {
-                        /// Deserialize json object
                         let entity = result[i] as MobileCRM.DynamicEntity;
 
                         let shipToCity = entity.properties.shipto_city

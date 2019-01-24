@@ -1,7 +1,0 @@
-C:\Users\Maros Kolibas\source\repos\Resconet\JSBridge\samples\FetchXml\Execute\bin\TypeScriptHTMLApp1.dll.config
-C:\Users\Maros Kolibas\source\repos\Resconet\JSBridge\samples\FetchXml\Execute\bin\TypeScriptHTMLApp1.dll
-C:\Users\Maros Kolibas\source\repos\Resconet\JSBridge\samples\FetchXml\Execute\bin\TypeScriptHTMLApp1.pdb
-C:\Users\Maros Kolibas\source\repos\Resconet\JSBridge\samples\FetchXml\Execute\obj\Debug\FetchXml.csprojAssemblyReference.cache
-C:\Users\Maros Kolibas\source\repos\Resconet\JSBridge\samples\FetchXml\Execute\obj\Debug\FetchXml.csproj.CoreCompileInputs.cache
-C:\Users\Maros Kolibas\source\repos\Resconet\JSBridge\samples\FetchXml\Execute\obj\Debug\TypeScriptHTMLApp1.dll
-C:\Users\Maros Kolibas\source\repos\Resconet\JSBridge\samples\FetchXml\Execute\obj\Debug\TypeScriptHTMLApp1.pdb
