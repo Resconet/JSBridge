@@ -35,7 +35,7 @@
                 else {
                     var info = "Info [Missing ship - to address]: \n";
                     switch (resultFormat) {
-                        case fetchResultFormat.Array:
+                        case "Array":
                             for (var i in result) {
                                 var entity = result[i];
                                 /// Append orders what doesn't have filled 'ship to address' to info message
@@ -46,7 +46,7 @@
                                     info += "\nName: " + entity[0] + " Total amount: " + entity[3];
                             }
                             break;
-                        case fetchResultFormat.JSON:
+                        case "JSON":
                             for (var i in result) {
                                 /// Deserialize json object
                                 var entity = result[i];
@@ -56,7 +56,7 @@
                                     info += "\nName: " + entity.name + " Total amount: " + entity.totalamount;
                             }
                             break;
-                        default: //fetchResultFormat.DynamicEntities
+                        default: //DynamicEntities
                             for (var i in result) {
                                 /// Deserialize json object
                                 var entity = result[i];
@@ -149,6 +149,6 @@
     <button onclick="executeFromXml('DynamicEntities')">ExecuteXml to DynamicEntities</button>
     <h4>Fetch appointments</h4>
     <button onclick="fetchAppointments()">Fetch to DynamicEntities</button> <b>offline</b><br />
-    <button onclick="fetchAppointments()">Fetch to DynamicEntities</button>  <b>online</b>
+    <button onclick="fetchAppointments(true)">Fetch to DynamicEntities</button>  <b>online</b>
 </body>
 </html>
