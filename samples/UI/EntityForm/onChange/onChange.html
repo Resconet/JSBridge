@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>EntityForm onChange</title>
+    <link rel="stylesheet" href="app.css" type="text/css" />
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <!-- Include JSBridge.js file to use RescoMCRM JSBridge api  -->
+    <script type="text/javascript" src="JSBridge.js"></script>
+</head>
+<body>
+    <script>
+        /** on Change parent customer field, set parent telephone number */
+        function setParentPhoneOnChange() {
+            MobileCRM.UI.EntityForm.onChange(function (entityForm) {
+                // Get context of entityForm
+                var context = entityForm.context;
+                if (context.changedItem == "parentcustomerid") {
+                    /// asynchronously load parent entity and update main phone with current record phone
+                    var parentcustomerRef_1 = entityForm.entity.properties.parentcustomerid;
+                    var mainphone_1 = entityForm.entity.properties.telephone1;
+                    /// Asynchronously load parent customer and set telephone number
+                    MobileCRM.DynamicEntity.loadById(parentcustomerRef_1.entityName, parentcustomerRef_1.id, function (parent) {
+                        // if telephone is not the same already, change and save.
+                        if (mainphone_1 !== parent.properties.telephone1) {
+                            parent.properties.telephone1 = mainphone_1;
+                            // Asynchronously Save changed property
+                            parent.save(function (err) {
+                                if (err)
+                                    MobileCRM.bridge.alert(err);
+                                else {
+                                    MobileCRM.bridge.alert("Parent customer successfully updated.");
+                                }
+                            });
+                        }
+                    }, function (err) { MobileCRM.bridge.alert("Failed to load parent customer " + MobileCRM.bridge.alert(JSON.stringify(parentcustomerRef_1) + "\n\nErr: " + err)); }, null);
+                }
+            }, true, null);
+        }
+        /** Handle specific item change event. */
+        function clearAddressOnItemChange() {
+            MobileCRM.UI.EntityForm.onItemChange("address1_city", function (entityForm) {
+                // clear all additional address fields
+                entityForm.entity.properties.address1_stateprovince = undefined;
+                entityForm.entity.properties.address1_country = undefined;
+                entityForm.entity.properties.address1_postalcode = undefined;
+            }, true, null);
+        }
+        window.onload = function () {
+            // Register onChange event handlers during onload.
+            setParentPhoneOnChange();
+            clearAddressOnItemChange();
+        };
+    </script>
+
+    <h3>Welcome to sample page for fetchXml method.</h3>
+        Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
+    <br />
+    <h4>Run sample</h4>
+    <p> In the script tag we register event handlers during window.onload method.</p>
+</body>
+</html>
