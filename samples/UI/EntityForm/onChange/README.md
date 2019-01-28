@@ -6,17 +6,15 @@ EntityForm Reference document: [UI.EntityForm](https://www.resco.net/javascript-
 ## onChange usage
 
 
+Recommended usage cases
 
-Recommended usage cases:
-- 
-- 
 
 ## Example explanation
 
-Provided example demonstrates how to change phone number of Contact record. Phone number is taken from parent entity record (Account - parent) once parentcustomerid field value is changed - new Account is set as 'Regarding'.
+Provided example demonstrates how to automatically change phone number of contact once value of 'Regarding' field on contact form is changed. Phone number is taken from parent entity record (account).
 
 **1.	Function setParentPhoneOnChange:**
-	<br />This functions gets changed items of form and saves them in context variable.
+	<br />This functions stores changed items of form in context variable. If changed item equals 'parentcustomerid', it loads parent record data. Phone number from parent record and current contact phone number are compared. If they missmatch, phone number is updated and user is informed about this action via alert.
 
 **2.	Function:**
 	<br />
