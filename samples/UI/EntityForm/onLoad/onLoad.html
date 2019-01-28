@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>EntityForm onChange</title>
+    <link rel="stylesheet" href="app.css" type="text/css" />
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <!-- Include JSBridge.js file to use RescoMCRM JSBridge api  -->
+    <script type="text/javascript" src="JSBridge.js"></script>
+</head>
+<body>
+    <script>
+        /** Request entity form and set property */
+        function onLoadSetAddress() {
+            MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
+                /// set address field
+                entityForm.entity.properties.address1_city = "77 Massachusetts Ave";
+                entityForm.entity.properties.address1_stateprovince = "MA";
+                entityForm.entity.properties.address1_postalcode = "02139";
+                entityForm.entity.properties.address1_country = "US";
+                // return true to apply changes
+                return true;
+            }, function (err) { MobileCRM.bridge.alert("Error occured during onload of entity form.\n\nErr: " + err); }, null);
+        }
+        /** Load parent account and set current email of child with the same value */
+        function loadParentAccount() {
+            MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
+                var entity = entityForm.entity;
+                // Get Parent customer field from entity.
+                var parentCustomer = entity.properties.prentcustomerid;
+                // Only in case if parent customer field is not empty
+                if (parentCustomer) {
+                    // load associated Parent record
+                    var contact = new MobileCRM.FetchXml.Entity(parentCustomer.entityName);
+                    contact.addAttributes();
+                    // filter contacts only for current entity
+                    var filter = new MobileCRM.FetchXml.Filter();
+                    filter.where("accountid", "eq", parentCustomer.id);
+                    contact.filter = filter;
+                    var fetch_1 = new MobileCRM.FetchXml.Fetch(contact);
+                    fetch_1.execute("DynamicEntities", function (res) {
+                        if (res.length > 1) {
+                            var parentEntity = res[0];
+                            var emailAddress_1 = parentEntity.properties.emailaddress1;
+                            if (emailAddress_1) {
+                                // In case if we want to make changes on entity form
+                                // Request entity form again to make sure we will works with current context of entity form
+                                MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
+                                    // get entity form email address detail item.
+                                    // disable this item for any further changes and set email from parent.
+                                    var dv = entityForm.getDetailView("General");
+                                    if (dv) {
+                                        var item = dv.getItemByName("emailaddress1");
+                                        if (item) {
+                                            item.value = emailAddress_1;
+                                            item.isEnabled = false;
+                                            return true;
+                                        }
+                                    }
+                                }, MobileCRM.bridge.alert, null);
+                            }
+                        }
+                    }, function (err) { MobileCRM.bridge.alert("Failed to fetch contacts.\n\nErr: " + err); }, null);
+                    return true;
+                }
+            }, function (err) { MobileCRM.bridge.alert("Error occured during onload of entity form.\n\nErr: " + err); }, null);
+        }
+        // Register handlers during onload phase
+        window.onload = function () {
+            onLoadSetAddress();
+            loadParentAccount();
+        }
+    </script>
+
+    <h3>Welcome to sample page for entity form onload method.</h3>
+        Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
+    <br />
+    <h4>Run sample</h4>
+    <p> In the script tag we register event handlers during window.onload method.</p>
+</body>
+</html>
