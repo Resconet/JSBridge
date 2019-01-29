@@ -1,6 +1,7 @@
 # Resco Mobile CRM JSDev Edition
 Offline HTML development/debugging version of Resco Mobile CRM app.
-This version of app opens a port for Javascript debugger and allows the HTML root overriding. Don't use in production!!!
+This version of app opens a port for Javascript debugger and allows the HTML root overriding.
+> Don't use in production!
 ## Android
 ### Installation
 
