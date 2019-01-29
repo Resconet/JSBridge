@@ -7,7 +7,7 @@ EntityForm Reference document: [UI.EntityForm](https://www.resco.net/javascript-
 ## onChange usage
 
 MobileCRM.UI.EntityForm.onChange(handlerFunction(){}, bind, scope)
-MobileCRM.UI.EntityForm.onItemChange("itemName", handlerFunction(){}, bind, scope)
+<br />MobileCRM.UI.EntityForm.onItemChange("itemName", handlerFunction(){}, bind, scope)
 
 > handlerFunction() - actions to be performed on change event
 <br /> bind - Boolean - determines whether to register or unregister handler on change event
