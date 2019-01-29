@@ -38,6 +38,7 @@ Open this file to check sample code directly.
 
 ## How to run the sample in the application?
 
+[Click for instructions](https://github.com/Resconet/JSBridge/tree/master/samples)
 
 ## Versioning
 
