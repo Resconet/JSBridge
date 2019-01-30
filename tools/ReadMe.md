@@ -1,7 +1,7 @@
 # Offline HTML development & debugging dools
 A set of tools that makes the Offline HTML development much easier.
 
-#iOS Tools
+## iOS Tools
 **iReSign.app**
 * MacOS application performing resigning of the Mobile CRM app (JSDev or Enterprise edition)
 * It requires the iOS development (or distribution) certificate installed in KeyChain Access (can be done with Xcode)
@@ -11,7 +11,7 @@ A set of tools that makes the Offline HTML development much easier.
 * bash script for MacOS returning the path to the Offline HTML root of the Mobile CRM app in currently booted iOS Simulator
 * Usage: *sh getOfflineHtmlDir.sh*
 
-#Windows Tools
+## Windows Tools
 **MobileCrmIntegration.vsix**
 * Visual Studio 2015/2017 extension installer
 * Adds the command "Run in Mobile CRM" to your Visual Studio menu "Tools"
