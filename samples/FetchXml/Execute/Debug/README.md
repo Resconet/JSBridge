@@ -1,3 +1,8 @@
+## Debug folder
+
+Use this folder and its files in case you want to debug the sample.
+Please follow below instructions to run sample properly.
+
 ## Installation
 
 Prepare Woodford environment according below instructions to try provided sample code.
