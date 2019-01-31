@@ -43,7 +43,7 @@ function linkParentAccountAppointments() {
         }
     }, MobileCRM.bridge.alert, null);
 }
-function fetch_M_N_ContactToCompetitor() {
+function fetch_M_N_CompetitorToCompetitorProduct() {
     var contact = new MobileCRM.FetchXml.Entity("competitor");
     contact.addAttribute("competitorid");
     contact.addAttribute("name");
