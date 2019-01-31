@@ -22,8 +22,10 @@ Prepare Woodford environment according below instructions to try provided sample
 
 ## Installation for debugging
 
-1. download Debug folder to your local machine
-2. open project (.sln file) in Visual Studio
+Use this steps if you want to debug the sample and try your own code changes without need to replace the .html file in Offline HTML section every time you make a change.
+
+1. **follow all the steps mentioned above**
+2. open project (.sln file) of Debug folder in Visual Studio
 3. download debbuging tools and follow installation instructions [Debugging tools](https://github.com/Resconet/JSBridge/tree/master/tools), [Resco Mobile CRM JSDev Edition](https://github.com/Resconet/JSBridge/tree/master/MobileCRM)
 4. to run project in the application, click on 'Tools' in VS and choose 'Run in MobileCRM'
 <br />
