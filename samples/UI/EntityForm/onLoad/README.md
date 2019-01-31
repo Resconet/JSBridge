@@ -16,7 +16,7 @@ MobileCRM.UI.EntityForm.requestObject(callback, errorCallback, scope)
 Recommended usage cases:
 - automatically perform specific actions once load event occurs on form
 
-**HINT:** *Always make sure you have unchecked 'Delay Load' setting on IFrame, if you want your code to run on load event of the form itself.*
+**HINT:** *Always make sure you have unchecked 'Delay Load' setting on IFrame, if you want your code to run on load event.*
 
 ## Example explanation
 
