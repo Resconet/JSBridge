@@ -26,4 +26,29 @@ Provided example demonstrates how to automatically set address to address fields
 <br /> This function is called via window.onload which registers handlers during load event. On load event, entity form is requested and values are added to its attributes. City, state, postal code and country fields are automaticaly entered. This callback function returns true to ensure that changes are applied.
 
 **2.	Function loadParentAccount:**
-<br />This function is called on load event as well. It checks parentcustomerid (customer) field and in case it has a value, it creates fetch on this parent entity records. In this example, it is account entity. Afterwards, filter is created to make sure that only that parent (account) record will be fetched, which is set as 'Customer' on currect contact form. In the last step, email address from account is set as email address of current contact and email field is made uneditable. This callback function returns true to ensure that changes are applied.
+<br />This function is called on load event as well. It checks parentcustomerid (customer) field and in case it has a value, it creates fetch on set parent entity record. In this example, it is account entity, because we assume account record is set as customer for contact. Afterwards, filter is created to make sure that we only fetch account record, which is set as 'Customer' on currect contact form. In the last step, email address from account is set as email address of current contact and email field is made uneditable. This callback function returns true to ensure that changes are applied.
+
+## In this repository
+    
+**Debug repository:**
+Find more information here: [Readme.md](https://github.com/Resconet/JSBridge/blob/master/samples/UI/EntityForm/onLoad/Debug/README.md)
+
+**onChange.html file:**
+Open this file to check sample code directly.
+
+## How to run the sample in the application?
+
+[Click for instructions](https://github.com/Resconet/JSBridge/tree/master/samples)
+
+## Versioning
+
+This sample is compatible with version 11.3 or newer.
+
+## References
+
+Here you can find useful references we used in this sample: [References Readme.md](https://github.com/Resconet/JSBridge/blob/master/README.md) 
+
+## Authors
+
+* **Maros Kolibas** - **Resco.net**
+* **Lucia Pavlikova** - **Resco.net**
