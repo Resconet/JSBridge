@@ -28,6 +28,8 @@ Provided example demonstrates how to automatically set address to address fields
 **2.	Function loadParentAccount:**
 <br />This function is called on load event as well. It checks parentcustomerid (customer) field and in case it has a value, it creates fetch on set parent entity record. In this example, it is account entity, because we assume account record is set as customer for contact. Afterwards, filter is created to make sure that we only fetch account record, which is set as 'Customer' on currect contact form. In the last step, email address from account is set as email address of current contact and email field is made uneditable. This callback function returns true to ensure that changes are applied.
 
+> Keep in mind that actions of each method are specified within callback functions, so they are run asynchronously.
+
 ## In this repository
     
 **Debug repository:**
