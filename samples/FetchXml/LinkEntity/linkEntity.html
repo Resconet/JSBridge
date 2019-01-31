@@ -57,7 +57,7 @@
                 }
             }, MobileCRM.bridge.alert, null);
         }
-        function fetch_M_N_ContactToCompetitor() {
+        function fetch_M_N_CompetitorToCompetitorProduct() {
             var contact = new MobileCRM.FetchXml.Entity("competitor");
             contact.addAttribute("competitorid");
             contact.addAttribute("name");
@@ -93,6 +93,6 @@
     <br />
     <h4>Run sample</h4>
     <button onclick="linkParentAccountAppointments()">Get Accounts appointments</button>
-    <button onclick="fetch_M_N_ContactToCompetitor()">Get Competitors and products</button>
+    <button onclick="fetch_M_N_CompetitorToCompetitorProduct()">Get Competitors and products</button>
 </body>
 </html>
