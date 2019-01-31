@@ -23,10 +23,10 @@ Recommended usage cases:
 Provided example demonstrates how to automatically set address to address fields of contact once form is loaded. Second method demonstrates how to automatically assign email from parent to child record, in case email field on parent is not empty.
 
 **1.	Function onLoadSetAddress:**
-<br /> This function is called via window.onload which registers handlers during load event. On load event, entity form is requested and values are added to its attributes. City, state, postal code and country fields are automaticaly entered. This callback function returns true to ensure that changes are applied.
+<br /> This function is called via window.onload which registers handlers during load event. On load event, entity form is requested and values are added to its attributes. City, state, postal code and country field values are automaticaly entered. This callback function returns true to ensure that changes are applied.
 
 **2.	Function loadParentAccount:**
-<br />This function is called on load event as well. It checks parentcustomerid (customer) field and in case it has a value, it creates fetch on set parent entity record. In this example, it is account entity, because we assume account record is set as customer for contact. Afterwards, filter is created to make sure that we only fetch account record, which is set as 'Customer' on currect contact form. In the last step, email address from account is set as email address of current contact and email field is made uneditable. This callback function returns true to ensure that changes are applied.
+<br />This function is called on load event as well. It checks parentcustomerid (customer) field and in case it has value, it creates fetch on selected parent entity record. In this example, it is account entity. Afterwards, filter is created to make sure that we only fetch account record, which is set as 'Customer' on currect contact form. In the last step, email address from account is set as email address of current contact and email field is made uneditable. This callback function returns true to ensure that changes are applied.
 
 > Keep in mind that actions of each method are specified within callback functions, so they are run asynchronously.
 
