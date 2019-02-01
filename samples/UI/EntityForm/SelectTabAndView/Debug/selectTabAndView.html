@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <script type="text/javascript" src="JSBridge.js"></script>
+    <script type="text/javascript" src="SelectTabAndView.js"></script>
+</head>
+<body>
+    <h3>Welcome to sample page for EntityForm select tab and select view methods.</h3>
+    Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
+    <br />
+    <h4>Run sample</h4>
+    <button onclick="selectProductTab();">select product tab</button>
+    <button onclick="selectViewAndMaximizeProductTab();">select product tab</button>   Works only with <strong>Flexi form (New UI)</strong>
+    <button onclick="selectTabAndMaximizeForm();">select 'webPage' iFrame</button> and maximize form
+</body>
+</html>
