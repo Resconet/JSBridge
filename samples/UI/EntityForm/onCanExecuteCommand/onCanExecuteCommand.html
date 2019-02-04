@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <script type="text/javascript" src="JSBridge.js"></script>
+</head>
+<body>
+    <h3>Welcome to sample page for EntityForm can command execute.</h3>
+    Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
+    <br />
+    <script>
+        /** Set whether command 'Won' can be executed or not*/
+        function canWonOpportunity() {
+            MobileCRM.UI.EntityForm.onCanExecuteCommand("WonOpportunity", function (entityForm) {
+                /// Enable command 'Won' only if opportunity rating code is 'Hot' and estimated value is grater than 10
+                return (entityForm.entity.properties.opportunityratingcode == 1 && entityForm.entity.properties.estimatedvalue > 100);
+            }, true, null);
+        }
+        /** Handle EntityForm onchange event to set whether 'Won' command can be executed or not. */
+        function onChange() {
+            MobileCRM.UI.EntityForm.onChange(function (entityForm) {
+                var change = entityForm.context;
+                if (change.changedItem == "opportunityratingcode" || change.changedItem == "estimatedvalue")
+                    canWonOpportunity();
+            }, true, null);
+        }
+        window.onload = function () { onChange(); canWonOpportunity(); };
+    </script>
+</body>
+</html>
