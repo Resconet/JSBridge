@@ -91,7 +91,6 @@ function executeFetch(online) {
             }
             else {
                 for (var i in result) {
-                    /// Deserialize json object
                     var entity = result[i];
                     var shipToCity = entity.properties.shipto_city;
                     var shipToAddress = entity.properties.shipto_line1;
@@ -99,6 +98,7 @@ function executeFetch(online) {
                         info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
                 }
             }
+            MobileCRM.bridge.alert(info);
         }, MobileCRM.bridge.alert, null);
     }
     else {
@@ -108,7 +108,6 @@ function executeFetch(online) {
             }
             else {
                 for (var i in result) {
-                    /// Deserialize json object
                     var entity = result[i];
                     var shipToCity = entity.properties.shipto_city;
                     var shipToAddress = entity.properties.shipto_line1;
@@ -116,6 +115,54 @@ function executeFetch(online) {
                         info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
                 }
             }
+            MobileCRM.bridge.alert(info);   
         }, MobileCRM.bridge.alert, null);
     }
+}
+
+
+function executeAsync() {
+    var fetchEntity = new MobileCRM.FetchXml.Entity("salesorder");
+    fetchEntity.addAttribute("name");
+    fetchEntity.addAttribute("shipto_city");
+    fetchEntity.addAttribute("totalamount");
+
+    var filter = new MobileCRM.FetchXml.Filter();
+    filter.type = "and";
+
+    var cond1 = new MobileCRM.FetchXml.Condition();
+    cond1.attribute = "name";
+    cond1.operator = "like";
+    cond1.value = "Bike%";
+
+    var cond2 = new MobileCRM.FetchXml.Condition();
+    cond2.attribute = "totalamount";
+    cond2.operator = "gt"
+    cond2.value = "1500%";
+
+    filter.conditions.push(cond1, cond2);
+
+    fetchEntity.filter = filter;
+
+    var fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
+
+    var info = "Info [Missing ship - to address]: \n";
+
+    fetch.executeAsync(null).then((result) => { // "null" stands for default "DynamicEntities" result format
+        if (result.length < 1) {
+            MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
+        }
+        else {
+            for (var i in result) {
+                var entity = result[i];
+                var shipToCity = entity.properties.shipto_city;
+                var shipToAddress = entity.properties.shipto_line1;
+                if (!(shipToAddress && shipToCity))
+                    info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
+            }
+        }
+        MobileCRM.bridge.alert(info); 
+    }).catch((err) => {
+        MobileCRM.bridge.alert(err);
+    });
 }
