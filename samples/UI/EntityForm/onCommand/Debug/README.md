@@ -10,9 +10,9 @@ Prepare Woodford environment according below instructions to try provided sample
 1. download Debug folder to your local machine
 2. import onCommand.html file from downloaded folder to Offline HTML section of your Woodford project
 3. go to Account entity in Woodford and open its form
-4. Tap on 'Edit' command button in the upper menu
-5. Create new command, which will be handled by script
-6. Name this command 'createTask', so its full name is 'custom_createTask'
+4. tap on 'Edit' command button in the upper menu
+5. create new command, which will be handled by script
+6. name this command 'createTask', so its full name is 'custom_createTask'
 7. tap on 'Add IFrame' command
 8. set IFrame name to onCommand_example
 9. tap on 'Browse' button and select onCommand.html file
