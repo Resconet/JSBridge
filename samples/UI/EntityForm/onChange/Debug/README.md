@@ -17,6 +17,8 @@ Prepare Woodford environment according below instructions to try provided sample
 8. navigate to your IFrame in the application
 <br />
 
+**To test it properly, please make sure you have parent record selected and visible on contact form. Also make sure your contact and parent account both has filled phone number.**
+
 > Make sure you have latest JSBridge.js file in your Offline HTML section.
 <br />[JSBridge.js file](https://github.com/Resconet/JSBridge/blob/master/src/JSBridge.js)
 
