@@ -1,70 +1,37 @@
-﻿# Project Title
+## Debug folder
 
-Create custom command and use script to handle its functionality.
+Use this folder and its files in case you want to debug the sample.
+Please follow below instructions to run sample properly.
 
-## Getting Started
+## Installation
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See installation for notes on how to deploy the project on a live system.
+Prepare Woodford environment according below instructions to try provided sample code.
 
-### Prerequisites
+1. download Debug folder to your local machine
+2. import onCommand.html file from downloaded folder to Offline HTML section of your Woodford project
+3. go to Account entity in Woodford and open its form
+4. Tap on 'Edit' command button in the upper menu
+5. Create new command, which will be handled by script
+6. Name this command 'createTask', so its full name is 'custom_createTask'
+7. tap on 'Add IFrame' command
+8. set IFrame name to onCommand_example
+9. tap on 'Browse' button and select onCommand.html file
+10. save all changes, publish your project and synchronize the application
+11. navigate to your IFrame in the application
+<br />
 
-Things you have to follow to use files properly
+> Make sure you have latest JSBridge.js file in your Offline HTML section.
+<br />[JSBridge.js file](https://github.com/Resconet/JSBridge/blob/master/src/JSBridge.js)
 
-	```
-	- Resco MobileCRM application
-	- Files included in project (JSBridge.js,...)
-	- Folder structure must be strictly respected (root folder contains .html page and required .js) files
-	- Woodford project
-	```
+## Installation for debugging
 
-### Installing
+Use this steps if you want to debug the sample and try your own code changes without need to replace the .html file in Offline HTML section every time you make a change.
 
-To run this sample code you have to set-up Woodford environment properly.
+1. **follow all the steps mentioned above**
+2. open project (.sln file) of Debug folder in Visual Studio
+3. download debbuging tools and follow installation instructions [Debugging tools](https://github.com/Resconet/JSBridge/tree/master/tools), [Resco Mobile CRM JSDev Edition](https://github.com/Resconet/JSBridge/tree/master/MobileCRM)
+4. to run project in the application, click on 'Tools' in VS and choose 'Run in MobileCRM'
+<br />
 
-	```
-	- Create new project in Woodford or use existing
-	- Download the files in this folder to your local machine.
-	- Import files from this folder to OfflineHTML section in Woodford project
-	- Go to 'Account' entity form
-	- Tap on 'Edit' command in top bar
-	- Tap 'New Command'
-	- Create name for command what will be handled in script, it means the name = 'createTask', then full command name will be 'custom_createTask'
-	- Label name will be displayed on the form command button
-	- Add iFrame to entity by tap on command 'Add IFrame'
-	- Configure IFrame window will appear
-	- Set name of IFrame to e.g. 'onCommand script'
-	- Tap on 'Browse' button, navigate to 'EntityForm_onCommand' folder & select 'index.html' file
-	```
-```
-NOTE! - don't UNCHECK 'Delay Load' box, because this event must be registered during EntityForm onload event.
-```
-
-For more details about setup the project, please follow [Guide](https://github.com/Resconet/JSBridge/blob/master/README.md) **Guide section**
-
-## Runninig test
-
-Run Resco MobileCRM application and sync with valid organization url, that refers to project where you installed this sample.
-
-	```
-	- Synchronize
-	- Navigate to 'Accounts' entities list
-	- Select existing record
-	- 'Info' tab will be displayed
-	- Tap on 'Command' button in up right corner
-	- The code will be executed and it will create new task with predefined properties, property 'scheduledstart' will be set using new Date method.
-	- Message dialog will appear with text: 'Task [name of account] created successfully..'
-	```
-
-## Versioning
-
-This sample is compatible with version 11.3 or newer.
-
-## References
-
-Here you can find useful references [Readme.md](https://github.com/Resconet/JSBridge/blob/master/README.md) we used in this sample.
-
-## Contributing
-
-## Authors
-
-* **Maros Kolibas** - **Resco.net**
+> 'Run in MobileCRM' button replaces your current Offline HTML files in the application folder (WWW folder).
+<br />To get Offline HTML files from your Woodford solution, perform Full Sync in the application or make change in Offline HTML folder, publish project and perform Incremental Sync in the application.
