@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <script type="text/javascript" src="JSBridge.js"></script>
+    <script type="text/javascript" src="onSelectedViewChanged.js"></script>
+</head>
+<body>
+    <h3>Welcome to sample page for EntityForm onSeletedView changed event handler.</h3>
+    Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
+    
+    <script>
+        /** Handle event when address tab has been displayed and if City is enabled and visible and value is not defined start edit item.*/
+        function updateAddressFieldsWhenAddressTabIsVisible() {
+            MobileCRM.UI.EntityForm.onSelectedViewChanged(function (entityForm) {
+                var context = entityForm.context;
+                if (context.selectedView == "Address") {
+                    var dv = entityForm.getDetailView("Address");
+                    var cityItem = dv.getItemByName("address1_city");
+                    if (cityItem && cityItem.isEnabled && cityItem.isVisible && cityItem.value == undefined) {
+                        dv.startEditItem(dv.getItemIndex("address1_city"));
+                    }
+                }
+            }, true, null);
+        }
+        window.onload = function () { updateAddressFieldsWhenAddressTabIsVisible(); };
+    </script>
+
+</body>
+</html>
