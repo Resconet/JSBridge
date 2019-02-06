@@ -1,8 +1,8 @@
 ## JSBridge Reference
 
 EntityForm Reference document: [UI.EntityForm](https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm)
-<br />onSave Reference document: [UI.EntityForm.onChange](https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm_onSave)
-<br />suspendSave method Reference document: [UI.EntityForm.suspendSave] (https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm_suspendSave)
+<br />onSave Reference document: [UI.EntityForm.onSave](https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm_onSave)
+<br />suspendSave method Reference document: [UI.EntityForm.suspendSave](https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm_suspendSave)
 <br />Fetch sample: [samples/FetchXML/execute](https://github.com/Resconet/JSBridge/tree/master/samples/FetchXml/Execute)
 
 ## onSave usage
