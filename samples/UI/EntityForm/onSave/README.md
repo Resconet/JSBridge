@@ -18,7 +18,7 @@ Recommended usage cases:
 
 ## Example explanation
 
-Provided example demonstrates how to check whether account record has related contact records once entity form is being saved. In the sample we check whether there is at least one related contact. If there is none related contact, save operation stops with an error.
+Provided example demonstrates how to check whether account record has related contact records once entity form is being saved. In the sample we check whether there is at least one related contact. If there is none related contact, save operation stops with a message.
 
 **1.	MobileCRM.UI.EntityForm.onSave():**
 	<br />This function registers handler for save event on form. Current entity data are stored within editedAccount variable. suspedSave method must be called within function to "tell" the application to wait for the result of another asynchronous operation before save. In this sample, it is Fetch which is executed asynchronously. Aggregated fetch is specified - count all contacts, which have current account ID set as parent record. If result of the fetch is higher than 0, form is saved. resumeSave method is called with null parameter in case of success (fetch result is > 0). Otherwise, resumeSave is called with an error string and save operation is killed.
