@@ -1,65 +1,49 @@
-﻿# Project Title
+## JSBridge Reference
 
-Create handler for save event on entity form, what will suspend save and call asynchronous fetch method to run simple count of parent records validation.
+EntityForm Reference document: [UI.EntityForm](https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm)
+<br />onSave Reference document: [UI.EntityForm.onChange](https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm_onSave)
+<br />suspendSave method Reference document: [UI.EntityForm.suspendSave] (https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm_suspendSave)
+<br />Fetch sample: [samples/FetchXML/execute](https://github.com/Resconet/JSBridge/tree/master/samples/FetchXml/Execute)
 
-## Getting Started
+## onSave usage
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See installation for notes on how to deploy the project on a live system.
+MobileCRM.UI.EntityForm.onSave(handlerFunction(){}, bind, scope)
 
-### Prerequisites
+> handlerFunction() - actions to be performed on save event
+<br /> bind - Boolean - determines whether to register or unregister handler on change event
+<br />scope - Object - scope for handler calls
 
-Things you have to follow to use files properly
+Recommended usage cases:
+- automatically perform specific action once save event occurs on form
 
+## Example explanation
 
-	- Resco MobileCRM application
-	- Files included in project (JSBridge.js,...)
-	- Folder structure must be strictly respected (root folder contains .html page and required .js) files
-	- Woodford project
+Provided example demonstrates how to check whether account record has related contact records once entity form is being saved. In the sample we check whether there is at least one related contact. If there is none related contact, save operation stops with an error.
 
+**1.	MobileCRM.UI.EntityForm.onSave():**
+	<br />This function registers handler for save event on form. Current entity data are stored within editedAccount variable. suspedSave method must be called within function to "tell" the application to wait for the result of another asynchronous operation before save. In this sample, it is Fetch which is executed asynchronously. Aggregated fetch is specified - count all contacts, which have current account ID set as parent record. If result of the fetch is higher than 0, form is saved. resumeSave method is called with null parameter in case of success (fetch result is > 0). Otherwise, resumeSave is called with an error string and save operation is killed.
 
-### Installing
+## In this repository
+    
+**Debug repository:**
+Find more information here: [Readme.md](https://github.com/Resconet/JSBridge/blob/master/samples/UI/EntityForm/onSave/Debug/README.md)
 
-To run this sample code you have to set-up Woodford environment properly.
+**onSave.html file:**
+Open this file to check sample code directly.
 
+## How to run the sample in the application?
 
-	- Create new project in Woodford or use existing
-	- Download the files in this folder to your local machine.
-	- Import files from this folder to OfflineHTML section in Woodford project
-	- Go to 'Account' entity form
-	- Add iFrame to entity by tap on command 'Add IFrame'
-	- Configure IFrame window will appear
-	- Set name of IFrame to e.g. 'onSave script'
-	- Tap on 'Browse' button, navigate to 'EntityForm_saveHandler' folder & select 'index.html' file
+[Click for instructions](https://github.com/Resconet/JSBridge/tree/master/samples)
 
-```
-NOTE! - don't UNCHECK 'Delay Load' box, because this event must be registered during EntityForm onload event.
-```
-
-## Runninig test
-
-Run Resco MobileCRM application and sync with valid organization url, that refers to project where you installed this sample.
-
-
-	- Synchronize
-	- Navigate to 'Accounts' entities list
-	- Create new record or select existing one
-	- 'Info' tab will be displayed
-	- Edit any field to make form **Dirty**, it will allow sveHandler to fire
-	- The code will call suspend save method ('entityForm.suspendSave'), and will fetch count of associated contacts.
-	- In case of count of fetched records is greater than one, **saveHandler** will resume save without error.
-	- If any error occurs, message dialog will display it and **saveHandler** will not be resumed.
-
-											 
 ## Versioning
 
 This sample is compatible with version 11.3 or newer.
 
 ## References
 
-Here you can find useful references [Readme.md](https://github.com/Resconet/JSBridge/blob/master/README.md) we used in this sample.
-
-## Contributing
+Here you can find useful references we used in this sample: [References Readme.md](https://github.com/Resconet/JSBridge/blob/master/README.md) 
 
 ## Authors
 
 * **Maros Kolibas** - **Resco.net**
+* **Lucia Pavlikova** - **Resco.net**
