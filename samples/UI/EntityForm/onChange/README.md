@@ -31,7 +31,7 @@ Provided example demonstrates how to automatically change phone number of contac
 ## In this repository
     
 **Debug repository:**
-Find more information here: [Readme.md]()
+Find more information here: [Readme.md](https://github.com/Resconet/JSBridge/tree/master/samples/UI/EntityForm/onChange/Debug)
 
 **onChange.html file:**
 Open this file to check sample code directly.
