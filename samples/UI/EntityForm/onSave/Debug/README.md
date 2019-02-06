@@ -1,65 +1,45 @@
-﻿# Project Title
+## Debug folder
 
-Create handler for save event on entity form, what will suspend save and call asynchronous fetch method to run simple count of parent records validation.
+Use this folder and its files in case you want to debug the sample.
+Please follow below instructions to run sample properly.
 
-## Getting Started
+## Installation
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See installation for notes on how to deploy the project on a live system.
+Prepare Woodford environment according below instructions to try provided sample code.
 
-### Prerequisites
+1. download Debug folder to your local machine
+2. import onSave.html file from downloaded folder to Offline HTML section of your Woodford project
+3. go to Account entity in Woodford and open its form
+4. tap on 'Add IFrame' command
+5. set IFrame name to onSave_example
+6. tap on 'Browse' button and select onChange.html file
+7. configure IFrame window be visible on form
+8. save all changes, publish your project and synchronize the application
+9. navigate to your IFrame in the application
 
-Things you have to follow to use files properly
+> Don't UNCHECK 'Delay Load' box, because this code must be registered during EntityForm onload event.
+> <br />Make sure you have latest JSBridge.js file in your Offline HTML section.
+<br />[JSBridge.js file](https://github.com/Resconet/JSBridge/blob/master/src/JSBridge.js)
 
+**To test it properly, please make sure you have parent record selected and visible on contact form.**
 
-	- Resco MobileCRM application
-	- Files included in project (JSBridge.js,...)
-	- Folder structure must be strictly respected (root folder contains .html page and required .js) files
-	- Woodford project
+## Steps to perform in the app
 
+1. navigate to 'Accounts' in the application
+2. create new record or select existing one
+3. edit any field on form to ensure that form is marked as 'Dirty', which allows saveHandler to be registered
+4. make sure account has at least one related contact
+5. save changes on form
 
-### Installing
+## Installation for debugging
 
-To run this sample code you have to set-up Woodford environment properly.
+Use this steps if you want to debug the sample and try your own code changes without need to replace the .html file in Offline HTML section every time you make a change.
 
+1. **follow all the steps mentioned above**
+2. open project (.sln file) of Debug folder in Visual Studio
+3. download debbuging tools and follow installation instructions [Debugging tools](https://github.com/Resconet/JSBridge/tree/master/tools), [Resco Mobile CRM JSDev Edition](https://github.com/Resconet/JSBridge/tree/master/MobileCRM)
+4. to run project in the application, click on 'Tools' in VS and choose 'Run in MobileCRM'
+<br />
 
-	- Create new project in Woodford or use existing
-	- Download the files in this folder to your local machine.
-	- Import files from this folder to OfflineHTML section in Woodford project
-	- Go to 'Account' entity form
-	- Add iFrame to entity by tap on command 'Add IFrame'
-	- Configure IFrame window will appear
-	- Set name of IFrame to e.g. 'onSave script'
-	- Tap on 'Browse' button, navigate to 'EntityForm_saveHandler' folder & select 'index.html' file
-
-```
-NOTE! - don't UNCHECK 'Delay Load' box, because this event must be registered during EntityForm onload event.
-```
-
-## Runninig test
-
-Run Resco MobileCRM application and sync with valid organization url, that refers to project where you installed this sample.
-
-
-	- Synchronize
-	- Navigate to 'Accounts' entities list
-	- Create new record or select existing one
-	- 'Info' tab will be displayed
-	- Edit any field to make form **Dirty**, it will allow sveHandler to fire
-	- The code will call suspend save method ('entityForm.suspendSave'), and will fetch count of associated contacts.
-	- In case of count of fetched records is greater than one, **saveHandler** will resume save without error.
-	- If any error occurs, message dialog will display it and **saveHandler** will not be resumed.
-
-											 
-## Versioning
-
-This sample is compatible with version 11.3 or newer.
-
-## References
-
-Here you can find useful references [Readme.md](https://github.com/Resconet/JSBridge/blob/master/README.md) we used in this sample.
-
-## Contributing
-
-## Authors
-
-* **Maros Kolibas** - **Resco.net**
+> 'Run in MobileCRM' button replaces your current Offline HTML files in the application folder (WWW folder).
+<br />To get Offline HTML files from your Woodford solution, perform Full Sync in the application or make change in Offline HTML folder, publish project and perform Incremental Sync in the application.
