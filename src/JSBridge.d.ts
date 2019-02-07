@@ -311,11 +311,21 @@ declare module MobileCRM {
 	}
 
 	class Reference {
+		/**
+		 * Constructs a Reference object.
+		 * @param entityName The logical name of the entity, e.g. "account".
+		 * @param id GUID of the existing entity or null for new one.
+		 * @param primaryName The human readable name of the entity, e.g "Alexandro".
+		 */
 		constructor(entityName: string, id?: string, primaryName?: string);
+		/** The logical name of the entity, e.g. "account".*/
 		entityName: string;
+		/** GUID of the existing entity or null for new one.*/
 		id: string;
+		/** Indicates whether the entity is newly created.*/
 		isNew: boolean;
-		primaryName: any;
+		/** The human readable name of the entity, e.g "Alexandro".*/
+		primaryName: string;
 	}
 
 	class Relationship {
@@ -365,8 +375,12 @@ declare module MobileCRM {
 	}
 
 	class DynamicEntity extends Reference {
+		/** An object with entity properties, e.g. {firstname:"Alexandro", lastname:"Puccini"}.*/
 		properties: any;
+		/** Indicates whether the entity was created by online request or from local data.*/
 		isOnline: boolean;
+		/** Indicates whether to force save the provided properties even if not modified. Default behavior is to save only properties that were modified.*/
+		forceDirty: boolean;
 
 		constructor(entityName: string, id?: string, primaryName?: string, properties?: object, isOnline?: boolean);
 

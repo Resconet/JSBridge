@@ -308,6 +308,7 @@
 	            /// <field name="id" type="String">GUID of the existing entity or null for new one.</field>
 	            /// <field name="isNew" type="Boolean">Indicates whether the entity is newly created.</field>
 	            /// <field name="isOnline" type="Boolean">Indicates whether the entity was created by online request or from local data.</field>
+	            /// <field name="forceDirty" type="Boolean">Indicates whether to force save the provided properties even if not modified. Default behavior is to save only properties that were modified.</field>
 	            /// <field name="primaryName" type="String">The human readable name of the entity, e.g. "Alexandro".</field>
 	            /// <field name="properties" type="Object">An object with entity properties, e.g. {firstname:"Alexandro", lastname:"Puccini"}.</field>
 	            MobileCRM.DynamicEntity.superproto.constructor.apply(this, arguments);
@@ -1948,7 +1949,9 @@
 	            props = props._privVals;
 	        var request = { entity: this.entityName, id: this.id, properties: props, isNew: this.isNew, isOnline: this.isOnline };
 	        if (forceMode === true || forceMode === false)
-	            request.isOnlineForce = forceMode;
+				request.isOnlineForce = forceMode;
+			if (this.forceDirty)
+				request.forceDirty = this.forceDirty;
 	        var cmdParams = JSON.stringify(request);
 	        var self = this;
 	        window.MobileCRM.bridge.command('entitysave', cmdParams,
