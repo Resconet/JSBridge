@@ -23,7 +23,7 @@ Recommended usage cases:
 Provided example demonstrates how to automatically set focus on *City* field on form when user manually switches to *Address* tab on Form. *City* field has to be empty to gain focus on this event.
 
 **1.	Function updateAddressFieldsWhenAddressTabIsVisible:**
-	<br />This function registers handler for selected view change event. If user switched for example from *General* to *Address* tab, we store Address detail item object in *dv* variable. As we want to set focus on *City* field, we have to use getItemByName method to get 'address1_city' detail item object and store it in cityItem variable. If this object exists, is enabled in project, visible on form and has no value, focus is set on it by .startEditItem method. 
+	<br />This function registers handler for selected view change event. If user switches (for example) from *General* to *Address* tab, we store Address detail item object in *dv* variable. As we want to set focus on *City* field, we have to use getItemByName method to get 'address1_city' detail item object and store it in cityItem variable. If this object exists, is enabled in project, visible on form and has no value, focus is set on it by .startEditItem method. 
 
 > By window.onload = function(){} onSelectedViewChanged handler is recognized on load event.
 
