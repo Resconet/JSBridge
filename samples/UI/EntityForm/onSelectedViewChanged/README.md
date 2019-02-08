@@ -32,9 +32,9 @@ Provided example demonstrates how to automatically set focus on *City* field on 
 ## In this repository
     
 **Debug repository:**
-Find more information here: [Readme.md](https://github.com/Resconet/JSBridge/tree/master/samples/UI/EntityForm/onChange/Debug)
+Find more information here: [Readme.md](https://github.com/Resconet/JSBridge/blob/master/samples/UI/EntityForm/onSelectedViewChanged/Debug/README.md)
 
-**onChange.html file:**
+**onSelectedViewChanged.html file:**
 Open this file to check sample code directly.
 
 ## How to run the sample in the application?
