@@ -27,7 +27,7 @@ Provided example demonstrates how to automatically set focus on *City* field on 
 
 > By window.onload = function(){} onSelectedViewChanged handler is recognized on load event.
 
-**If NewForm US is enabled in the application, this sample isn't applicable. Tab has to be switched manually, which is not possible if tabs are displayed within one grid.**
+**If 'NewForm UI' is enabled in the application setup, this sample isn't applicable. Tab has to be switched manually, which is not possible if tabs are displayed within one grid.**
 
 ## In this repository
     
