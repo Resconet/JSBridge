@@ -10,6 +10,7 @@ function onSaveHandler() {
         var attribute = new MobileCRM.FetchXml.Attribute("contactid");
         attribute.aggregate = "count";
         attribute.alias = "Contact_cnt";
+        fetchEntity.attributes.push(attribute);
         fetchEntity.filter = new MobileCRM.FetchXml.Filter();
         fetchEntity.filter.where("parentcustomerid", "eq", editedAccount.id);
         var fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
