@@ -851,7 +851,7 @@ declare module MobileCRM.FetchXml {
 		 * @param op The condition operator. "eq", "ne", "lt", "le", "gt", "ge", "like"
 		 * @param value The values to compare to.
 		 */
-		where(attribute: string, op: string, value: any): MobileCRM.FetchXml.Condition;
+		where(attribute: string, op: string, value?: any): MobileCRM.FetchXml.Condition;
 		/**
 		 * Adds a attribute inclusion condition to the filter.
 		 * @param attribute The attribute name (CRM logical field name).
@@ -1101,14 +1101,17 @@ declare module MobileCRM.UI {
 
 	interface _DetailItemLink extends _DetailItem {
 		isMultiline: boolean;
-		value: MobileCRM.Reference;
+		value: MobileCRM.Reference | string;
 	}
 
-	class _DetailView {
+    class _DetailView {
+        items: Array<DetailViewItems.Item>;
 		getItemByName(name: string): MobileCRM.UI._DetailItem;
-		getItemIndex(name: string): MobileCRM.UI._DetailItem;
+        getItemIndex(name: string): number;
 		insertItem(item: MobileCRM.UI._DetailItem, index: number);
-		insertItems(items: Array<MobileCRM.UI._DetailItem>, index: number);
+        insertItems(items: Array<MobileCRM.UI._DetailItem>, index: number);
+        removeItem(index: number);
+        removeItems(indexes: Array<number>);
 		/**
 		 * @since 8.0
 		 * Installs the handler which has to be called when user clicks on the link item.
@@ -1198,7 +1201,15 @@ declare module MobileCRM.UI {
 		* @param errorCallback The errorCallback which is called asynchronously in case of error.
 		* @param scope The scope for callback.
 		*/
-		selectTab(tabName: string, errorCallback?: (err: string) => void, scope?: any);
+        selectTab(tabName: string, errorCallback?: (err: string) => void, scope?: any);
+        /**
+        * @since 8.0 
+        * Selects the form tab by its name using static method.
+        * @param tabName The name of the tab.
+        * @param errorCallback The errorCallback which is called asynchronously in case of error.
+        * @param scope The scope for callback.
+        */
+        public static selectTabEx(tabName: string, errorCallback?: (err: string) => void, scope?: any);
 		/**
 		* The name of the associated entity list tab.
 		* @param tabName The name of the associated entity list tab.
@@ -1228,8 +1239,14 @@ declare module MobileCRM.UI {
 		 * A request object with single function 'resumePostSave'; which has to be called after all necessary operations completed.
 		 */
 		suspendPostSave(): IFormPostSaveHandler;
+        /**
+		* @since 9.1
+		* Reactivates inactive entity and reloads the form.
+		* @param statuscode Activation status code.
+		*/
+        reactivateEntity(statuscode: number);
 
-		/**
+        /**
 		* Requests the managed EntityForm object.
 		* @description Method initiates an asynchronous request which either ends with calling the errorCallback or with calling the callback with Javascript version of EntityForm object. See { MobileCRM.Bridge.requestObject } for further details.
 		* @param callback The callback function that is called asynchronously with serialized EntityForm object as argument. Callback should return true to apply changed properties.
@@ -1346,12 +1363,6 @@ declare module MobileCRM.UI {
 		*/
 		public static openSalesEntityDetail(detail: MobileCRM.DynamicEntity, errorCallback: (err?: string) => void);
 		/**
-		* @since 9.1
-		* Reactivates inactive entity and reloads the form.
-		* @param statuscode Activation status code.
-		*/
-		public static reactivateEntity(statuscode: number);
-		/**
 		* @ since 9.3
 		* Binds or unbinds the handler for onSelectedViewChanged event on EntityForm.
 		* @description Bound handler is called with the EntityForm object as an argument. The EntityForm context object contains 'selectedView' property with the name of currently selected view.
@@ -1359,7 +1370,7 @@ declare module MobileCRM.UI {
 		* @param bind Determines whether to bind or unbind the handler.
 		* @param scope The scope for callbacks.
 		*/
-		public onSelectedViewChanged: (handler: (entityForm: EntityForm) => void, bind: boolean, scope?: any) => void;
+		public static onSelectedViewChanged(handler: (entityForm: EntityForm) => void, bind: boolean, scope?: any);
 	}
 	interface IFormSaveHandler {
 		resumeSave(error?: string);
@@ -1371,7 +1382,8 @@ declare module MobileCRM.UI {
 		errorMessage: string;
 	}
 	interface IFormChangeContext {
-		changedItem: string;
+        changedItem: string;
+        selectedView: string;
 	}
 
 	/**
@@ -1511,7 +1523,7 @@ declare module MobileCRM.UI {
 		 */
 		public static clickCell(rowIndex: number, cellIndex: number, errorCallback?: (errorCallback: string) => void, scope?: any);
 		/*Initiates asynchronous entity list reload.*/
-		public reload: () => void;
+		public static reload();
 		/**
 		 * @since 10.0
 		 * Suspends current 'onSave'; validation and allows performing another asynchronous tasks to determine the validation result.
@@ -1878,12 +1890,12 @@ declare module MobileCRM.UI {
 		syncResultText: string;
 		syncProgress: any;
 
-		static requestObject(callback: (entityForm: HomeForm) => void, errorCallback?: (err: string) => void, scope?: any);
+        static requestObject(callback: (homeForm: HomeForm) => void, errorCallback?: (err: string) => void, scope?: any);
 		static openHomeItemAsync(name: string, errorCallback?: (err: string) => void, scope?: any);
 		static closeHomeItemAsync(name: string, errorCallback?: (err: string) => void, scope?: any);
 		static closeForms(callback: () => void, errorCallback?: (err: string) => void, scope?: any);
 		static hideUIReplacement();
-		static onSyncFinished(handler: (entityForm: HomeForm) => void, scope?: any);
+		static onSyncFinished(handler: (homeForm: HomeForm) => void, scope?: any);
 
 		static updateHomeItemAsync(items: string[], title?: string, subTitle?: string, badge?: string, errorCallback?: (err: string) => void, scope?: any);
 		static updateHomeItems(items: IHomeItem[]);
@@ -2254,7 +2266,7 @@ declare module MobileCRM.UI.DetailViewItems {
 
 	class LinkItem extends Item {
 		isMultiline: boolean;
-		value: MobileCRM.Reference;
+        value: MobileCRM.Reference | string;
 	}
 
 	class LookupSetup {
