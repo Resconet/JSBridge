@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Add product to sales entity</title>
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <script type="text/javascript" src="JSBridge.js"></script>
+</head>
+<body>
+    <h3>Welcome to sample page, what shows how to add product to sales entity.</h3>
+    Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a><br />
+    <button onclick="addProduct()">Add product</button>
+    <button onclick="addProductWithQuantity(10)">Add 10 products</button>
+    <script>
+        function addProduct() {
+            // first fetch any existing product
+            var productFetchEntity = new MobileCRM.FetchXml.Entity("product");
+            productFetchEntity.addAttributes();
+            // order fetch results in descending price way
+            productFetchEntity.orderBy("price", true);
+            var fetch = new MobileCRM.FetchXml.Fetch(productFetchEntity);
+            fetch.execute("DynamicEntities", function (res) {
+                if (res.length < 1)
+                    MobileCRM.bridge.alert("Not any product was found.");
+                else {
+                    var product = res[0];
+                    // Add product to collection
+                    // we can use Dynamic entity as parameter, since it extends the MobileCRM.Reference object. 
+                    MobileCRM.UI.EntityForm.DetailCollection.add(product, function (detail) {
+                        // set discount to 10.
+                        detail.properties["manualdiscountamount"] = 10.0;
+                        detail.update(function (err) {
+                            if (err)
+                                MobileCRM.bridge.alert("Failed to update the product.\n\nErr: " + err);
+                        });
+                    }, function (err) { MobileCRM.bridge.alert("Failed to add product to sales detail collection.\n\nErr: " + err); }, null);
+                }
+            }, function (err) { MobileCRM.bridge.alert("Failed to fetch products.\n\nErr: " + err); }, null);
+        }
+        /**
+         * Fetch products and use first one to add it into Order product details with desired quantity.
+         * @param quantity quantity for products.
+         */
+        function addProductWithQuantity(quantity) {
+            // first fetch any existing product
+            var productFetchEntity = new MobileCRM.FetchXml.Entity("product");
+            productFetchEntity.addAttributes();
+            // order fetch results in descending price way
+            productFetchEntity.orderBy("price", true);
+            var fetch = new MobileCRM.FetchXml.Fetch(productFetchEntity);
+            fetch.execute("DynamicEntities", function (res) {
+                if (res.length < 1)
+                    MobileCRM.bridge.alert("Not any product was found.");
+                else {
+                    var product = res[0];
+                    // Add product to collection
+                    // we can use Dynamic entity as parameter, since it extends the MobileCRM.Reference object. 
+                    MobileCRM.UI.EntityForm.DetailCollection.addProductWithQuantity(product, quantity, function (detail) {
+                        // order detail will be updated automatically.
+                    }, function (err) { MobileCRM.bridge.alert("Failed to add product to sales detail collection.\n\nErr: " + err); }, null);
+                }
+            }, function (err) { MobileCRM.bridge.alert("Failed to fetch products.\n\nErr: " + err); }, null);
+        }
+    </script>
+</body>
+</html>
