@@ -29,7 +29,7 @@
             fetchEntity.filter.where("parentcustomerid", "eq", editedAccount.id);
             var fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
             fetch.aggregate = true;
-            fetch.execute("DynamicEntities", function (res) {
+            fetch.execute(null, function (res) { // use null for default 'Array' output type
                 if (res[0] > 0)
                     saveHandler.resumeSave();
                 else

@@ -20,7 +20,7 @@ function onSaveHandler() {
 
         let fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
         fetch.aggregate = true;
-        fetch.execute("DynamicEntities", (res) => {
+        fetch.execute(null, (res) => { // use null for default 'Array' output type
             if (res[0] > 0)
                 saveHandler.resumeSave();
             else
