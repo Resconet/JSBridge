@@ -42,6 +42,8 @@ Open this file to check sample code directly.
 
 [Click for instructions](https://github.com/Resconet/JSBridge/tree/master/samples)
 
+>Custom command must be added to entity form to run this example.
+
 ## Versioning
 
 This sample is compatible with version 11.3 or newer.
