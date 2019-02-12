@@ -20,12 +20,20 @@ Recommended usage cases:
 Provided example demonstrates how to automatically create new task record from account form by using a form button. Once user hits "Create Task" (custom_createTask) button, new task record is created and its fields are filled with predefined values from code - without need to open task form.
 
 **1.	MobileCRM.UI.EntityForm.onCommand(...)**
-<br /> onCommand method registers action handler for 'custom_createTask' command. Once user clicks on this button from account entity form, handler will be registered and following actions will be done:
-<br />Firstly, it checkes, whether the record which is currently open (account record) is new or not. If this record is already existing, new task record is created using 'MobileCRM.DynamicEntity.createNew("task");'. Following steps are setting values to task attributes. Lastly, task record is being saved. User is informed about result of creating new task record via alert. 
+
+onCommand method registers action handler for 'custom_createTask' command. Once user clicks on this button from account entity form, handler will be called and following actions will be done:
+
+It implements the following logic:
+1. checks, whether the form's record already exists
+2. if it exists, new task dynamic entity is created
+3. task atttributes are set
+4. dynamic entity is saved
+5. user is notified via alert that new record was created
 
 ## In this repository
     
 **Debug repository:**
+Includes step by step instructions on how test and debug the sample.
 Find more information here: [Readme.md](https://github.com/Resconet/JSBridge/blob/master/samples/UI/EntityForm/onCommand/Debug/README.md)
 
 **onCommand.html file:**
