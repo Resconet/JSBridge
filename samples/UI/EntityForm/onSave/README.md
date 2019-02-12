@@ -14,7 +14,8 @@ MobileCRM.UI.EntityForm.onSave(handlerFunction(){}, bind, scope)
 <br />scope - Object - scope for handler calls
 
 Recommended usage cases:
-- automatically perform specific action once save event occurs on form
+- executed just before the form’s entity is saved 
+- re-calculate entity attributes, validate the entity attributes and optionally abort the save with an error
 
 ## Example explanation
 
@@ -26,6 +27,7 @@ Provided example demonstrates how to check whether account record has related co
 ## In this repository
     
 **Debug repository:**
+Includes step by step instructions on how test and debug the sample.
 Find more information here: [Readme.md](https://github.com/Resconet/JSBridge/blob/master/samples/UI/EntityForm/onSave/Debug/README.md)
 
 **onSave.html file:**
