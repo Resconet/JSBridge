@@ -23,8 +23,7 @@ Provided example demonstrates how to automatically create new task record from a
 
 onCommand method registers action handler for 'custom_createTask' command. Once user clicks on this button from account entity form, handler will be called and following actions will be done:
 
-It implements the following logic:
-1. checks, whether the form's record already exists
+1. it checks, whether the form's record already exists
 2. if it exists, new task dynamic entity is created
 3. task atttributes are set
 4. dynamic entity is saved
