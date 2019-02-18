@@ -1,7 +1,7 @@
 ﻿/// <reference path="JSBridge.d.ts"/>
 
 /**
- * Get most expansive product and delete it from sales detail collection
+ * Get most expensive product and delete it from sales detail collection
  * @param deleteById If <c>true</c> deleteById method will be used otherwise we use deleteByIndex method.
  */
 function getProductAndDelete(deleteById: boolean) {
