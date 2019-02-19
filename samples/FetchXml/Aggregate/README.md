@@ -31,7 +31,7 @@ On button click, following logic is executed:
     
 **Debug repository:**
 Includes step by step instructions on how test and debug the sample.
-Find more information here: [Readme.md](https://github.com/Resconet/JSBridge/blob/master/samples/FetchXml/Aggregate/Debug/README.md)
+Find more information here: [Aggregate Debug](https://github.com/Resconet/JSBridge/tree/master/samples/FetchXml/Aggregate/Debug)
 
 **aggregation.html file:**
 Open this file to check sample code directly.
