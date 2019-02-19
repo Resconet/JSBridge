@@ -8,7 +8,7 @@ Please follow below instructions to run sample properly.
 Prepare Woodford environment according below instructions to try provided sample code.
 
 1. download Debug folder to your local machine
-2. import aggrregation.html file from downloaded folder to Offline HTML section of your Woodford project
+2. import aggregation.html file from downloaded folder to Offline HTML section of your Woodford project
 3. go to Home form in Woodford
 4. tap on 'Add IFrame' command
 5. set IFrame name to Aggregate_example
