@@ -1332,7 +1332,7 @@ declare module MobileCRM.UI {
 		* @param enable Determines whether to enable or disable the command.
 		* @param iParam @since 9.1 Optional parameter defining the additional command parameter (like status code value for 'ChangeStatus'; command).
 		*/
-		public static enableCommand(command: string, enable: boolean, iParam: number);
+		public static enableCommand(command: string, enable: boolean, iParam?: number);
 		/**
 		* Shows a please wait message, disabling the form except for the close command.
 		* @param caption Wait message.
