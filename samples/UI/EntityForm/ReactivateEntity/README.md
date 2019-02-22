@@ -25,7 +25,7 @@ Provided example demonstrates how to reactivate inactive record via button click
 **Debug repository:**
 Find more information here: [reactivateEntity Debug](https://github.com/Resconet/JSBridge/tree/master/samples/UI/EntityForm/ReactivateEntity/Debug)
 
-**reactivateEntity.html file:**
+**reactivateInactiveEntity.html file:**
 Open this file to check sample code directly.
 
 ## How to run the sample in the application?
