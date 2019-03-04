@@ -25,7 +25,7 @@ Provided example demonstrates how to execute fetch using FetchXml.Entity and Fet
 2. The goal is to show all the Competitors with their linked Competitors Products.
 
 **1.	Function linkParentAccountAppointments:**
-	<br />Fetch query is executed for Account entity records. These records are filtered to only keep accounts starting with "A". Link for Appointment entity is created - *appointmentLink*. Properties are set and we want the result records to be ordered by scheduled start date. Configured link is added to entity fetch. Result of the fetch is shown in alert. 
+	<br />Fetch query is executed for Account entity records. These records are filtered to only keep accounts starting with 'A'. Link for Appointment entity is created - *appointmentLink*. Properties are set and we want the result records to be ordered by scheduled start date. Configured link is added to entity fetch. Result of the fetch is shown in alert. 
 
 **2.	Function fetch_M_N_CompetitorToCompetitorProduct:**
 	<br />Fetch query is executed for Competitor entity records. Link for Competitor Product entity is directly added to existing fetch via **addLink** method. Result of the fetch is shown in alert. 
