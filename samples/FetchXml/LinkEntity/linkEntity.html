@@ -58,14 +58,14 @@
             }, MobileCRM.bridge.alert, null);
         }
         function fetch_M_N_CompetitorToCompetitorProduct() {
-            var contact = new MobileCRM.FetchXml.Entity("competitor");
-            contact.addAttribute("competitorid");
-            contact.addAttribute("name");
+            var competitor = new MobileCRM.FetchXml.Entity("competitor");
+            competitor.addAttribute("competitorid");
+            competitor.addAttribute("name");
             //contact.addAttributes(); - use this to add all attributes without explicitly specifying them
-            var linkEntity = contact.addLink("competitorproduct", "competitorid", "competitorid", "outer");
+            var linkEntity = competitor.addLink("competitorproduct", "competitorid", "competitorid", "outer");
             linkEntity.addAttribute("productid");
             // Note: this example will fail if compentitorproduct relationship is not enabled in Mobile Project in Woodford
-            var fetch = new MobileCRM.FetchXml.Fetch(contact, 1);
+            var fetch = new MobileCRM.FetchXml.Fetch(competitor, 1);
             fetch.execute("DynamicEntities", function (res) {
                 if (res.length < 1) {
                     MobileCRM.bridge.alert("Not any Competitor was found.");
