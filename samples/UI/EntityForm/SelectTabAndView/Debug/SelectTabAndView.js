@@ -2,7 +2,7 @@
 /** Select Product tab on sales order entity form using static method */
 function selectProductTab() {
     var tabName = "product.salesorderid.salesorder";
-    MobileCRM.UI.EntityForm.selectTabEx(tabName, function (err) { MobileCRM.bridge.alert("Unable to select Tab 'products'.\n\nErr: " + err); }, null);
+    MobileCRM.UI.EntityForm.selectTabEx(tabName, null, null);
 }
 /** Select product tab on sales order entity form and maximize view
  * @requires flexi form to be enabled (new UI).
@@ -10,10 +10,10 @@ function selectProductTab() {
 function selectViewAndMaximizeProductTab() {
     MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
         var tabName = "product.salesorderid.salesorder";
-        entityForm.selectView(tabName, "Default");
-        MobileCRM.UI.EntityForm.isViewMaximized("Default", function (isMaximized) {
+        entityForm.selectView(tabName);
+        MobileCRM.UI.EntityForm.isViewMaximized(tabName, function (isMaximized) {
             if (!isMaximized)
-                MobileCRM.UI.EntityForm.maximizeView("Default", !isMaximized);
+                MobileCRM.UI.EntityForm.maximizeView(tabName, !isMaximized);
         }, MobileCRM.bridge.alert, null);
     }, function (err) { MobileCRM.bridge.alert("Error occurred while requesting entityForm object.\n\nErr: " + err); }, null);
 }
