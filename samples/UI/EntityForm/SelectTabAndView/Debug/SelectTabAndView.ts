@@ -4,7 +4,7 @@
 function selectProductTab() {
     let tabName = "product.salesorderid.salesorder";
 
-    MobileCRM.UI.EntityForm.selectTabEx(tabName, (err) => { MobileCRM.bridge.alert("Unable to select Tab 'products'.\n\nErr: " + err); }, null);
+    MobileCRM.UI.EntityForm.selectTabEx(tabName, null, null);
 }
 
 /** Select product tab on sales order entity form and maximize view 
@@ -13,10 +13,10 @@ function selectProductTab() {
 function selectViewAndMaximizeProductTab() {
     MobileCRM.UI.EntityForm.requestObject((entityForm) => {
         let tabName = "product.salesorderid.salesorder";
-        entityForm.selectView(tabName, "Default");
-        MobileCRM.UI.EntityForm.isViewMaximized("Default", (isMaximized) => {
+        entityForm.selectView(tabName);
+        MobileCRM.UI.EntityForm.isViewMaximized(tabName, (isMaximized) => {
             if (!isMaximized)
-                MobileCRM.UI.EntityForm.maximizeView("Default", !isMaximized);
+                MobileCRM.UI.EntityForm.maximizeView(tabName, !isMaximized);
         }, MobileCRM.bridge.alert, null);
     }, (err) => { MobileCRM.bridge.alert("Error occurred while requesting entityForm object.\n\nErr: " + err); }, null);
 }
