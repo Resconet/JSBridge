@@ -8,7 +8,7 @@ Please follow below instructions to run sample properly.
 Prepare Woodford environment according below instructions to try provided sample code.
 
 1. download Debug folder to your local machine
-2. import onCommand.html file from downloaded folder to Offline HTML section of your Woodford project
+2. import onCommand.html file to Offline HTML section of your Woodford project <br />[onCommand.html file](https://github.com/Resconet/JSBridge/blob/master/samples/UI/EntityForm/onCommand/onCommand.html)
 3. go to Account entity in Woodford and open its form
 4. tap on 'Edit' command button in the upper menu
 5. create new command, which will be handled by script
