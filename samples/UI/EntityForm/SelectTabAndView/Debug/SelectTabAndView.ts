@@ -13,10 +13,10 @@ function selectProductTab() {
 function selectViewAndMaximizeProductTab() {
     MobileCRM.UI.EntityForm.requestObject((entityForm) => {
         let tabName = "product.salesorderid.salesorder";
-        entityForm.selectView(tabName);
-        MobileCRM.UI.EntityForm.isViewMaximized(tabName, (isMaximized) => {
+        entityForm.selectView(tabName, "Default");
+        MobileCRM.UI.EntityForm.isViewMaximized("Default", (isMaximized) => {
             if (!isMaximized)
-                MobileCRM.UI.EntityForm.maximizeView(tabName, !isMaximized);
+                MobileCRM.UI.EntityForm.maximizeView("Default", !isMaximized);
         }, MobileCRM.bridge.alert, null);
     }, (err) => { MobileCRM.bridge.alert("Error occurred while requesting entityForm object.\n\nErr: " + err); }, null);
 }
