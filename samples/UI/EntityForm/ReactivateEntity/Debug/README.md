@@ -8,7 +8,7 @@ Please follow below instructions to run sample properly.
 Prepare Woodford environment according below instructions to try provided sample code.
 
 1. download Debug folder to your local machine
-2. import reactivateInactiveEntity.html file from downloaded folder to Offline HTML section of your Woodford project
+2. import reactivateInactiveEntity.html file to Offline HTML section of your Woodford project <br />[reactivateInactiveEntity.html file](https://github.com/Resconet/JSBridge/blob/master/samples/UI/EntityForm/ReactivateEntity/reactivateInactiveEntity.html)
 3. go to contact entity form in Woodford (you can use any other entity with statuses)
 4. tap on 'Add IFrame' command
 5. set IFrame name to reactivateEntity_example
