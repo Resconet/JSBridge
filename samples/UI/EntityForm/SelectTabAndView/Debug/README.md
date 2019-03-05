@@ -8,7 +8,7 @@ Please follow below instructions to run sample properly.
 Prepare Woodford environment according below instructions to try provided sample code.
 
 1. download Debug folder to your local machine
-2. import SelectTabAndView.html file from downloaded folder to Offline HTML section of your Woodford project
+2. import SelectTabAndView.html file to Offline HTML section of your Woodford project <br />[selectTabAndView.html file](https://github.com/Resconet/JSBridge/blob/master/samples/UI/EntityForm/SelectTabAndView/selectTabAndView.html)
 3. go to Order entity in Woodford and open its form
 4. tap on 'Add IFrame' command
 5. set IFrame name to *Web page*
