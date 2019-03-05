@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -16,7 +16,7 @@
         /** Select Product tab on sales order entity form using static method */
         function selectProductTab() {
             var tabName = "product.salesorderid.salesorder";
-            MobileCRM.UI.EntityForm.selectTabEx(tabName, function (err) { MobileCRM.bridge.alert("Unable to select Tab 'products'.\n\nErr: " + err); }, null);
+            MobileCRM.UI.EntityForm.selectTabEx(tabName, null, null);
         }
         /** Select product tab on sales order entity form and maximize view
          * @requires flexi form to be enabled (new UI).
@@ -24,10 +24,10 @@
         function selectViewAndMaximizeProductTab() {
             MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
                 var tabName = "product.salesorderid.salesorder";
-                entityForm.selectView(tabName, "Default");
-                MobileCRM.UI.EntityForm.isViewMaximized("Default", function (isMaximized) {
+                entityForm.selectView(tabName);
+                MobileCRM.UI.EntityForm.isViewMaximized(tabName, function (isMaximized) {
                     if (!isMaximized)
-                        MobileCRM.UI.EntityForm.maximizeView("Default", !isMaximized);
+                        MobileCRM.UI.EntityForm.maximizeView(tabName, !isMaximized);
                 }, MobileCRM.bridge.alert, null);
             }, function (err) { MobileCRM.bridge.alert("Error occurred while requesting entityForm object.\n\nErr: " + err); }, null);
         }
@@ -48,8 +48,10 @@
     Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
     <br />
     <h4>Run sample</h4>
-    <button onclick="selectProductTab();">select product tab</button>
-    <button onclick="selectViewAndMaximizeProductTab();">select product tab</button>   Works only with <strong>Flexi form (New UI)</strong>
+    <button onclick="selectProductTab();">select product tab</button> Use with <strong>New Form UI disabled.</strong>
+	<br />
+    <button onclick="selectViewAndMaximizeProductTab();">select product tab</button>   Works only with <strong>Flexi form (New UI).</strong>
+	<br />
     <button onclick="selectTabAndMaximizeForm();">select 'webPage' iFrame</button> and maximize form
 </body>
 </html>
