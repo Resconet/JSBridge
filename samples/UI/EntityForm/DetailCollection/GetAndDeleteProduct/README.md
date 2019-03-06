@@ -5,7 +5,7 @@ Detail Collection object Reference document: [UI.EntityForm.DetailCollection](ht
 <br />deleteById method Reference document: [UI.EntityForm.DetailCollection.deleteById](https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm_DetailCollection_deleteById)
 <br />deleteByIndex method Reference document: [UI.EntityForm.DetailCollection.deleteByIndex](https://www.resco.net/javascript-bridge-reference/#MobileCRM_UI_EntityForm_DetailCollection_deleteByIndex)
 
-## onChange usage
+## DetailCollection get and delete methods usage
 
 Detail collections provide methods to access and perform actions on the collections of the sales entity details.
 
