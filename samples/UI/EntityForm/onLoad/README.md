@@ -5,7 +5,7 @@ EntityForm Reference document: [UI.EntityForm](https://www.resco.net/javascript-
 
 > The method itself is not called onLoad. We are requesting object and performing actions on load event of the form (window.onload).
 
-## requestObject usage
+## requestObject usage on load event
 
 MobileCRM.UI.EntityForm.requestObject(callback, errorCallback, scope)
 
