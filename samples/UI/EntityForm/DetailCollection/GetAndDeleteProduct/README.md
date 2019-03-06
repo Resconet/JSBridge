@@ -31,7 +31,7 @@ Provided example demonstrates how to get all the items in the Order products col
 **Debug repository:**
 Find more information here: [GetAndDeleteProduct Debug](https://github.com/Resconet/JSBridge/tree/master/samples/UI/EntityForm/DetailCollection/GetAndDeleteProduct/Debug)
 
-**GetAndDeleteProduct.html file:**
+**deleteProduct.html file:**
 Open this file to check sample code directly.
 
 ## How to run the sample in the application?
