@@ -16,7 +16,7 @@ Prepare Woodford environment according below instructions to try provided sample
 7. save all changes, publish your project and synchronize the application
 8. navigate to your IFrame in the application
 
-**Before testing the example, please make sure you have added some products to the order.**
+**Before testing the example, please make sure there are product records available in the database.**
 
 > Make sure you have latest JSBridge.js file in your Offline HTML section.
 <br />[JSBridge.js file](https://github.com/Resconet/JSBridge/blob/master/src/JSBridge.js)
