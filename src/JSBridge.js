@@ -1,6 +1,6 @@
-// v11.3
+// v12.0
 (function () {
-	var _scriptVersion = 11.3;
+	var _scriptVersion = 12.0;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -156,6 +156,9 @@
 			this.name = "MobileCrmException";
 		};
 		MobileCrmException.prototype.toString = function () { return this.message; };
+	}
+	function _safeErrorMessage(err) {
+		return "message" in err ? err.message : ("Message" in err ? err.Message : err.toString());
 	}
 
 	// MobileCRM object definition
@@ -1028,6 +1031,17 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.command("getViewData", viewName, callback, errorCallback, scope);
 	    };
+		MobileCRM.UI.MediaTab.getDataAsync = function (viewName) {
+			/// <summary>[v8.0] Gets the media tab document in form of base64 string.</summary>
+			/// <param name="viewName" type="String">The name of the media tab.</param>
+			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with the base64-encoded document data.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("getViewData", viewName);
+		};
+		MobileCRM.UI.MediaTab.prototype.getDataAsync = function () {
+			/// <summary>[v8.0] Gets the media tab document in form of base64 string.</summary>
+			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with the base64-encoded document data.</returns>
+			return MobileCRM.UI.MediaTab.getDataAsync(this.name);
+		};
 	    MobileCRM.UI.MediaTab.prototype.isEmpty = function (callback, errorCallback, scope) {
 	        /// <summary>[v9.0.2] Asynchronously gets the boolean value indicating whether the media tab content is empty or not.</summary>
 	        /// <param name="callback" type="function(Boolean)">The callback function that is called asynchronously with the boolean value indicating whether the content is empty or not.</param>
@@ -1076,43 +1090,6 @@
 	    MobileCRM.Bridge.prototype.initialize = function () {
 	        /// <summary>Initializes the bridge to be used for synchronous invokes.</summary>
 	    }
-	    /* Following methods are no longer supported (they are no longer implemented on iOS)
-		MobileCRM.Bridge.prototype.invokeMethod = function (objectName, method) {
-			/// <summary>Synchronously invokes a method on exposed managed object and returns the result.</summary>
-			/// <remarks><p>WARNING: This function is in experimental stage and can cause a deadlock if invoked C# method calls back to Javascript. Its usage must be tested on all platforms.</p><p>Before calling this method for the first time, it is necessary to initialize the bridge by calling <see cref="MobileCRM.Bridge.initialize">initialize</see> method.</p></remarks>
-			/// <param name="objectName" type="String">The name of exposed managed object as it was registered on application side.</param>
-			/// <param name="method" type="String">The name of the method implemented by object class.</param>
-			var params = [];
-			var i = 2;
-			while (arguments[i])
-				params.push(arguments[i++]);
-			return MobileCRM.bridge.invoke("invokeMethod", objectName + "." + method + JSON.stringify(params));
-		}
-		MobileCRM.Bridge.prototype.invokeStaticMethod = function (assembly, typeName, method) {
-			/// <summary>Synchronously invokes a static method on specified type and returns the result.</summary>
-			/// <remarks><p>WARNING: This function is in experimental stage and can cause a deadlock if invoked C# method calls back to Javascript. Its usage must be tested on all platforms.</p><p>Before calling this method for the first time, it is necessary to initialize the bridge by calling <see cref="MobileCRM.Bridge.initialize">initialize</see> method.</p></remarks>
-			/// <param name="assembly" type="String">The name of the assembly which defines the type.</param>
-			/// <param name="typeName" type="String">The full name of the C# type which implements the method.</param>
-			/// <param name="method" type="String">The name of static method to be invoked.</param>
-			var params = [];
-			var i = 3;
-			while (arguments[i])
-				params.push(arguments[i++]);
-			return MobileCRM.bridge.invoke("invokeMethod", (assembly ? (assembly + ":") : "") + typeName + "." + method + JSON.stringify(params));
-		}
-		MobileCRM.Bridge.prototype.getPropertyValue = function (objectName, property) {
-			/// <summary>Synchronously invokes a property getter on exposed managed object and returns the result.</summary>
-			/// <param name="objectName" type="String">The name of exposed managed object as it was registered on application side.</param>
-			/// <param name="property" type="String">The name of the property.</param>
-			return MobileCRM.bridge.invokeMethod(objectName, "get_" + property);
-		}
-		MobileCRM.Bridge.prototype.setPropertyValue = function (objectName, property, value) {
-			/// <summary>Synchronously invokes a property setter on exposed managed object.</summary>
-			/// <param name="objectName" type="String">The name of exposed managed object as it was registered on application side.</param>
-			/// <param name="property" type="String">The name of the property.</param>
-			/// <param name="value" type="">A value being set into property.</param>
-			return MobileCRM.bridge.invokeMethod(objectName, "set_" + property, value);
-		}*/
 	    MobileCRM.Bridge.prototype.invokeMethodAsync = function (objectName, method, paramsList, callback, errorCallback, scope) {
 	        /// <summary>Invokes a method on exposed managed object and returns the result asynchronously via callback.</summary>
 	        /// <param name="objectName" type="String">The name of exposed managed object as it was registered on C# side (IJavascriptBridge.ExposeObject).</param>
@@ -1134,6 +1111,28 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        return MobileCRM.bridge.command("invokeMethod", (assembly ? (assembly + ":") : "") + typeName + "." + method + JSON.stringify(paramsList),  callback, errorCallback, scope);
 	    }
+		MobileCRM.Bridge.prototype.invokeCommandPromise = function (command, args) {
+			return new Promise(function (resolve, reject) {
+				MobileCRM.bridge.command(command, args, resolve, function (err) { reject(new Error(err)); });
+			});
+		}
+		MobileCRM.Bridge.prototype.invokeMethodPromise = function (objectName, method, paramsList) {
+			/// <summary>Invokes a method on exposed managed object asynchronously as a Promise.</summary>
+			/// <param name="objectName" type="String">The name of exposed managed object as it was registered on C# side (IJavascriptBridge.ExposeObject).</param>
+			/// <param name="method" type="String">The name of the method implemented by object class.</param>
+			/// <param name="paramsList" type="Array">An array with parameters that should be passed to a method.</param>
+			/// <returns type="Promise&lt;any&gt;">A Promise object which will be resolved with JSON-serialized return value. It is either generic type or <see cref="MobileCRM.ObservableObject">MobileCRM.ObservableObject</see> with JSON-serialized return value..</returns>
+			return MobileCRM.bridge.invokeCommandPromise("invokeMethod", objectName + "." + method + JSON.stringify(paramsList));
+		}
+		MobileCRM.Bridge.prototype.invokeStaticMethodPromise = function (assembly, typeName, method, paramsList) {
+			/// <summary>Invokes a static method on specified type asynchronously as a Promise.</summary>
+			/// <param name="assembly" type="String">The name of the assembly which defines the type.</param>
+			/// <param name="typeName" type="String">The full name of the C# type which implements the method.</param>
+			/// <param name="method" type="String">The name of static method to be invoked.</param>
+			/// <param name="paramsList" type="Array">An array with parameters that should be passed to a method.</param>
+			/// <returns type="Promise&lt;any&gt;">A Promise object which will be resolved with JSON-serialized return value. It is either generic type or <see cref="MobileCRM.ObservableObject">MobileCRM.ObservableObject</see> with JSON-serialized return value..</returns>
+			return MobileCRM.bridge.invokeCommandPromise("invokeMethod", (assembly ? (assembly + ":") : "") + typeName + "." + method + JSON.stringify(paramsList));
+		}
 
 	    var _tmpObjId = 0;
 	    MobileCRM.Bridge.prototype.exposeObjectAsync = function (method, paramsList) {
@@ -1184,45 +1183,45 @@
 	        return null;
 	    }
 
-	    MobileCRM.Bridge.prototype.runCallback = function (id, response) {
-	        /// <summary>Internal method which is called from Mobile CRM application to run a command callback.</summary>
-	        /// <param name="id" type="String">A command ID</param>
-	        /// <param name="response" type="String">A string containing the JSON response</param>
-	        try {
-	            var callback = MobileCRM.bridge.callbacks[id];
-	            if (callback) {
-	                var result = null;
-	                if (callback.SuccessFn) {
-	                    result = callback.SuccessFn.call(callback.Scope, response);
-	                    // Forget SuccessFn not to be called anymore
-	                    delete callback.SuccessFn;
-	                }
-	                return JSON.stringify(result);
-	            }
-	            return "Err: callback not found";
-	        } catch (exception) {
-	            return 'Err:' + exception.message;
-	        }
-	    };
-	    MobileCRM.Bridge.prototype.setResponse = function (id, response, deleteCallback) {
-	        /// <summary>Internal method which is called from Mobile CRM application in case of successfully processed command.</summary>
-	        /// <param name="id" type="String">A command ID</param>
-	        /// <param name="response" type="String">A string containing the JSON response</param>
-	        try {
-	            var self = MobileCRM.bridge;
-	            var callback = self.callbacks[id];
-	            if (callback) {
-	                if (callback.SuccessFn) {
-	                    callback.SuccessFn.call(callback.Scope, response);
-	                }
-	                if (deleteCallback != false)
-	                    delete self.callbacks[id];
-	            }
-	        } catch (exception) {
-	            return exception.message;
-	        }
-	        return "OK";
-	    };
+		MobileCRM.Bridge.prototype.runCallback = function (id, response) {
+			/// <summary>Internal method which is called from Mobile CRM application to run a command callback.</summary>
+			/// <param name="id" type="String">A command ID</param>
+			/// <param name="response" type="String">A string containing the JSON response</param>
+			try {
+				var callback = MobileCRM.bridge.callbacks[id];
+				if (callback) {
+					var result = null;
+					if (callback.SuccessFn) {
+						result = callback.SuccessFn.call(callback.Scope, response);
+						// Forget SuccessFn not to be called anymore
+						delete callback.SuccessFn;
+					}
+					return JSON.stringify(result);
+				}
+				return "Err: callback not found";
+			} catch (exception) {
+				return 'Err:' + _safeErrorMessage(exception);
+			}
+		};
+		MobileCRM.Bridge.prototype.setResponse = function (id, response, deleteCallback) {
+			/// <summary>Internal method which is called from Mobile CRM application in case of successfully processed command.</summary>
+			/// <param name="id" type="String">A command ID</param>
+			/// <param name="response" type="String">A string containing the JSON response</param>
+			try {
+				var self = MobileCRM.bridge;
+				var callback = self.callbacks[id];
+				if (callback) {
+					if (callback.SuccessFn) {
+						callback.SuccessFn.call(callback.Scope, response);
+					}
+					if (deleteCallback != false)
+						delete self.callbacks[id];
+				}
+			} catch (exception) {
+				return _safeErrorMessage(exception);
+			}
+			return "OK";
+		};
 	    MobileCRM.Bridge.prototype.setError = function (id, error) {
 	        /// <summary>Internal method which is called from Mobile CRM application in case of command processing failure.</summary>
 	        /// <param name="id" type="String">A command ID</param>
@@ -1298,6 +1297,14 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.invokeMethodAsync("#exposedObj#" + this.id, method, paramsList, callback, errorCallback, scope);
 	    };
+		MobileCRM.ExposedObject.prototype.invokeMethodPromise = function (method, paramsList) {
+			/// <summary>Invokes a method on exposed managed object and returns the result asynchronously via callback.</summary>
+			/// <param name="objectName" type="String">The name of exposed managed object as it was registered on C# side (IJavascriptBridge.ExposeObject).</param>
+			/// <param name="method" type="String">The name of the method implemented by object class.</param>
+			/// <param name="paramsList" type="Array">An array with parameters that should be passed to a method.</param>
+			/// <returns type="Promise&lt;any&gt;">A Promise object which will be resolved with JSON-serialized return value. It is either generic type or <see cref="MobileCRM.ObservableObject">MobileCRM.ObservableObject</see> with JSON-serialized return value..</returns>
+			return MobileCRM.bridge.invokeMethodPromise("#exposedObj#" + this.id, method, paramsList);
+		};
 	    MobileCRM.ExposedObject.prototype.exposeObjectAsync = function (method, paramsList) {
 	        /// <summary>Exposes the managed object which is the result of the method called on this exposed object.</summary>
 	        /// <param name="method" type="String">The name of the method implemented by object class.</param>
@@ -1467,19 +1474,32 @@
 	                callback.call(scope, res);
 	        }, errorCallback, scope);
 	    }
+		MobileCRM.CultureInfo.initializeAsync = function () {
+			/// <summary>[v10.2] Initializes the CultureInfo object.</summary>
+			/// <remarks><p>Method loads the current culture information asynchronously.</p><p>All other functions will return the default or empty string before the initialization promise is resolved.</p></remarks>
+			/// <returns type="Promise&lt;MobileCRM.CultureInfo&gt;">A Promise object which will be resolved with the loaded CultureInfo object.</returns>
+			return new Promise(function (resolve, reject) {
+				MobileCRM.CultureInfo.initialize(resolve, function (err) { reject(new Error(err)); });
+			});
+		}
 
-	    MobileCRM.CultureInfo.load = function (culture, callback, errorCallback, scope) {
-	        /// <summary>[v10.2] Asynchronously gets the CultureInfo object for specified language/country.</summary>
-	        /// <remarks><p>Method loads specified culture information asynchronously and calls either the <b>errorCallback</b> with error message or the <b>callback</b> with initialized CultureInfo object.</p><p>All other functions will return the default or empty string before the initialization finishes.</p></remarks>
-	        /// <param name="culture" type="String">The name of culture that has to be loaded. The culture name is in the format language code-country where language code is a lowercase two-letter code derived from ISO 639-1. country is derived from ISO 3166 and usually consists of two uppercase letters</param>
-	        /// <param name="callback" type="function(cultureInfo)">The callback function that is called asynchronously with initialized CultureInfo object as argument.</param>
-	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is to be called in case of error.</param>
-	        /// <param name="scope" type="Object">The scope for callbacks.</param>
-	        MobileCRM.bridge.command("getCultureInfo", culture || '', function (res) {
-	            if (callback)
-	                callback.call(scope, res);
-	        }, errorCallback, scope);
-	    };
+		MobileCRM.CultureInfo.load = function (culture, callback, errorCallback, scope) {
+			/// <summary>[v10.2] Asynchronously gets the CultureInfo object for specified language/country.</summary>
+			/// <param name="culture" type="String">The name of culture that has to be loaded. The culture name is in the format language code-country where language code is a lowercase two-letter code derived from ISO 639-1. country is derived from ISO 3166 and usually consists of two uppercase letters</param>
+			/// <param name="callback" type="function(cultureInfo)">The callback function that is called asynchronously with initialized CultureInfo object as argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is to be called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.command("getCultureInfo", culture || '', function (res) {
+				if (callback)
+					callback.call(scope, res);
+			}, errorCallback, scope);
+		};
+		MobileCRM.CultureInfo.loadAsync = function (culture) {
+			/// <summary>[v10.2] Asynchronously gets the CultureInfo object for specified language/country.</summary>
+			/// <param name="culture" type="String">The name of culture that has to be loaded. The culture name is in the format language code-country where language code is a lowercase two-letter code derived from ISO 639-1. country is derived from ISO 3166 and usually consists of two uppercase letters</param>
+			/// <returns type="Promise&lt;MobileCRM.CultureInfo&gt;">A Promise object which will be resolved with the loaded CultureInfo object.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("getCultureInfo", culture || '');
+		};
 
 	    MobileCRM.CultureInfo.shortDateString = function (date) {
 	        /// <summary>[v10.2] Returns the short date string that matches current device culture.</summary>
@@ -1530,219 +1550,219 @@
 	        return MobileCRM.CultureInfo.formatDate(date, MobileCRM.CultureInfo.currentCulture.dateTimeFormat.yearMonthPattern)
 	    };
 
-	    MobileCRM.CultureInfo.formatDate = function (date, format) {
-	        /// <summary>[v10.2] Returns the formatted date/time string that matches current device culture.</summary>
-	        /// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
-	        /// <param name="date" type="Date">A date being formatted.</param>
-	        /// <param name="format" type="String">Custom format string that meets the <see cref="https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings">MSDN Sepcification</see>.</param>
-	        var df = MobileCRM.CultureInfo.currentCulture.dateTimeFormat;
-	        var zeroPad = function (num, length, dontCut) {
-	            var st = "" + num;
-	            if (st.length > length)
-	                return dontCut ? st : st.substr(0, length);
-	            while (st.length < length)
-	                st = "0" + st;
-	            return st;
-	        };
-	        var trimDigits = function (num, length) {
-	            var st = "" + num;
-	            if (st.length > length)
-	                return st.substr(0, length);
-	            return st;
-	        };
-	        var hoursTo12h = function (h) {
-	            return h <= 12 ? h : (h % 12);
-	        };
-	        var i = 0;
-	        var fLen = format.length;
-	        var res = "";
-	        while (i < fLen) {
-	            var c = format.charAt(i);
-	            switch (c) {
-	                case 'd': // Day
-	                    if (format.charAt(++i) === 'd') {
-	                        if (format.charAt(++i) === 'd') {
-	                            if (format.charAt(++i) === 'd') {
-	                                res += df.dayNames[date.getDay()];
-	                                i++;
-	                            }
-	                            else
-	                                res += df.abbreviatedDayNames[date.getDay()];
-	                        }
-	                        else
-	                            res += zeroPad(date.getDate(), 2, false);
-	                    } else
-	                        res += date.getDate();
-	                    break;
-	                case 'f':
-	                    if (format.charAt(++i) === 'f') {
-	                        if (format.charAt(++i) === 'f') {
-	                            if (format.charAt(++i) === 'f') {
-	                                if (format.charAt(++i) === 'f') {
-	                                    if (format.charAt(++i) === 'f') {
-	                                        if (format.charAt(++i) === 'f') {
-	                                            res += date.getMilliseconds();
-	                                            i++;
-	                                        }
-	                                        else
-	                                            res += date.getMilliseconds();
-	                                    }
-	                                    else
-	                                        res += date.getMilliseconds();
-	                                }
-	                                else
-	                                    res += date.getMilliseconds();
-	                            }
-	                            else
-	                                res += date.getMilliseconds();
-	                        }
-	                        else
-	                            res += trimDigits(date.getMilliseconds(), 2);
-	                    }
-	                    else
-	                        res += trimDigits(date.getMilliseconds(), 1);
-	                    break;
-	                case 'F':
-	                    if (format.charAt(++i) === 'F') {
-	                        if (format.charAt(++i) === 'F') {
-	                            if (format.charAt(++i) === 'F') {
-	                                if (format.charAt(++i) === 'F') {
-	                                    if (format.charAt(++i) === 'F') {
-	                                        if (format.charAt(++i) === 'F') {
-	                                            res += zeroPad(date.getMilliseconds(), 7, false);
-	                                            i++;
-	                                        }
-	                                        else
-	                                            res += zeroPad(date.getMilliseconds(), 6, false);
-	                                    }
-	                                    else
-	                                        res += zeroPad(date.getMilliseconds(), 5, false);
-	                                }
-	                                else
-	                                    res += zeroPad(date.getMilliseconds(), 4, false);
-	                            }
-	                            else
-	                                res += zeroPad(date.getMilliseconds(), 3, false);
-	                        }
-	                        else
-	                            res += zeroPad(date.getMilliseconds(), 2, false);
-	                    }
-	                    else
-	                        res += zeroPad(date.getMilliseconds(), 1, false);
-	                    break;
-	                case 'g':
-	                    if (format.charAt(++i) === 'g') {
-	                        res += "A.D.";
-	                        i++;
-	                    }
-	                    else
-	                        res += "AD";
-	                    break;
-	                case 'h':
-	                    if (format.charAt(++i) === 'h') {
-	                        res += zeroPad(hoursTo12h(date.getHours()), 2, false);
-	                        i++;
-	                    }
-	                    else
-	                        res += hoursTo12h(date.getHours());
-	                    break;
-	                case 'H':
-	                    if (format.charAt(++i) === 'H') {
-	                        res += zeroPad(date.getHours(), 2, false);
-	                        i++;
-	                    }
-	                    else
-	                        res += date.getHours();
-	                    break;
-	                case 'K':
-	                    var o = -date.getTimezoneOffset();
-	                    res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false) + ":" + zeroPad(o % 60, 2, false);
-	                    i++;
-	                    break;
-	                case 'm':
-	                    if (format.charAt(++i) === 'm') {
-	                        res += zeroPad(date.getMinutes(), 2, false);
-	                        i++;
-	                    }
-	                    else
-	                        res += date.getMinutes();
-	                    break;
-	                case 's':
-	                    if (format.charAt(++i) === 's') {
-	                        res += zeroPad(date.getSeconds(), 2, false);
-	                        i++;
-	                    }
-	                    else
-	                        res += date.getSeconds();
-	                    break;
-	                case 'M':
-	                    if (format.charAt(++i) === 'M') {
-	                        if (format.charAt(++i) === 'M') {
-	                            if (format.charAt(++i) === 'M') {
-	                                res += df.monthGenitiveNames[date.getMonth()];
-	                                i++;
-	                            }
-	                            else
-	                                res += df.abbreviatedMonthGenitiveNames[date.getMonth()];
-	                        }
-	                        else
-	                            res += zeroPad(date.getMonth() + 1, 2, false);
-	                    } else
-	                        res += date.getMonth() + 1;
-	                    break;
-	                case 't':
-	                    if (format.charAt(++i) === 't')
-	                        i++;
+		MobileCRM.CultureInfo.formatDate = function (date, format) {
+			/// <summary>[v10.2] Returns the formatted date/time string that matches current device culture.</summary>
+			/// <remarks>This method fails if <see cref="MobileCRM.CultureInfo.initialize">CultureInfo.initialize</see> method hasn't completed yet.</remarks>
+			/// <param name="date" type="Date">A date being formatted.</param>
+			/// <param name="format" type="String">Custom format string that meets the <see cref="https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings">MSDN Sepcification</see>.</param>
+			var df = MobileCRM.CultureInfo.currentCulture.dateTimeFormat;
+			var zeroPad = function (num, length, dontCut) {
+				var st = "" + num;
+				if (st.length > length)
+					return dontCut ? st : st.substr(0, length);
+				while (st.length < length)
+					st = "0" + st;
+				return st;
+			};
+			var trimDigits = function (num, length) {
+				var st = "" + num;
+				if (st.length > length)
+					return st.substr(0, length);
+				return st;
+			};
+			var hoursTo12h = function (h) {
+				return h <= 12 ? h : (h % 12);
+			};
+			var i = 0;
+			var fLen = format.length;
+			var res = "";
+			while (i < fLen) {
+				var c = format.charAt(i);
+				switch (c) {
+					case 'd': // Day
+						if (format.charAt(++i) === 'd') {
+							if (format.charAt(++i) === 'd') {
+	    						if (format.charAt(++i) === 'd') {
+	    							res += df.dayNames[date.getDay()];
+	    							i++;
+	    						}
+	    						else
+	    							res += df.abbreviatedDayNames[date.getDay()];
+	    					}
+	    					else
+	    						res += zeroPad(date.getDate(), 2, false);
+	    				} else
+	    					res += date.getDate();
+	    				break;
+	    			case 'f':
+	    				if (format.charAt(++i) === 'f') {
+	    					if (format.charAt(++i) === 'f') {
+	    						if (format.charAt(++i) === 'f') {
+	    							if (format.charAt(++i) === 'f') {
+	    								if (format.charAt(++i) === 'f') {
+	    									if (format.charAt(++i) === 'f') {
+	    										res += date.getMilliseconds();
+	    										i++;
+	    									}
+	    									else
+	    										res += date.getMilliseconds();
+	    								}
+	    								else
+	    									res += date.getMilliseconds();
+	    							}
+	    							else
+	    								res += date.getMilliseconds();
+	    						}
+	    						else
+	    							res += date.getMilliseconds();
+	    					}
+	    					else
+	    						res += trimDigits(date.getMilliseconds(), 2);
+	    				}
+	    				else
+	    					res += trimDigits(date.getMilliseconds(), 1);
+	    				break;
+	    			case 'F':
+	    				if (format.charAt(++i) === 'F') {
+	    					if (format.charAt(++i) === 'F') {
+	    						if (format.charAt(++i) === 'F') {
+	    							if (format.charAt(++i) === 'F') {
+	    								if (format.charAt(++i) === 'F') {
+	    									if (format.charAt(++i) === 'F') {
+	    										res += zeroPad(date.getMilliseconds(), 7, false);
+	    										i++;
+	    									}
+	    									else
+	    										res += zeroPad(date.getMilliseconds(), 6, false);
+	    								}
+	    								else
+	    									res += zeroPad(date.getMilliseconds(), 5, false);
+	    							}
+	    							else
+	    								res += zeroPad(date.getMilliseconds(), 4, false);
+	    						}
+	    						else
+	    							res += zeroPad(date.getMilliseconds(), 3, false);
+	    					}
+	    					else
+	    						res += zeroPad(date.getMilliseconds(), 2, false);
+	    				}
+	    				else
+	    					res += zeroPad(date.getMilliseconds(), 1, false);
+	    				break;
+	    			case 'g':
+	    				if (format.charAt(++i) === 'g') {
+	    					res += "A.D.";
+	    					i++;
+	    				}
+	    				else
+	    					res += "AD";
+	    				break;
+	    			case 'h':
+	    				if (format.charAt(++i) === 'h') {
+	    					res += zeroPad(hoursTo12h(date.getHours()), 2, false);
+	    					i++;
+	    				}
+	    				else
+	    					res += hoursTo12h(date.getHours());
+	    				break;
+	    			case 'H':
+	    				if (format.charAt(++i) === 'H') {
+	    					res += zeroPad(date.getHours(), 2, false);
+	    					i++;
+	    				}
+	    				else
+	    					res += date.getHours();
+	    				break;
+	    			case 'K':
+	    				var o = -date.getTimezoneOffset();
+	    				res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false) + ":" + zeroPad(o % 60, 2, false);
+	    				i++;
+	    				break;
+	    			case 'm':
+	    				if (format.charAt(++i) === 'm') {
+	    					res += zeroPad(date.getMinutes(), 2, false);
+	    					i++;
+	    				}
+	    				else
+	    					res += date.getMinutes();
+	    				break;
+	    			case 's':
+	    				if (format.charAt(++i) === 's') {
+	    					res += zeroPad(date.getSeconds(), 2, false);
+	    					i++;
+	    				}
+	    				else
+	    					res += date.getSeconds();
+	    				break;
+	    			case 'M':
+	    				if (format.charAt(++i) === 'M') {
+	    					if (format.charAt(++i) === 'M') {
+	    						if (format.charAt(++i) === 'M') {
+	    							res += df.monthGenitiveNames[date.getMonth()];
+	    							i++;
+	    						}
+	    						else
+	    							res += df.abbreviatedMonthGenitiveNames[date.getMonth()];
+	    					}
+	    					else
+	    						res += zeroPad(date.getMonth() + 1, 2, false);
+	    				} else
+	    					res += date.getMonth() + 1;
+	    				break;
+	    			case 't':
+	    				if (format.charAt(++i) === 't')
+	    					i++;
 
-	                    res += date.getHours() < 12 ? df.aMDesignator : df.pMDesignator;
-	                    break;
-	                case 'y':
-	                    if (format.charAt(++i) === 'y') {
-	                        if (format.charAt(++i) === 'y') {
-	                            if (format.charAt(++i) === 'y') {
-	                                if (format.charAt(++i) === 'y') {
-	                                    res += zeroPad(date.getFullYear(), 5, true);
-	                                    i++;
-	                                }
-	                                else
-	                                    res += zeroPad(date.getFullYear(), 4, true);
-	                            }
-	                            else
-	                                res += zeroPad(date.getFullYear(), 3, true);
-	                        } else
-	                            res += zeroPad(date.getFullYear() % 100, 2, false);
-	                    }
-	                    else
-	                        res += date.getFullYear() % 100;
-	                    break;
-	                case 'z':
-	                    if (format.charAt(++i) === 'z') {
-	                        var o = -date.getTimezoneOffset();
-	                        if (format.charAt(++i) === 'z') {
-	                            res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false) + ":" + zeroPad(o % 60, 2, false);
-	                            i++;
-	                        }
-	                        else 
-	                            res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false);
-	                    }
-	                    else
-	                        res += -date.getTimezoneOffset() / 60;
-	                case '/':
-	                    res += (typeof (df.dateSeparator) == "string") ? df.dateSeparator : '/';
-	                    i++;
-	                    break;
-	                case ':':
-	                    res += (typeof (df.timeSeparator) == "string") ? df.timeSeparator : ':';
-	                    i++;
-	                    break;
-	                default:
-	                    res += c;
-	                    i++;
-	                    break;
-	            }
-	        }
-	        return res;
-	    };
+	    				res += date.getHours() < 12 ? df.aMDesignator : df.pMDesignator;
+	    				break;
+	    			case 'y':
+	    				if (format.charAt(++i) === 'y') {
+	    					if (format.charAt(++i) === 'y') {
+	    						if (format.charAt(++i) === 'y') {
+	    							if (format.charAt(++i) === 'y') {
+	    								res += zeroPad(date.getFullYear(), 5, true);
+	    								i++;
+	    							}
+	    							else
+	    								res += zeroPad(date.getFullYear(), 4, true);
+	    						}
+	    						else
+	    							res += zeroPad(date.getFullYear(), 3, true);
+	    					} else
+	    						res += zeroPad(date.getFullYear() % 100, 2, false);
+	    				}
+	    				else
+	    					res += date.getFullYear() % 100;
+	    				break;
+	    			case 'z':
+	    				if (format.charAt(++i) === 'z') {
+	    					var o = -date.getTimezoneOffset();
+	    					if (format.charAt(++i) === 'z') {
+	    						res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false) + ":" + zeroPad(o % 60, 2, false);
+	    						i++;
+	    					}
+	    					else
+	    						res += (o < 0 ? "-" : "") + zeroPad(Math.abs(o / 60), 2, false);
+	    				}
+	    				else
+	    					res += -date.getTimezoneOffset() / 60;
+	    			case '/':
+	    				res += (typeof (df.dateSeparator) == "string") ? df.dateSeparator : '/';
+	    				i++;
+	    				break;
+	    			case ':':
+	    				res += (typeof (df.timeSeparator) == "string") ? df.timeSeparator : ':';
+	    				i++;
+	    				break;
+	    			default:
+	    				res += c;
+	    				i++;
+	    				break;
+				}
+			}
+			return res;
+		};
 
 	    //MobileCRM.Localization
 	    MobileCRM.Localization.initialize = function (callback, errorCallback, scope) {
@@ -1767,6 +1787,15 @@
 	                callback.call(scope, MobileCRM.Localization);
 	        }, errorCallback, scope);
 	    };
+		MobileCRM.Localization.initializeAsync = function (regularExpression) {
+			/// <summary>[v10.0] Initializes the Localization object.</summary>
+			/// <remarks><p>Method loads the string table asynchronously and resolves pending promise with initialized Localization object.</p><p>All other functions will return the default or empty string before the initialization finishes.</p></remarks>
+			/// <param name="regularExpression" type="string">Optional regular expression defining a subset of localization keys. Refer to <see cref="https://msdn.microsoft.com/en-us/library/az24scfc(v=vs.110).aspx">Regular Expression Language - Quick Reference</see>. Set to null to obtain whole localization.</param>
+			/// <returns type="Promise&lt;MobileCRM.Localization&gt;">A Promise object which will be resolved with initialized Localization object as argument.</returns>
+			return new Promise(function (resolve, reject) {
+				MobileCRM.Localization.initializeEx(regularExpression, resolve, function (err) { reject(new Error(err)); });
+			});
+		};
 	    MobileCRM.Localization.getLoadedLangId = function (callback, errorCallback, scope) {
 	        /// <summary>Asynchronously gets currently loaded localization language.</summary>
 	        /// <remarks>The default language is &quot;en-US&quot;.</remarks>
@@ -1823,8 +1852,15 @@
 	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> will carry an instance of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> object.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        window.MobileCRM.bridge.command('referenceload', JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
+	        MobileCRM.bridge.command('referenceload', JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
 	    };
+		MobileCRM.Reference.loadAsync = function (entityName, id) {
+			/// <summary>Asynchronously loads the CRM reference.</summary>
+			/// <param name="entityName" type="String">An entity name</param>
+			/// <param name="id" type="String">The reference ID.</param>
+			/// <returns type="Promise&lt;MobileCRM.Reference&gt;">A Promise object which will be resolved with an instance of Reference object representing entity record reference.</returns>
+			return MobileCRM.bridge.invokeCommandPromise('referenceload', JSON.stringify({ entity: entityName, id: id }));
+		};
 
 	    // MobileCRM.ManyToManyReference
 	    MobileCRM.ManyToManyReference.addRecord = function (entityName, ref1, ref2, create, success, failed, scope) {
@@ -1885,8 +1921,17 @@
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        var request = { entity: entityName, id: id };
 	        var cmdParams = JSON.stringify(request);
-	        window.MobileCRM.bridge.command('entitydelete', cmdParams, success, failed, scope);
+	        MobileCRM.bridge.command('entitydelete', cmdParams, success, failed, scope);
 	    };
+		MobileCRM.DynamicEntity.deleteAsync = function (entityName, id) {
+			/// <summary>Asynchronously deletes the CRM entity.</summary>
+			/// <param name="entityName" type="String">The logical name of the entity, e.g. "account".</param>
+			/// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
+			/// <returns type="Promise&lt;void&gt;">A Promise object which will be resolved after the entity record is deleted.</returns>
+			var request = { entity: entityName, id: id };
+			var cmdParams = JSON.stringify(request);
+			return MobileCRM.bridge.invokeCommandPromise('entitydelete', cmdParams);
+		};
 	    MobileCRM.DynamicEntity.loadById = function (entityName, id, success, failed, scope) {
 	        /// <summary>Asynchronously loads the CRM entity properties.</summary>
 	        /// <param name="entityName" type="String">The logical name of the entity, e.g. "account".</param>
@@ -1894,8 +1939,15 @@
 	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the MobileCRM.DynamicEntity object.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        window.MobileCRM.bridge.command('entityload', JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
+	        MobileCRM.bridge.command('entityload', JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
 	    };
+		MobileCRM.DynamicEntity.loadAsync = function (entityName, id) {
+			/// <summary>Asynchronously loads the CRM entity properties.</summary>
+			/// <param name="entityName" type="String">The logical name of the entity, e.g. "account".</param>
+			/// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
+			/// <returns type="Promise&lt;MobileCRM.DynamicEntity&gt;">A Promise object which will be resolved with an instance of DynamicEntity object representing entity record.</returns>
+			return MobileCRM.bridge.invokeCommandPromise('entityload', JSON.stringify({ entity: entityName, id: id }));
+		};
 	    MobileCRM.DynamicEntity.saveDocumentBody = function (entityId, entityName, relationship, filePath, mimeType, success, failed, scope) {
 	        /// <summary>[v10.0]Asynchronously saves the document body for specified entity.</summary>
 	        /// <remarks>Function sends an asynchronous request to application, where the locally stored document body (e.g. the annotation.documentbody) is saved.</remarks>
@@ -1907,8 +1959,19 @@
 	        /// <param name="success" type="function(MobileCRM.Reference)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the <see cref="MobileCRM.Reference">Reference</see> to updated/created entity.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        window.MobileCRM.bridge.command('documentBodysave', JSON.stringify({ entity: entityName, id: entityId, relationship: relationship, filePath: filePath, mimeType: mimeType }), success, failed, scope);
+	        MobileCRM.bridge.command('documentBodysave', JSON.stringify({ entity: entityName, id: entityId, relationship: relationship, filePath: filePath, mimeType: mimeType }), success, failed, scope);
 	    };
+		MobileCRM.DynamicEntity.saveDocumentBodyAsync = function (entityId, entityName, relationship, filePath, mimeType) {
+			/// <summary>[v10.0]Asynchronously saves the document body for specified entity.</summary>
+			/// <remarks>Function sends an asynchronous request to application, where the locally stored document body (e.g. the annotation.documentbody) is saved.</remarks>
+			/// <param name="entityId" type="String">GUID of the existing entity or &quot;null&quot; for new one.</param>
+			/// <param name="entityName" type="String">The logical name of the entity; optional, default is &quot;annotation&quot;.</param>
+			/// <param name="relationship" type="MobileCRM.Relationship">The relationship with parent object.</param>
+			/// <param name="filePath" type="String">Absolute or app data-relative path to the file holding the body.</param>
+			/// <param name="mimeType" type="String">MimeType of the content, optional.</param>
+			/// <returns type="Promise&lt;MobileCRM.Reference&gt;">A Promise object which will be resolved with the <see cref="MobileCRM.Reference">Reference</see> object representing updated/created entity.</returns>
+			return MobileCRM.bridge.invokeCommandPromise('documentBodysave', JSON.stringify({ entity: entityName, id: entityId, relationship: relationship, filePath: filePath, mimeType: mimeType }));
+		};
 	    MobileCRM.DynamicEntity.loadDocumentBody = function (entityName, id, success, failed, scope) {
 	        /// <summary>Asynchronously loads the document body for specified entity.</summary>
 	        /// <remarks>Function sends an asynchronous request to application, where the locally stored document body (e.g. the annotation.documentbody) is encoded to base64 and sent back to the Javascript callback. This function supports both online data and the data stored in local database/BLOB store.</remarks>
@@ -1917,8 +1980,16 @@
 	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the string with base64-encoded data.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        window.MobileCRM.bridge.command('documentBodyload', JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
+	        MobileCRM.bridge.command('documentBodyload', JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
 	    };
+		MobileCRM.DynamicEntity.loadDocumentBodyAsync = function (entityName, id) {
+			/// <summary>Asynchronously loads the document body for specified entity.</summary>
+			/// <remarks>Function sends an asynchronous request to application, where the locally stored document body (e.g. the annotation.documentbody) is encoded to base64 and pending Javascript promise is resolved. This function supports both online data and the data stored in local database/BLOB store.</remarks>
+			/// <param name="entityName" type="String">The logical name of the entity, in most cases "annotation".</param>
+			/// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
+			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with base64-encoded data string.</returns>
+			return MobileCRM.bridge.invokeCommandPromise('documentBodyload', JSON.stringify({ entity: entityName, id: id }));
+		};
 	    MobileCRM.DynamicEntity.unzipDocumentBody = function (entityName, id, targetDir, success, failed, scope) {
 	        /// <summary>[v9.1] Asynchronously unpacks the document body (assumes it's a zip file) for specified entity.</summary>
 	        /// <param name="entityName" type="String">The logical name of the entity, in most cases the "annotation".</param>
@@ -1927,7 +1998,7 @@
 	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the string with base64-encoded data.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        window.MobileCRM.bridge.command('documentBodyUnzip', targetDir + ';' + JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
+	        MobileCRM.bridge.command('documentBodyUnzip', targetDir + ';' + JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
 	    };
 	    MobileCRM.DynamicEntity.downloadAttachment = function (entityName, id, success, failed, scope) {
 	        /// <summary>[v9.1] Initiates the attachment download for specified entity.</summary>
@@ -1938,7 +2009,16 @@
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 
-	        window.MobileCRM.bridge.command("downloadAttachment", JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
+	        MobileCRM.bridge.command("downloadAttachment", JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
+		}
+		MobileCRM.DynamicEntity.downloadAttachmentAsync = function (entityName, id) {
+			/// <summary>[v9.1] Initiates the attachment download for specified entity.</summary>
+			/// <remarks>Function sends an asynchronous request to application, which downloads the document body (e.g. the annotation) from server and resolves pending Javascript promise.</remarks>
+			/// <param name="entityName" type="String">The logical name of the entity, in most cases "annotation".</param>
+			/// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
+			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with base64-encoded data string.</returns>
+
+			return MobileCRM.bridge.invokeCommandPromise("downloadAttachment", JSON.stringify({ entity: entityName, id: id }));
 		}
 	    MobileCRM.DynamicEntity.prototype.save = function (callback, forceMode) {
 	        /// <summary>Performs the asynchronous CRM create/modify entity command.</summary>
@@ -1977,7 +2057,7 @@
 			return new Promise(function (resolve, reject) {
 				_this.save(function (err) {
 					if (err)
-						reject(err);
+						reject(new Error(err));
 					else
 						resolve(this);
 				}, forceMode);
@@ -2197,7 +2277,7 @@
 	    			format = online ? "Online." : "Offline.";
 	    		if (output)
 	    			format += output;
-	    		_this.execute(format, resolve, reject);
+				_this.execute(format, resolve, function (err) { reject(new Error(err)); });
 	    	});
 	    };
 
@@ -2209,6 +2289,12 @@
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Data.FetchXml.Fetch", "Deserialize", [xml], success, failed, scope);
 	    };
+		MobileCRM.FetchXml.Fetch.deserializeFromXmlAsync = function (xml) {
+			/// <summary>Deserializes the Fetch object from XML.</summary>
+	        /// <param name="xml" type="String">A string defining the fetch XML request.</param>
+			/// <returns type="Promise&lt;MobileCRM.FetchXml.Fetch&gt;">A Promise object which will be resolved with the Fetch object.</returns>
+			return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Data.FetchXml.Fetch", "Deserialize", [xml]);
+		};
 
 	    MobileCRM.FetchXml.Fetch.prototype.serializeToXml = function (success, failed, scope) {
 	        /// <summary>[v10.0] Serializes the Fetch object to XML.</summary>
@@ -2218,6 +2304,12 @@
 	        var reqParams = JSON.stringifyNotNull({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate });
 	        MobileCRM.bridge.command('fetchToXml', reqParams, success, failed, scope);
 	    };
+		MobileCRM.FetchXml.Fetch.prototype.serializeToXmlAsync = function () {
+			/// <summary>[v10.0] Serializes the Fetch object to XML.</summary>
+			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with the XML representation of this Fetch object.</returns>
+			var reqParams = JSON.stringifyNotNull({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate });
+			return MobileCRM.bridge.invokeCommandPromise('fetchToXml', reqParams);
+		};
 
 	    // MobileCRM.FetchXml.Entity
 	    MobileCRM.FetchXml.Entity.prototype.addAttribute = function (name, alias, aggregate) {
@@ -2497,6 +2589,18 @@
 	            params.timeout = timeout;
 	        MobileCRM.bridge.command("getLocation", JSON.stringify(params), success, failed, scope);
 	    };
+		MobileCRM.Platform.getLocationAsync = function (age, precision, timeout) {
+			/// <summary>Gets current geo-location from platform-specific location service.</summary>
+			/// <remarks>If the current platform does not support the location service, returned Promise is rejected with error "Unsupported".</remarks>
+			/// <param name="age" type="Number">Max age in seconds to accept GPS.</param>
+			/// <param name="precision" type="Number">Desired accuracy in meters.</param>
+			/// <param name="timeout" type="Number">Timeout in milliseconds (since v10.1).</param>
+			/// <returns type="Promise&lt;object&gt;">A Promise object which will be resolved with an object having <b>latitude</b> and <b>longitude</b> properties.</returns>
+			var params = { maxAge: age, accuracy: precision };
+			if (timeout)
+				params.timeout = timeout;
+			return MobileCRM.bridge.invokeCommandPromise("getLocation", JSON.stringify(params));
+		};
 	    MobileCRM.Platform.preventBackButton = function (handler, scope) {
 	        /// <summary>Prevents application to close when HW back button is pressed and installs handler which is called instead.</summary>
 	        /// <remarks><p>Pass &quot;null&quot; handler to allow the HW back button.</p><p>Works only under OS having HW back button (Android, Windows 10).</p></remarks>
@@ -3077,6 +3181,11 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.command("messageBox", JSON.stringify(this), success, failed, scope);
 	    };
+		MobileCRM.UI.MessageBox.prototype.showAsync = function () {
+			/// <summary>Shows a popup window allowing user to choose one of actions.</summary>
+			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with chosen item string.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("messageBox", JSON.stringify(this));
+		};
 
 	    MobileCRM.UI.MessageBox.sayText = function (text, success, failed, scope) {
 	        /// <summary>Shows a simple popup window with a multi-line text.</summary>
@@ -3089,6 +3198,15 @@
 	        mb.multiLine = true;
 	        mb.show(success, failed, scope);
 	    };
+		MobileCRM.UI.MessageBox.sayTextAsync = function (text) {
+			/// <summary>Shows a simple popup window with a multi-line text.</summary>
+			/// <param name="text" type="String">A text to be shown.</param>
+			/// <returns type="Promise&lt;void&gt;">A Promise object which will be resolved when user closes the message box.</returns>
+			var mb = new MobileCRM.UI.MessageBox(text);
+			mb.items = ["OK"];
+			mb.multiLine = true;
+			return mb.showAsync();
+		};
 
 	    // MobileCRM.UI.LookupForm
 	    MobileCRM.UI.LookupForm.prototype.addView = function (entityName, viewName, isDefault) {
@@ -3115,6 +3233,11 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.command("lookupForm", JSON.stringify(this._constructParams()), success, failed, scope);
 	    };
+		MobileCRM.UI.LookupForm.prototype.showAsync = function () {
+			/// <summary>Shows a dialog which allows the user to select an entity from a configurable list of entity types.</summary>
+			/// <returns type="Promise&lt;MobileCRM.Reference&gt;">A Promise object which will be resolved with a Reference object representing chosen entity record.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("lookupForm", JSON.stringify(this._constructParams()));
+		};
 	    MobileCRM.UI.LookupForm.prototype._constructParams = function () {
 	        var _escape = function (st) {
 	            var xml_special_to_escaped_one_map = { '<': '&lt;', '>': '&gt;' };				
@@ -3180,6 +3303,13 @@
 	        params.dataSource = this.dataSource;
 	        MobileCRM.bridge.command("multiLookupForm", JSON.stringify(params), success, failed, scope);
 	    };
+		MobileCRM.UI.MultiLookupForm.prototype.showAsync = function () {
+			/// <summary>Shows a dialog which allows the user to select a list of entities from a configurable list of entity types.</summary>
+			/// <returns type="Promise&lt;MobileCRM.Reference[]&gt;">A Promise object which will be resolved with an array of Reference objects representing chosen entity records.</returns>
+			var params = this._constructParams();
+			params.dataSource = this.dataSource;
+			return MobileCRM.bridge.invokeCommandPromise("multiLookupForm", JSON.stringify(params), success, failed, scope);
+		};
 
 	    // MobileCRM.UI.Form
 	    _inherit(MobileCRM.UI.Form, MobileCRM.ObservableObject);
@@ -3360,6 +3490,19 @@
 
 	        MobileCRM.bridge.command("runMobileReportAsync", JSON.stringify(params), success, failed, scope);
 	    };
+		MobileCRM.MobileReport.runReportAsync = function (fetch, reportXML, reportFormat, isExportOnly, isOnline, outputFile) {
+			/// <summary>[v9.1] Executes the mobile reporting request which produces the mobile report document of given format.</summary>
+			/// <param name="fetch" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
+			/// <param name="reportXML" type="String">The mobile report XML definition which can be loaded from the resco_report entity or constructed dynamically. Ignored if IsExportOnly parameter is true.</param>
+			/// <param name="reportFormat" type="String">Report format: Pdf (default), Html, Excel, Text.</param>
+			/// <param name="isExportOnly" type="Boolean">If true then ReportXml is optional. The default is false.</param>
+			/// <param name="isOnline" type="Boolean">Indicates whether the report should be run against the online data or local database. The default is current application mode.</param>
+			/// <param name="outputFile" type="String">The full path to the output file. If omitted a temp file is created.</param>
+			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with the file path to successfully created report.</returns>
+			return new Promise(function (resolve, reject) {
+				MobileCRM.MobileReport.runReport(fetch, reportXML, reportFormat, isExportOnly, isOnline, outputFile, resolve, function (err) { reject(new Error(err)); });
+			});
+		};
 	    MobileCRM.MobileReport.showForm = function (entity, source, fetchXml, failed, scope) {
 	        /// <summary>[v10.1] Shows new MobileReport form.</summary>
 	        /// <param name="entity" type="MobileCRM.Reference">Report Entity reference what the report is related to.</param>
@@ -3668,8 +3811,8 @@
 	                fetch.count = count;
 	                ds.loadNextChunk(page, count);
 	                return "OK";
-	            } catch (e) {
-	                return e.message;
+				} catch (e) {
+					return _safeErrorMessage(e);
 	            }
 	        }
 	        return "Invalid ListDataSource";
@@ -4173,12 +4316,6 @@
 	                MobileCRM.bridge.invokeMethodAsync("EntityForm", "Form.set_SelectedViewIndex", [index], callback, errorCallback, scope);
 	        }, errorCallback, scope);
 		};
-		MobileCRM.UI.EntityForm.loadTab = function (tabName, isLoaded, callback, errorCallback, scope) {
-			/// <summary>[v11.1] Reloads a form tab.</summary>
-			/// <param name="tabName" type="String">The name of the tab.</param>
-			/// <param name="isLoaded" type="Boolean">True for re-loaded, false for unload.</param>
-			MobileCRM.bridge.invokeMethodAsync("EntityForm", "LoadView", [tabName, isLoaded], callback, errorCallback, scope);
-		};
 	    MobileCRM.UI.EntityForm.prototype.selectView = function (tabName, viewName) {
 	        /// <summary>Selects the associated entity list view by its name.</summary>
 	        /// <param name="tabName" type="String">The name of the associated entity list tab.</param>
@@ -4562,6 +4699,13 @@
 	            callback.call(scope, orderDetails);
 	        }, errorCallback, scope);
 	    };
+		MobileCRM.UI.EntityForm.DetailCollection.getAllAsync = function () {
+	        /// <summary>Asynchronously returns the collection of the sales entity details (e.g. Order details)</summary>
+			/// <returns type="Promise&lt;MobileCRM.DynamicEntity[]&gt;">A Promise object which will be resolved with an array of DynamicEntity objects representing the sales entity detail records.</returns>
+			return new Promise(function (resolve, reject) {
+				MobileCRM.UI.EntityForm.DetailCollection.getAll(resolve, function (err) { reject(new Error(err)); });
+			});
+		}
 	    MobileCRM.UI.EntityForm.DetailCollection.get = function (index, callback, errorCallback, scope) {
 	        /// <summary>Asynchronously returns requested sales entity detail (e.g. Order detail)</summary>
 	        /// <param name="index" type="Number">An index of requested item.</param>
@@ -4574,6 +4718,14 @@
 	                callback.call(scope, entity);
 	        }, errorCallback, scope);
 	    };
+		MobileCRM.UI.EntityForm.DetailCollection.getAsync = function (index) {
+	        /// <summary>Asynchronously returns requested sales entity detail (e.g. Order detail)</summary>
+	        /// <param name="index" type="Number">An index of requested item.</param>
+			/// <returns type="Promise&lt;MobileCRM.DynamicEntity&gt;">A Promise object which will be resolved with the DynamicEntity object representing the sales entity detail record.</returns>
+			return new Promise(function (resolve, reject) {
+				MobileCRM.UI.EntityForm.DetailCollection.get(index, resolve, function (err) { reject(new Error(err)); });
+			});
+		}
 	    MobileCRM.UI.EntityForm.DetailCollection.deleteByIndex = function (index, callback, errorCallback, scope) {
 	        /// <summary>Deletes the sales entity detail (e.g. Order detail) by index.</summary>
 	        /// <param name="index" type="Number">An index of the item to be deleted.</param>
@@ -4611,7 +4763,7 @@
 	            if (typeof callback == "function")
 	                callback.call(scope, detailEntity);
 	        }, errorCallback, scope);
-	    };
+		};
 
 	    MobileCRM.UI.EntityForm.DetailCollection.addProductWithQuantity = function (product, quantity, callback, errorCallback, scope) {
 	        /// <summary>[v10.0] Appends the product into sales order collection.</summary>
@@ -4627,6 +4779,16 @@
 	                callback.call(scope, detailEntity);
 	        }, errorCallback, scope);
 	    };
+		MobileCRM.UI.EntityForm.DetailCollection.addAsync = function (product, quantity) {
+	        /// <summary>[v10.0] Appends the product into sales order collection.</summary>
+	        /// <remarks>Resulting <see cref="MobileCRM.DynamicEntity">MobileCRM.DynamicEntity</see> object implements method &quot;update&quot; which can be used to update the entity properties in the sales detail collection.</remarks>
+	        /// <param name="product" type="MobileCRM.Reference">A reference of the product to be appended.</param>
+	        /// <param name="quantity" type="Number">Product quantity.</param>
+			/// <returns type="Promise&lt;MobileCRM.DynamicEntity&gt;">A Promise object which will be resolved with the DynamicEntity object representing new sales entity detail record.</returns>
+			return new Promise(function (resolve, reject) {
+				MobileCRM.UI.EntityForm.DetailCollection.addProductWithQuantity(product, quantity, resolve, function (err) { reject(new Error(err)); });
+			});
+		};
 
 	    MobileCRM.UI.EntityForm.DetailCollection.onChange = function (handler, bind, scope) {
 	        /// <summary>[v8.2] Binds or unbinds the handler which is called when the list of sales details changes.</summary>
