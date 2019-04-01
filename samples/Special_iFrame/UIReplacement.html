@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Offline html UIReplacement</title>
+	<!-- Activate IE9 document mode, if available. -->
+	<!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<!-- Defined iOS viewport -->
+	<!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+	<!-- JSBridge must be explicitly included, otherwise the bridge is not accessible from Javascript. -->
+	<script type='text/javascript' src='JSBridge.js'></script>
+</head>
+<body>
+	<h3>Welcome to sample page.</h3>
+	<p>Example shows how to hide ui replacementm, set home item and handle sync finished event on home form.</p>
+	Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
+
+	<script>
+		/** Interval object to check whether use can access DB operation or not. */
+		var interval = null;
+		/** Check in the 1 second interval whether user can use password to run fetch of synced accounts using aggregate function, to update home item. */
+		function updateAccountHomeItem() {
+			interval = setInterval(function () {
+				MobileCRM.Configuration.requestObject(function (config) {
+					if (config.settings.canUsePassword) {
+						var entity = new MobileCRM.FetchXml.Entity("account");
+						var attr = entity.addAttribute("statuscode");
+						attr.aggregate = "count";
+						attr.groupby = true;
+						var fetch = new MobileCRM.FetchXml.Fetch(entity);
+						fetch.aggregate = true;
+						fetch.execute("Array", function (res) {
+							MobileCRM.UI.HomeForm.updateHomeItemAsync(["account"], "Accounts", "Synced Accounts", res[0][0], MobileCRM.bridge.alert);
+						}, MobileCRM.bridge.alert);
+
+						// Fetch can be executed, then clear interval object
+						clearInterval(interval);
+					}
+				}, MobileCRM.bridge.alert, null);
+			}, 1000);
+		}
+		/** Handle event on home form, when synchronization has finished. */
+		function onSyncFinished() {
+			MobileCRM.UI.HomeForm.onSyncFinished(function (homeForm) {
+				/// <param name="homeForm" type="MobileCRM.UI.HomeForm"/>
+				if (homeForm.lastSyncResult.newCustomizationReady && !homeForm.lastSyncResult.customizationDownloaded)
+					MobileCRM.bridge.alert("Application update is available");
+				else if (homeForm.lastSyncResult.connectFailed)
+					MobileCRM.Application.showAppLogin();
+				else
+					updateAccountHomeItem();
+			}, null);
+		}
+		
+		/** Execute action when window is loaded. */
+		window.onload = function () {
+			/// hide UI replacement and display native Home form and UI
+			MobileCRM.UI.HomeForm.hideUIReplacement();
+			// register sync finshed handler
+			onSyncFinished();
+			// update account of home item every time application is opened
+			updateAccountHomeItem();
+		}
+	</script>
+</body>
+</html>

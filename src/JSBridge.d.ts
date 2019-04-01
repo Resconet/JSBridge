@@ -237,7 +237,9 @@ declare module MobileCRM {
 
 		static initialize(callback: (localization: Localization) => void, errorCallback?: (error: string) => void, scope?: any);
 		static initializeEx(regularExpression: string, callback?: (localization: Localization) => void, errorCallback?: (error: string) => void, scope?: any);
-		static initializeAsync(regularExpression: string): Promise<Localization>;
+		static
+
+			(regularExpression: string): Promise<Localization>;
 		static getLoadedLangId(callback: (langId: string) => void, errorCallback?: (error: string) => void, scope?: any);
 		static getTextOrDefault: (id: string, defaultString: string) => string;
 		static getComponentLabel: (entityName: string, componentType: string, viewName: string) => string;
@@ -609,6 +611,8 @@ declare module MobileCRM {
 		public static synchronizeOnForeground(forceLogin: boolean);
 		public static getAppColor(colName: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
 		public static getAppImage(imageName: string, colorize: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
+		/** Display application login form. */
+		public static showAppLogin();
 		/**
 		 * Sets the application colors.
 		 * @since 11.2.2
@@ -817,7 +821,7 @@ declare module MobileCRM.FetchXml {
 		 * @param aggregate Optional parameter defining an aggregation function.
 		 * @returns void
 		 */
-		addAttribute(name: string, alias?: string, aggregate?: string);
+		addAttribute(name: string, alias?: string, aggregate?: string): Attribute;
 		/**
 		 * Adds all entity attributes to the fetch query.
 		 * @returns void
@@ -885,7 +889,7 @@ declare module MobileCRM.FetchXml {
 		constructor(name: string);
 		name: string;
 		aggregate: string;
-		grouby: boolean;
+		groupby: boolean;
 		alias: string;
 		dategrouping: string;
 	}
@@ -1005,7 +1009,9 @@ declare module MobileCRM.Services {
         appWasLocked: boolean;
         syncAborted: boolean;
         adminFullSync: boolean;
-        wasBackgroundSync: boolean;
+		wasBackgroundSync: boolean;
+		connectFailed: boolean;
+		webError: boolean;
     }
     class AddressBookService {
         public static getService(errorCallback?: (error: string) => void, scope?: any): AddressBookService;
