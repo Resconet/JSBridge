@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>Empty Offline HTML page</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="initial-scale=1, user-scalable=no" />
+	<script src="../JSBridge.js"></script>
+</head>
+<body>
+	<script>
+	var interval = null;
+/**
+ * Register global handler for 'SyncStarted' event. Event handler appends every second elapsed time of synchronization process.
+ * @param register If 'true' handler is bound.
+ */
+function onSyncStarted(register) {
+    MobileCRM.bridge.onGlobalEvent("SyncStarted", function (args) {
+        interval = setInterval(function () {
+        	interval += new Date().getMilliseconds();
+        }, 1000);
+    }, register, null);
+}
+/**
+ * Register global handler for 'SyncFinshed' event. Event handler displays elapsed time of synchronization process if new customization is not ready.
+ * @param register If 'true' handler is bound.
+ */
+function onSyncFinished(register) {
+    MobileCRM.bridge.onGlobalEvent("SyncFinished", function (syncResult) {
+        if (interval != null) {
+            clearInterval(interval);
+        }
+        var syncDurationMsg = "\nSynchronization tooks " + interval + " [ms].";
+        if (syncResult.newCustomizationReady)
+            MobileCRM.bridge.alert("New Customization ready." + syncDurationMsg);
+        else
+            MobileCRM.bridge.alert("Not any new Customization ready." + syncDurationMsg);
+    }, register, null);
+}
+/**
+ * Register global handler for 'EntityFormClosed' event. Event handler display message with closed entity form caption.
+ * @param register If 'true' handler is bound.
+ */
+function onEntityFormClosed(register) {
+    MobileCRM.bridge.onGlobalEvent("EntityFormClosed", function (entityForm) {
+    	MobileCRM.bridge.alert("Trying to close entity form ['" + entityForm.form.caption + "']");
+    }, register, null);
+}
+/** Register all handlers when html page is loaded. */
+window.onload = function () {
+    onSyncStarted(true);
+    onSyncFinished(true);
+    onEntityFormClosed(true);
+};
+	</script>
+</body>
+</html>
