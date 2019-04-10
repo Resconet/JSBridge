@@ -1455,7 +1455,10 @@ declare module MobileCRM.UI {
 	}
 	interface IFormChangeContext {
         changedItem: string;
-        selectedView: string;
+		selectedView: string;
+		newIndex: number;
+		oldIndex: number;
+		type: number;
 	}
 
 	/**
@@ -2224,6 +2227,8 @@ declare module MobileCRM.UI {
 		 * A request object with single function 'resumeSave'; which has to be called with the validation result (either error message string or 'null' in case of success).
 		 */
 		suspendSave(): IFormSaveHandler;
+		/** @since 10.0 Controls the behavior of the Save command on this form (0=Default, 1=SaveOnly, 2=SaveAndClose). */
+		saveBehavior: number;
 	}
      /** Represents the Javascript equivalent view of tourplan form object. */
 	class TourplanForm {
