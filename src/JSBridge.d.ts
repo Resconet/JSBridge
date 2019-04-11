@@ -237,9 +237,7 @@ declare module MobileCRM {
 
 		static initialize(callback: (localization: Localization) => void, errorCallback?: (error: string) => void, scope?: any);
 		static initializeEx(regularExpression: string, callback?: (localization: Localization) => void, errorCallback?: (error: string) => void, scope?: any);
-		static
-
-			(regularExpression: string): Promise<Localization>;
+		static initializeAsync(regularExpression: string): Promise<Localization>;
 		static getLoadedLangId(callback: (langId: string) => void, errorCallback?: (error: string) => void, scope?: any);
 		static getTextOrDefault: (id: string, defaultString: string) => string;
 		static getComponentLabel: (entityName: string, componentType: string, viewName: string) => string;
@@ -1456,9 +1454,6 @@ declare module MobileCRM.UI {
 	interface IFormChangeContext {
         changedItem: string;
 		selectedView: string;
-		newIndex: number;
-		oldIndex: number;
-		type: number;
 	}
 
 	/**
