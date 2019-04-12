@@ -237,9 +237,7 @@ declare module MobileCRM {
 
 		static initialize(callback: (localization: Localization) => void, errorCallback?: (error: string) => void, scope?: any);
 		static initializeEx(regularExpression: string, callback?: (localization: Localization) => void, errorCallback?: (error: string) => void, scope?: any);
-		static
-
-			(regularExpression: string): Promise<Localization>;
+		static initializeAsync(regularExpression: string): Promise<Localization>;
 		static getLoadedLangId(callback: (langId: string) => void, errorCallback?: (error: string) => void, scope?: any);
 		static getTextOrDefault: (id: string, defaultString: string) => string;
 		static getComponentLabel: (entityName: string, componentType: string, viewName: string) => string;
@@ -1223,7 +1221,7 @@ declare module MobileCRM.UI {
 		/** Determines if form can be closed, i.e. there are no unsaved data being edited.*/
 		canClose: boolean;
 		/** Gets the specific context object for onChange and onSave handlers. The onChange context contains single property 'changedItem' with the name of the changed detail item and the onSave context contains property 'errorMessage' which can be used to break the save process with certain error message.*/
-		context?: IFormSaveContext | IFormChangeContext;
+		context?: IFormSaveContext | IFormChangeContext | IFormDetailCollectionChangeContext;
         /** Gets the current view of entity list.*/
         currentView: string;
 		/** Gets the form controllers (map, web) as an array of { MobileCRM.UI._Controller } objects.*/
@@ -1456,6 +1454,9 @@ declare module MobileCRM.UI {
 	interface IFormChangeContext {
         changedItem: string;
 		selectedView: string;
+	}
+	/** Represents context of change on entity form detail collection. */
+	interface IFormDetailCollectionChangeContext {
 		newIndex: number;
 		oldIndex: number;
 		type: number;
@@ -2227,8 +2228,6 @@ declare module MobileCRM.UI {
 		 * A request object with single function 'resumeSave'; which has to be called with the validation result (either error message string or 'null' in case of success).
 		 */
 		suspendSave(): IFormSaveHandler;
-		/** @since 10.0 Controls the behavior of the Save command on this form (0=Default, 1=SaveOnly, 2=SaveAndClose). */
-		saveBehavior: number;
 	}
      /** Represents the Javascript equivalent view of tourplan form object. */
 	class TourplanForm {
