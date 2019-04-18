@@ -3308,7 +3308,7 @@
 			/// <returns type="Promise&lt;MobileCRM.Reference[]&gt;">A Promise object which will be resolved with an array of Reference objects representing chosen entity records.</returns>
 			var params = this._constructParams();
 			params.dataSource = this.dataSource;
-			return MobileCRM.bridge.invokeCommandPromise("multiLookupForm", JSON.stringify(params), success, failed, scope);
+			return MobileCRM.bridge.invokeCommandPromise("multiLookupForm", JSON.stringify(params));
 		};
 
 	    // MobileCRM.UI.Form
