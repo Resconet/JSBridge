@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>Link Item To Account</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="initial-scale=1, user-scalable=no" />
+	<script src="JSBridge.js"></script>
+</head>
+<body>
+    <script>
+        // INFO:
+        // this script adds link item to default account form to tab sf_account
+        // after clicking on the link, a signature form opens
+        // if signature for the current record existed, edit form is opened
+        // if such signature did not exist, new form is opened and associated with the current record
+        // REQUIRED:
+        // default account form with tab sf_account
+        // remove command "Clear" from Content Version form (in Woodford)
+
+
+        // global variable which contains:
+        // entity form where iframe with this js file is
+        // detail view where the link is constructed
+        var _data = {
+            entityform: null,
+            detailView: null
+        }
+
+        init();
+
+		/** Initialization method */
+        function init() {
+            //create link item which opens signature form
+            createLinkDetailItems();
+            //register global handler - in case form with signature is closed, reload link
+            MobileCRM.bridge.onGlobalEvent("EntityFormClosed", function (closedEntityForm) {
+                if (closedEntityForm.entity.entityName == "sf_contentversion")
+                    createLinkDetailItems();
+            }, true);
+        }
+
+		/** Request entity form and set global variable '_data' after call fetch method. */
+        function createLinkDetailItems() {
+        	MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
+        		///<param name='entityForm' type='MobileCRM.UI.EntityForm' />
+
+				if (!entityForm.entity.isNew) {
+					var detailView = entityForm.getDetailView("sf_account");    // 'sf_account' is the tab which will contain the link item
+					if (detailView) {
+
+						_data = {
+							entityform: entityForm,
+							detailView: detailView
+						};
+
+						fetchContentVersion(fetchCallback);
+					}
+					else
+						MobileCRM.bridge.alert("Tab 'sf_account' is not defined");
+				}
+            }, MobileCRM.bridge.alert, null);
+        }
+
+		/**
+		 * Fetch signature from 'sf_contentversion' entity and pass result to callback function
+		 * @param fetchCallback callback function with passed result of DynamicEntities array
+		 */
+        function fetchContentVersion(fetchCallback) {
+            //signature is stored in Content Version, which is linked to Account through two other entities
+            var contentVersion = new MobileCRM.FetchXml.Entity("sf_contentversion");
+            contentVersion.addAttributes();
+            var linkCD = contentVersion.addLink("sf_contentdocument", "latestpublishedversionid", "id", "inner");
+            var linkCDLEntity = linkCD.addLink("sf_contentdocumentlink", "contentdocumentid", "id", "inner");
+            linkCDLEntity.alias = "linkCDL";
+            //fetch only signature which is linked to the open account
+            linkCDLEntity.filter = new MobileCRM.FetchXml.Filter();
+            linkCDLEntity.filter.where("linkedentityid", "eq", _data.entityform.entity.id);
+
+            //return signature as dynamic entity. in case of successful fetch, process results with the callback function
+            var fetch = new MobileCRM.FetchXml.Fetch(contentVersion);
+            fetch.execute(
+                "DynamicEntities",
+                fetchCallback,
+                function (err) {
+                    MobileCRM.bridge.alert("Error fetching content version: " + err);
+                },
+                null
+            );
+        }
+
+		/**
+		 * Create link and register handler, which will open the signature form
+		 * it opens either form for new signature or edit form if a signature exist
+		 * @param result passed result of DynamicEntities array
+		 */
+        function fetchCallback(result) {
+
+            // if item with name 'linkRefItem' exists, remove it
+            var ind = _data.detailView.getItemIndex("linkRefItem");
+            if ((ind && ind > -1) || ind === 0) {
+                _data.detailView.removeItem(ind);
+            }
+
+            //construct link item
+            var linkRefItem = new MobileCRM.UI.DetailViewItems.LinkItem("signature", "Signature");
+            linkRefItem.name = "linkRefItem";
+            linkRefItem.value = "Click here to provide signature";  // default clickable text within the link item
+
+            //handler which opens new form
+            var handler = function () {
+
+                // construct relationship, which needs to be passed to new content version form
+                // this is needed to automatically create the whole content document structure and associate content version with current record        
+                var editedAccount = _data.entityform.entity;
+                var target = new MobileCRM.Reference(editedAccount.entityName, editedAccount.id);               
+                var relationship = new MobileCRM.Relationship("linkedentityid", target, "sf_contentdocument", "latestpublishedversionid");
+
+                MobileCRM.UI.FormManager.showNewDialog(
+                    "sf_contentversion",
+                    relationship,
+                    {
+                        "@initialize": {
+                            title: "mobilecrm_signature"    // this will set the title field on content version to mobilecrm_signature
+                        }
+                    }
+                );
+            };
+
+            //if there was a signature already (fetch returned a result), add different text to link and use different handler
+            if (result && result[0]) {
+                linkRefItem.value = "Signature provided"; 
+
+                //handler which opens edit form
+                handler = function () {
+                    MobileCRM.UI.FormManager.showEditDialog("sf_contentversion", result[0].properties.id, null, null)
+                };
+            }
+
+            //register handler
+            _data.detailView.registerClickHandler(linkRefItem, handler);   
+
+            //add link to view
+            _data.detailView.insertItem(linkRefItem, -1);
+        }
+
+    </script>
+</body>
+</html>
