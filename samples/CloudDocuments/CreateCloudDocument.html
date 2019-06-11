@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>Create Cloud document</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+	<script type='text/javascript' src='JSBridge.js'></script>
+</head>
+<body>
+	<h4>Create Cloud document.</h4>
+	<button onclick="CreateDocument()">Create</button>
+	<script>
+
+		/**
+		 * Create cloud document from base64 formated string, linked to first record from fetch result of desired entity.
+		 * @param entityName name of entity.
+		 * @param base64img Base64 formated string of image.
+		 * @param cloudSource Source where to store the cloud document @see cloudSource .
+		 */
+		function createCloudDocumentFromBase64(entityName, base64img, cloudSource) {
+			var err = null;
+			// check and test if entities are enabled
+			MobileCRM.Metadata.requestObject(function (metadata) {
+				/// <param name='metadata' type='MobileCRM.Metadata'/>
+
+				if (!entityName) {
+					err += "Parameter 'entityName' is not defined\n\n";
+				}
+				else {
+					if (!metadata.getEntity(entityName))
+						err += entityName + " entity is not enabled.\n";
+				}
+				if (!metadata.getEntity("resco_mobilereport"))
+					err += "resco_mobilereport entity is not enabled\n";
+				if (!metadata.getEntity("resco_mobilereport"))
+					err += "resco_sharepointdoc entity is not enabled\n";
+				if (!base64img)
+					err += "Parameter 'base64Img' parameter is not defined\n";
+
+				if (err) {
+					MobileCRM.bridge.alert("Error: \n" + err);
+					return;
+				}
+
+				var acc = new MobileCRM.FetchXml.Entity(entityName);
+				acc.addAttributes();
+
+				var fetch = new MobileCRM.FetchXml.Fetch(acc, 1);
+				fetch.execute("DynamicEntities", function (res) {
+					var entity = res[0];
+
+					var doc = new MobileCRM.DynamicEntity("resco_sharepointdoc");
+					doc.properties.resco_filename = "Test.png";
+					doc.properties.resco_filesize = base64img.length / 4;
+					// in relativepath, the entityid is used without dashes
+					var entityid = entity.id.replace(/-/g, "");
+					doc.properties.resco_relativepath = "/" + entity.entityName + "/" + entity.primaryName + "_" + entityid + "/Test.png";
+
+					doc.properties.resco_regardingid = new MobileCRM.Reference(entity.entityName, entity.id, entity.primaryName);
+					doc.properties.resco_name = "Test_from JS";
+					doc.properties.resco_source = cloudSource; // 0 - Sharepoint, 1 - DropBox, 2 - GoogleDrive, 3 - OneDrive, 4 - Box
+
+					let primaryName = entity.primaryName;
+
+					MobileCRM.Application.writeFileFromBase64("Test.png", base64img, function (res) {
+						doc.save(function (err) {
+							if (err) MobileCRM.bridge.alert("Saving report to sharepoint was unsacesful\n\n" + err);
+							else {
+								MobileCRM.DynamicEntity.saveDocumentBody(this.id, "resco_sharepointdoc", null, "Test.png", "image/png", function (res) {
+									MobileCRM.DynamicEntity.loadById("resco_sharepointdoc", res.id, function (res) {
+										/// <param name='res' type='MobileCRM.Reference' />
+										if (!res)
+											MobileCRM.bridge.alert("Failed to create cloud document");
+										else
+											MobileCRM.bridge.alert("Sucesfully created cloud document for record ['" + primaryName + "'], please try to sync.");
+									}, MobileCRM.bridge.alert, null);
+								}, MobileCRM.bridge.alert, null);
+							}
+						});
+					}, MobileCRM.bridge.alert);
+
+				}, MobileCRM.bridge.alert, null);
+			}, MobileCRM.bridge.alert, null);
+		}
+
+		/** Cloud enum source */
+		var cloudSource = {
+			Sharepoint: 0,
+			DropBox: 1,
+			GoogleDrive: 2,
+			OneDrive: 3,
+			Box: 4
+		}
+
+	</script>
+</body>
+</html>
