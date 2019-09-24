@@ -1,5 +1,5 @@
 // JSBridge.js TypeScript definition file
-// v12.0
+// v12.2
 // (c) 2019 Resco
 
 declare module MobileCRM {
@@ -644,6 +644,15 @@ declare module MobileCRM {
 		 * @param scope The scope for errorCallback.
 		 */
 		public static writeFileWithEncoding(path: string, text: string, encoding: string, append: boolean, success: () => void, failed?: (err: string) => void, scope?: any);
+		/**
+		 * @since 12.1
+		 * Asynchronously refresh access token using saved token in protected settings and send serialized token to success callback
+		 * @param resource The resource
+		 * @param success A callback function what is called asynchronously with serialized access token argument.
+		 * @param errorCallback The errorCallback which is called asynchronously in case of error.
+		 * @param scope The scope for errorCallback.
+		 */
+		public static getAccessToken(resource, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any)
 	}
 
 	class AboutInfo {
@@ -983,11 +992,17 @@ declare module MobileCRM.Services {
 		mimeType: string;
 		nextInfo: FileInfo;
     }
-    class DocumentService {
-        maxImageSize: number;
-        recordQuality: number;
-        allowChooseVideo: boolean;
-        allowMultipleFiles: boolean;
+	class DocumentService {
+		/**Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size.*/
+		maxImageSize: number;
+		/**Gets or sets the record quality for audio/video recordings.*/
+		recordQuality: number;
+		/**Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.*/
+		allowChooseVideo: boolean;
+		/**Indicates whether to allow multiple files for DocumentActions SelectPhoto and SelectFile.[Not implemented on iOS.]*/
+		allowMultipleFiles: boolean;
+		/**Indicates whether to allow handling of cancel event. Callback will pass the null argument in this case.*/
+		allowCancelHandler: boolean;
 
         capturePhoto(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         selectPhoto(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
@@ -2228,8 +2243,6 @@ declare module MobileCRM.UI {
 		 * A request object with single function 'resumeSave'; which has to be called with the validation result (either error message string or 'null' in case of success).
 		 */
 		suspendSave(): IFormSaveHandler;
-		/** @since 10.0 Controls the behavior of the Save command on this form (0=Default, 1=SaveOnly, 2=SaveAndClose). */
-		saveBehavior: number;
 	}
      /** Represents the Javascript equivalent view of tourplan form object. */
 	class TourplanForm {
@@ -2354,18 +2367,26 @@ declare module MobileCRM.UI.DetailViewItems {
 	}
 	class DurationItem extends Item {
 	}
-
 	class ComboBoxItem extends Item {
 		listDataSource: any;
 	}
-
 	class LinkItem extends Item {
 		isMultiline: boolean;
-        value: MobileCRM.Reference | string;
+		value: MobileCRM.Reference | string;
+		listDropDownFormat: DropDownFormat;
 	}
-
+	class ButtonItem extends Item {
+		/**Gets or sets the click text.*/
+		clickText: string;
+	}
 	class LookupSetup {
 		addView(entityName: string, viewName: string, isDefault: boolean);
 		addFilter(entityName: string, filterXml: string);
+	}
+	enum DropDownFormat {
+		StringList = 17,
+		StringListInput = 18,
+		MultiStringList = 19,
+		MultiStringListInput = 20
 	}
 }

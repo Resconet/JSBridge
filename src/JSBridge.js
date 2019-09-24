@@ -1,6 +1,6 @@
-// v12.0
+// v12.2
 (function () {
-	var _scriptVersion = 12.0;
+	var _scriptVersion = 12.2;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -805,7 +805,15 @@
 	                    this._type = "Link";
 	                    if (listDropDownFormat)
 	                        this.listDropDownFormat = listDropDownFormat;
-	                },
+					},
+					ButtonItem: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> duration item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <field name="clickText" type="Boolean">Gets or sets the click text.</field>
+						MobileCRM.UI.DetailViewItems.DurationItem.superproto.constructor.apply(this, arguments);
+						this._type = "Button";
+					},
 	                DropDownFormat: {
 	                    StringList: 17,
 	                    StringListInput: 18,
@@ -851,6 +859,7 @@
 	                /// <field name="recordQuality" type="Number">Gets or sets the record quality for audio/video recordings.</field>
 	                /// <field name="allowChooseVideo" type="Boolean">Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.</field>
 	                /// <field name="allowMultipleFiles" type="Boolean">Indicates whether to allow multiple files for DocumentActions SelectPhoto and SelectFile.[Not implemented on iOS.]</field>
+					/// <field name="allowCancelHandler" type="Boolean">Indicates whether to allow handling of cancel event. Callback will pass the null argument in this case.</field>
 	            },
 	            AudioRecorder: function () {
 	                /// <summary>[v10.0] Represents a service for recording an audio.</summary>
@@ -2827,6 +2836,15 @@
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.WriteStorageFileFromBase64", [path, base64], success, failed, scope);
 	    };
 
+	    MobileCRM.Application.getAccessToken = function (resourceUrl, successCallback, failureCallback, scope) {
+	    	/// <param name="resourceUrl">The resource.</param>
+	    	/// <param name="successCallback" type="function(textAccessToken)">A callback function what is called asynchronously with serialized <b>access token</b> as argument.</param>
+	    	/// <param name="failureCallback" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+	    	/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+
+	    	MobileCRM.bridge.command("GetAccessToken", JSON.stringify({ resource: resourceUrl }), successCallback, failureCallback, scope);
+	    };
+
 	    // MobileCRM.UI.FormManager
 	    MobileCRM.UI.FormManager.showEditDialog = function (entityName, id, relationship, options) {
 	        /// <summary>Shows an entity edit dialog.</summary>
@@ -3135,7 +3153,8 @@
 	    _inherit(MobileCRM.UI.DetailViewItems.DateTimeItem, MobileCRM.UI.DetailViewItems.Item);
 	    _inherit(MobileCRM.UI.DetailViewItems.DurationItem, MobileCRM.UI.DetailViewItems.Item);
 	    _inherit(MobileCRM.UI.DetailViewItems.ComboBoxItem, MobileCRM.UI.DetailViewItems.Item);
-	    _inherit(MobileCRM.UI.DetailViewItems.LinkItem, MobileCRM.UI.DetailViewItems.Item);
+		_inherit(MobileCRM.UI.DetailViewItems.LinkItem, MobileCRM.UI.DetailViewItems.Item);
+		_inherit(MobileCRM.UI.DetailViewItems.ButtonItem, MobileCRM.UI.DetailViewItems.Item);
 
 	    // MobileCRM.UI.ViewController
 	    MobileCRM.UI.ViewController.createCommand = function (primary, labels, callback, scope) {
@@ -4809,7 +4828,8 @@
 	            maxImageSize: this.maxImageSize,
 	            recordQuality: this.recordQuality,
 	            allowChooseVideo: this.allowChooseVideo,
-	            allowMultipleFiles: this.allowMultipleFiles
+				allowMultipleFiles: this.allowMultipleFiles,
+				allowCancelHandler: this.allowCancelHandler
 	        };
 	        MobileCRM.bridge.command("documentService", JSON.stringify(params), callback, errorCallback, scope);
 	    };
@@ -5120,15 +5140,15 @@
 		// Platform dependent implementation   /
 		// MobileCRM.bridge singleton creation /
 		/**************************************/
-		if (document.location.search.indexOf("isWC_MCRM=1") >= 0) {	// when running on webclient, that client appends isWC_MCRM attribute to url
-			var instanceId;
+		if (document.location.search.indexOf("wc_mcrm_bid|") >= 0) {	// when running on webclient, that client appends 'wc_mcrm_bid|' is part of the 'data' attribute
+			var webClientBridgeId = getWCBridgeInstanceId();
 
 			MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
-				if (!this.instanceId) {
-					this.instanceId = getBridgeInstanceId();
+				if (!webClientBridgeId) {
+					webClientBridgeId = getWCBridgeInstanceId();
 				}
 				var cmdId = this._createCmdObject(success, failed, scope);
-				var cmdText = this.instanceId + ';' + cmdId + ';' + command + ';' + params;
+				var cmdText = webClientBridgeId + ';' + cmdId + ';' + command + ';' + params;
 				parent.window.postMessage(cmdText, "*");
 			};
 			MobileCRM.bridge = new MobileCRM.Bridge('WebClient');
@@ -5147,10 +5167,10 @@
 							var evalId = data.substr(0, index).split('|')[1];
 							var result = eval(evalCode);
 							if (evalId) {
-								if (!this.instanceId) {
-									this.instanceId = getBridgeInstanceId();
+								if (!webClientBridgeId) {
+									webClientBridgeId = getWCBridgeInstanceId();
 								}
-								parent.window.postMessage(this.instanceId + ";" + evalId + ";asyncResponse;" + result, "*");
+								parent.window.postMessage(webClientBridgeId + ";" + evalId + ";asyncResponse;" + result, "*");
 							}
 						}
 					}
@@ -5161,12 +5181,12 @@
 				}
 			}
 
-			function getBridgeInstanceId() {
+			function getWCBridgeInstanceId() {
 				args = document.location.search;
-				var index = args.indexOf("bid=");
+				var index = args.indexOf("wc_mcrm_bid|");
 				var id = null;
 				if (index > 0) {
-					id = args.substr(index + 4);
+					id = args.substr(index + 12);
 				}
 				if (id === null) {
 					throw "JSBridge not registered."
