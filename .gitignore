@@ -74,3 +74,4 @@
 /samples/UI/EntityForm/onSave/Debug/obj/Debug/onSave.csprojAssemblyReference.cache
 /samples/UI/EntityForm/DetailCollection/GetAndDeleteProduct/Debug/obj/Debug/Debug.csproj.CoreCompileInputs.cache
 *.cache
+/samples/.vs
