@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>EntityForm onChange</title>
+    <link rel="stylesheet" href="app.css" type="text/css" />
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <!-- Include JSBridge.js file to use RescoMCRM JSBridge api  -->
+    <script type="text/javascript" src="JSBridge.js"></script>
+</head>
+<body onload="onBodyLoaded()">
+    <script>
+        const commandName = "custom_run_report"; // change the name of the command (see Woodford -> entity -> form editor -> commands)
+        const reportName = "custom_report"; // change the name of the report (see report editor)
+        const entityName = "sf_product2"; // change to the name of the entity on which the report is run
+        const reportFile = "CustomReport.pdf"; // name of the file in which the report is stored
+        const attachmentDescription = "CustomReport"; // in Woodford, in entity form, click on report media tab -> Configure Media Tab window will appear
+                                                      // constant attachmentDescription has to be set to the string in "Title Equals"
+
+        var g_storDir = null;
+        var g_entityForm = null;
+
+        function onBodyLoaded() {
+            // everything happens after clicking on command, which name is in commandName
+            MobileCRM.UI.EntityForm.onCommand(commandName, function (entityForm) {
+                // store entityForm in a global variable
+                g_entityForm = entityForm;
+                MobileCRM.Configuration.requestObject(
+                    function (config) {
+                        // store storage dir in a global variable
+                        g_storDir = config.storageDirectory;
+                        // check if the form is dirty
+                        checkForDirtyForm();
+                        return false;
+                    }, MobileCRM.bridge.alert, null);
+            });
+        }
+
+        function checkForDirtyForm() {
+            // if anything has changed, show messagebox saying that user has to save the changes first
+            if (g_entityForm.isDirty) {
+                var messageBox = new MobileCRM.UI.MessageBox("Save your changes first by clicking on the save button!");
+                // add buttons for the message box
+                messageBox.items = ["OK"];
+                // if title is too long, set the 'multi-line' to true
+                messageBox.multiLine = true;
+                messageBox.show();
+            } else {
+                // in case of no changes, generate the report
+                fetchReportXML();
+            }
+        }
+
+        // get report xml
+        function fetchReportXML() {
+            //this is where report definition is stored, do not change the next two rows
+            var report = new MobileCRM.FetchXml.Entity("resco_mobilereport");
+            report.addAttribute("resco_data");
+
+            //name of the report has to match the name of the report in report editor
+            report.filter = new MobileCRM.FetchXml.Filter();
+            report.filter.where("name", "eq", reportName);
+
+            //fetch the report definition
+            var fetch = new MobileCRM.FetchXml.Fetch(report);
+            fetch.execute("Array", function (res) {
+                if (res.length > 0) {
+                    var reportXML = res[0][0];
+                    //run the mobile report, report definition is passed as an argument in XML format
+                    runMobileReport(reportXML, g_entityForm.entity.id);
+                }
+            }, MobileCRM.bridge.alert, null);
+        }
+
+        // prepare the report file in pdf format
+        function runMobileReport(reportXML, id) {
+            // prepare fetch in XML format that will get the data
+            var dataXML = "<fetch version='1.0' aggregate='false'><entity name='" + entityName + "'><filter><condition attribute='id' operator='eq' value='" + id + "' /></filter></entity></fetch>";
+
+            // make the report file in pdf format; if successfull, then call the function readBody
+            MobileCRM.MobileReport.runReport(dataXML, reportXML, "Pdf", null, false, g_storDir + "/" + reportFile,
+                readBody, MobileCRM.bridge.alert);
+        }
+
+        function readBody(filePath) {
+            // load the file body, if successful, call function clearOldReports and pass the file body as a parameter
+            MobileCRM.Application.readFileAsBase64(filePath, clearOldReports, MobileCRM.bridge.alert, null);
+        }
+
+        function clearOldReports(newBody) {
+            // fetch all the old reports
+            var oldReports = new MobileCRM.FetchXml.Entity("sf_attachment");
+            oldReports.addAttribute("id");
+
+            // old reports has to have the name of the file specified in constant reportFile
+            // AND they have to belong to the actual record
+            oldReports.filter = new MobileCRM.FetchXml.Filter();
+            oldReports.filter.where("name", "eq", reportFile);
+            oldReports.filter.where("parentid", "eq", g_entityForm.entity.id);
+
+            // fetch the old reports, if successful, clear them all
+            // pass loaded report to the function clearReport, so it can work with it after clearing old reports
+            var fetch = new MobileCRM.FetchXml.Fetch(oldReports);
+            fetch.execute("DynamicEntities", function (result) {
+                clearReport(result, newBody);
+            }, MobileCRM.bridge.alert, null);
+        }
+
+        // recursively clear all old reports, afterwards create new Attachement with the actual report
+        function clearReport(oldReports, newBody) {
+            if (oldReports.length > 0) {
+                var report = oldReports.pop();
+                MobileCRM.DynamicEntity.deleteById("sf_attachment", report.id, function () {
+                        clearReport(oldReports, newBody);
+                    }, function (error) {
+                        MobileCRM.bridge.alert("An error in deleting old records occurred: " + error);
+                    }, null);
+
+            } else {
+                // create new Attachement with the report (finally)
+                createAttachment(newBody);
+            }
+        }
+
+        // prepare a record of the entity Attachment and save it
+        function createAttachment(newBody) {
+            var attachment = MobileCRM.DynamicEntity.createNew("sf_attachment");
+            // add content of the report file to body (that thing that was passed through the last two functions)
+            attachment.properties.body = newBody;
+            attachment.properties.name = reportFile;
+            attachment.properties.contenttype = "application/pdf";
+            attachment.properties.description = attachmentDescription;
+            // parent of the attachment is the current record
+            attachment.properties.parentid = new MobileCRM.Reference(entityName, g_entityForm.entity.id, g_entityForm.entity.name);
+            // save the attachment
+            attachment.save(function (err) {
+                if (err) {
+                    MobileCRM.bridge.alert(err);
+                } else {
+                    // if the save was successful (no errors) reload the media tab with report
+                    MobileCRM.UI.EntityForm.loadTab("Report", true, MobileCRM.bridge.alert, null);
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
