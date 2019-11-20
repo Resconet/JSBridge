@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>OnEntityListCommandExmaples</title>
+	<!-- Activate IE9 document mode, if available. -->
+	<!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<!-- Defined iOS viewport -->
+	<!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+	<!-- JSBridge must be explicitly included, otherwise the bridge is not accessible from Javascript. -->
+	<script type='text/javascript' src='JSBridge.js'></script>
+</head>
+<body>
+	<script>
+
+		/** PREREQUESITS
+		 *  1) Go to Woodford and create custom command on entity view.
+		 *  2) On entity view tap on 'Buttons' command and create commands with following names 'custom_scanBarcode' and 'custom_changeName'
+		 *  3) Add script to entity view by command 'iFrame' (select script script from offline html section)
+		 * */
+
+
+		/** Scan barcode on custom command and use scanned value to set entity name property. */
+		function scanBarcodeOnCommand() {
+			MobileCRM.UI.EntityList.onCommand("custom_scanBarcode", function (entityList) {
+				/// <param name="entityList" type="MobileCRM.UI.EntityList" />
+				var context = entityList.context;
+				if (context) {
+					var entities = context.entities;
+					if (entities) {
+						/// call barcode scanner
+						MobileCRM.Platform.scanBarCode(function (barcodes) {
+							/// <param name="barcode" type="Array">Array of scanned barcodes</param>
+							if (barcodes && barcodes.length > 0) {
+								//make simple validation whether 'name' entity property is defined.
+								if (entities[0].properties.name) {
+									// since we move the context of execution to barcode scanner, we have to set the entity properties on the entity list like this.
+									MobileCRM.UI.EntityList.setEntityProperty(entityList.listView.selectedIndex, "name", barcodes[0], true, (err) => {
+										MobileCRM.bridge.alert("Error has been thrown while trying to set 'name' entity property.\nErr: " + err);
+									}, null);
+								}
+							}
+						}, (err) => {
+							if (err !== "Failed")
+								MobileCRM.bridge.alert(err);
+						}, null);
+					}
+				}
+			}, true, null);
+		}
+		/** Append prefix '##' to entity property name on custom command. */
+		function appendPrefixToName() {
+			MobileCRM.UI.EntityList.onCommand("custom_changeName", function (entityList) {
+				/// <param name='entityList' type='MobileCRM.UI.EntityList'>
+
+				MobileCRM.bridge.alert("Changing name...");
+
+				if (entityList.context) {
+					var entities = entityList.context.entities;
+					if (entities) {
+						if (entities[0].properties.name)
+							entities[0].properties.name = "##" + entities[0].properties.name;
+						else
+							MobileCRM.bridge.alert("Name property not defined.");
+					}
+					else
+						MobileCRM.bridge.alert("Context doesn't contain object 'entities'.");
+				}
+			}, true, null);
+		}
+
+		/** When page is loaded register custom command handlers. */
+		window.onload = function () {
+			appendPrefixToName();
+			scanBarcodeOnCommand();
+		}
+
+	</script>
+</body>
+</html>
