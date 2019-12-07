@@ -426,6 +426,24 @@ declare module MobileCRM {
 		static unzipDocumentBody(entityName: string, id: string, targetDir: string, sucess?: () => void, failed?: (error: string) => void, scope?: any);
 		static downloadAttachment(entityName: string, id: string, sucess: (base64: string) => void, failed?: (error: string) => void, scope?: any);
 		static downloadAttachmentAsync(entityName: string, id: string): Promise<string>;
+		/**
+		 * Saves an entities instances to storage.Where the entity is stored is determined by how it was loaded: online / offline.
+		 * @param updatedEntities Array of MobileCRM.DynamicEntity what will be updated.
+		 * @param online Whether to load and save online or offline. Null for default mode by current configuration.
+		 * @param sucessCallback A callback function for successful asynchronous result
+		 * @param failureCallback A callback function for command failure. The argument will carry the error message.
+		 * @param scope A scope for calling the callbacks
+		 */
+		static saveMultiple(updatedEntities: Array<MobileCRM.DynamicEntity>, online?: boolean, sucessCallback?: () => void, failureCallback?: (error: string) => void, scope?: any)
+		/**
+		 * Delete an entities instances to storage.Where the entity is stored is determined by how it was loaded: online / offline.
+		 * @param deletedEntities Array of MobileCRM.DynamicEntity or MobileCRM.Reference what will be deleted.
+		 * @param online Whether to load and save online or offline. Null for default mode by current configuration.
+		 * @param sucessCallback A callback function for successful asynchronous result
+		 * @param failureCallback A callback function for command failure. The argument will carry the error message.
+		 * @param scope A scope for calling the callbacks
+		 */
+		static deleteMultiple(deletedEntities: Array<MobileCRM.Reference>, online?: boolean, sucessCallback?: () => void, failureCallback?: (error: string) => void, scope?: any)
 	}
 
 	class Metadata {
@@ -1090,7 +1108,54 @@ declare module MobileCRM.Services {
          * @param encoding The encoding (e.g. UTF-8, ASCII, Base64)
          */
         public setResponseEncoding(encoding: string);
-    }
+	}
+	class AIVision {
+		/**
+		 * Construct AIVision instance from passed setting parameter @see MobileCRM.Services.AIVisionSettings .
+		 * @param AIVisionSettings settings @see MobileCRM.Services.AIVisionSettings.
+		 */
+		static create(settings: AIVisionSettings): AIVision;
+		/**
+		 * Construct AIVision instance using entity settings defined in woodford.
+		 * @param entityName Name of the entity what contains AI Image Recognition settings.
+		 */
+		static createFromEntitySettings(entityName: string): AIVision;
+		/**
+		 * Recognize captured photo using AIVison service.
+		 * @param success A callback function that is called with the result of recognition @see MobileCRM.Services.IAIVisionResult.
+		 * @param failed A callback which is called in case of error.
+		 * @param scope The scope for callbacks.
+		 */
+		recognizeCapturedPhoto(success: (tags: MobileCRM.Services.IAIVisionResult) => void, failed?: (error: string) => void, scope?: any);
+		/**
+		 * Recognize captured photo using selected pricture.
+		 * @param success A callback function that is called with the result of recognition @see MobileCRM.Services.IAIVisionResult.
+		 * @param failed A callback which is called in case of error.
+		 * @param scope The scope for callbacks.
+		 */
+		recognizeSelectedPicture(success: (res: MobileCRM.Services.IAIVisionResult) => void, failed?: (error: string) => void, scope?: any);
+	}
+	/** Represents the settings for AI image recognition service.</summary> */
+	class AIVisionSettings {
+		/** Gets or sets the model name. */
+		public modelName: string;
+		/** Gets or sets the model prediction key. */
+		public predictionKey: string;
+		/** Gets or sets the url to train model. */
+		public url: string;
+		/** Gets or sets the service type. By default we use Azure. */
+		public serviceType?: string;
+	}
+
+	interface IAIVisionResult {
+		tags: Array<IAIVisionTags>
+		filePath: string;
+	}
+	interface IAIVisionTags {
+		tag: string;
+		probability: string;
+	}
+
     interface IWebResponse {
         responseCode: number;
         responseText: string;
@@ -1527,6 +1592,8 @@ declare module MobileCRM.UI {
 		/** Gets or sets the unique name of the list. Used to save/load list specific settings.*/
 		uniqueName: number;
 		allowedViews: string;
+		/** Gets the current entity list view */
+		currentView: string;
 		/** Gets the specific context object for event handlers.*/
 		context?: IEntityListChangeContext | IEntityListSaveContext | IEntityListClickContext;
 
@@ -1975,13 +2042,13 @@ declare module MobileCRM.UI {
 
 	class HomeForm {
 		form: Form;
-		items: Array<any>;
+		items: HomeItem[];
 		listView: _ListView;
 		lastSyncResult: MobileCRM.Services.SynchronizationResult;
 		syncResultText: string;
 		syncProgress: any;
 
-        static requestObject(callback: (homeForm: HomeForm) => void, errorCallback?: (err: string) => void, scope?: any);
+		static requestObject(callback: (homeForm: HomeForm) => void, errorCallback?: (err: string) => void, scope?: any);
 		static openHomeItemAsync(name: string, errorCallback?: (err: string) => void, scope?: any);
 		static closeHomeItemAsync(name: string, errorCallback?: (err: string) => void, scope?: any);
 		static closeForms(callback: () => void, errorCallback?: (err: string) => void, scope?: any);
@@ -1998,6 +2065,27 @@ declare module MobileCRM.UI {
 		subTitle?: string;
 		badge?: string;
 		isVisible?: boolean;
+	}
+
+	class HomeItem
+	{
+		name: string;
+		path: string;
+		title: string;
+		subTitle: string;
+		badge: string;
+		icon: string;
+		isVisible: boolean;
+
+		isEnabled: boolean;
+		isInitial: boolean;
+		isLevelUp: boolean;
+		isNavigationItem: boolean;
+		url: string;
+		uniqueName: string;
+		itemConfiguration: string;
+
+		children: HomeItem[];
 	}
 
 	class ReportForm {

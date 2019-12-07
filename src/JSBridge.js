@@ -1,6 +1,6 @@
-// v12.2
+// v12.3
 (function () {
-	var _scriptVersion = 12.2;
+	var _scriptVersion = 12.3;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -806,13 +806,17 @@
 	                    if (listDropDownFormat)
 	                        this.listDropDownFormat = listDropDownFormat;
 					},
-					ButtonItem: function (name, label) {
+					ButtonItem: function (name, clickText) {
 						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> duration item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="clickText" type="String">Gets or sets the text content of click button.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
-						/// <field name="clickText" type="Boolean">Gets or sets the click text.</field>
 						MobileCRM.UI.DetailViewItems.DurationItem.superproto.constructor.apply(this, arguments);
 						this._type = "Button";
+						this.name = name;
+						this.isEnabled = true;
+						this.style = "Button";
+						this.clickText = clickText;
 					},
 	                DropDownFormat: {
 	                    StringList: 17,
@@ -935,6 +939,24 @@
 	                /// <field name="stateOrProvince" type="String">Gets or sets the state or province.</field>
 	                /// <field name="country" type="String">Gets or sets the country.</field>
 	                /// <field name="isValid" type="String">Indicates whether the address is valid.</field>
+				},
+				AIVision: function () {
+					/// <summary>[v12.3] Represents a service for AI image recognition.</summary>
+					/// <field name="action" type="number">Sets action for AI vision service. Capture photo or Select picture.</field>
+					/// <field name="settings" type="Array">Array sets of json formated prediction key and url.</field>
+					this._isNew = true;
+					this._entityName = "";
+				},
+				AIVisionSettings: function () {
+					/// <summary>[v12.3] Represents the settings for AI image recognition service.</summary>
+					/// <field name="modelName" type="String">Gets or sets the model name.</field>
+					/// <field name="predictionKey" type="String">Gets or sets the model prediction key.</field>
+					/// <field name="url" type="String">Gets or sets the url to train model.</field>
+					/// <field name="serviceType" type="String">Gets or sets the service type. By default we use Azure.</field>
+					this.modelName = "";
+					this.predictionKey = "";
+					this.url = "";
+					this.serviceType = "Azure"; // [v12.3] supports only azure service, used as default.
 				}
 	        }
 	    };
@@ -1957,6 +1979,52 @@
 			/// <returns type="Promise&lt;MobileCRM.DynamicEntity&gt;">A Promise object which will be resolved with an instance of DynamicEntity object representing entity record.</returns>
 			return MobileCRM.bridge.invokeCommandPromise('entityload', JSON.stringify({ entity: entityName, id: id }));
 		};
+
+		MobileCRM.DynamicEntity.saveMultiple = function (updatedEntities, online, sucessCallback, failureCallback, scope) {
+			/// <summary>Saves an entities instances to storage.Where the entity is stored is determined by how it was loaded: online / offline.</summary>
+			/// <param name="updatedEntities" type="MobileCRM.DynamicEntity[]">Array of MobileCRM.DynamicEntity.</param>
+			/// <param name="online" type="Boolean">Whether to load and save online or offline. Null for default mode defined by current configuration.</param>
+			/// <param name="sucessCallbacak" type="function(result)">A callback function for successful asynchronous result.</param>
+			/// <param name="failureCallback" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+
+			MobileCRM.DynamicEntity._executeMultiple(online, updatedEntities, null, sucessCallback, failureCallback, scope);
+		};
+		MobileCRM.DynamicEntity.deleteMultiple = function (deletedEntities, online, sucessCallback, failureCallback, scope) {
+			/// <summary>Saves an entity instance to storage.Where the entity is stored is determined by how it was loaded: online / offline.</summary>
+			/// <param name="deletedEntities" type="MobileCRM.DynamicEntity[]">Array of MobileCRM.DynamicEntity or MobileCRM.Reference what will be deleted.</param>
+			/// <param name="sucessCallbacak" type="function(result)">A callback function for successful asynchronous result.</param>
+			/// <param name="failureCallback" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="online" type="Boolean">Whether to load and save online or offline. Null for default mode defined by current configuration.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+
+			MobileCRM.DynamicEntity._executeMultiple(online, null, deletedEntities, sucessCallback, failureCallback, scope);
+		};
+
+		MobileCRM.DynamicEntity._executeMultiple = function (online, updateEntities, deleteEntities, sucessCallback, failureCallback, scope) {
+			var data = {
+				updateEntities: null,
+				deleteEntities: null,
+				online: online
+			};
+
+			if (updateEntities) {
+				data.updateEntities = [];
+				for (var ue in updateEntities) {
+					data.updateEntities.push("" + JSON.stringify(updateEntities[ue]) + "");
+				}
+			}
+			else if (deleteEntities) {
+				data.deleteEntities = [];
+				for (var de in deleteEntities) {
+					var entity = deleteEntities[de];
+					data.deleteEntities.push(JSON.stringify({ entity: entity.entityName, id: entity.id }));
+				}
+			}
+
+			MobileCRM.bridge.command('executeMultiple', JSON.stringify(data), sucessCallback, failureCallback, scope);
+		};
+
 	    MobileCRM.DynamicEntity.saveDocumentBody = function (entityId, entityName, relationship, filePath, mimeType, success, failed, scope) {
 	        /// <summary>[v10.0]Asynchronously saves the document body for specified entity.</summary>
 	        /// <remarks>Function sends an asynchronous request to application, where the locally stored document body (e.g. the annotation.documentbody) is saved.</remarks>
@@ -2837,7 +2905,7 @@
 	    };
 
 	    MobileCRM.Application.getAccessToken = function (resourceUrl, successCallback, failureCallback, scope) {
-	    	/// <param name="resourceUrl">The resource.</param>
+	    	/// <param name="resourceUrl" type="String">The resource.</param>
 	    	/// <param name="successCallback" type="function(textAccessToken)">A callback function what is called asynchronously with serialized <b>access token</b> as argument.</param>
 	    	/// <param name="failureCallback" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	    	/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
@@ -3124,18 +3192,30 @@
 	        return xml;
 	    };
 
-	    MobileCRM.UI._DetailView.prototype.registerClickHandler = function (item, callback, scope) {
-	        /// <summary>[v8.0] Installs the handler which has to be called when user clicks on the link item.</summary>
-	        /// <param name="item" type="MobileCRM.UI.DetailViewItems.LinkItem">An item</param>
-	        /// <param name="callback" type="function(String, String)">A callback which is called when user clicks on the link item. It obtains the link item name and the detail view name as arguments.</param>
-	        /// <param name="scope" type="Object">A scope, in which the callback has to be called.</param>
-	        if (!MobileCRM.UI._DetailView._handlers) {
-	            MobileCRM.UI._DetailView._handlers = [];
-	        }
-	        var handlers = MobileCRM.UI._DetailView._handlers;
-	        var index = this.name + "." + item.name;
-	        handlers[index] = { handler: callback, scope: scope };
-	    };
+		MobileCRM.UI._DetailView.prototype.registerClickHandler = function (item, callback, scope) {
+			/// <summary>[v8.0] Installs the handler which has to be called when user clicks on the link item.</summary>
+			/// <param name="item" type="MobileCRM.UI.DetailViewItems.LinkItem">An item</param>
+			/// <param name="callback" type="function(String, String)">A callback which is called when user clicks on the link item. It obtains the link item name and the detail view name as arguments.</param>
+			/// <param name="scope" type="Object">A scope, in which the callback has to be called.</param>
+
+			if (!MobileCRM.UI._DetailView._handlers) {
+				MobileCRM.UI._DetailView._handlers = [];
+			}
+			var handlers = MobileCRM.UI._DetailView._handlers;
+			var index = this.name + "." + item.name;
+
+			handlers[index] = { handler: callback, scope: scope };
+
+			var itemIndex = this.getItemIndex(item.name);
+			if (itemIndex > -1) { // execute command to register click handler for existing item only.
+				var data = {
+					action: "registerLinkItemClickHandler",
+					viewName: this.name,
+					index: itemIndex
+				};
+				MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
+			}
+		};
 	    MobileCRM.UI._DetailView._callHandler = function (viewName, itemName) {
 	        var index = viewName + "." + itemName;
 	        var handlerDescriptor = MobileCRM.UI._DetailView._handlers[index];
@@ -5047,7 +5127,60 @@
 	        /// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.command("addressToLocation", JSON.stringifyNotNull(this), success, failed, scope);
-	    };
+		};
+
+		//// --- AIVISION ---
+		MobileCRM.Services.AIVision.create = function (settings) {
+			/// <summary>[v12.3]Create AIVsion instance using <see cref="MobileCRM.Services.AIVisionSettings">MobileCRM.Services.AIVisionSettings</see> object.</summary>
+			/// <param name="settings" type="MobileCRM.Services.AIVisionSettings">AIVision settings.</param>
+
+			var aivison = new MobileCRM.Services.AIVision();
+			aivison._settings = [];
+			aivison._settings.push("{ \"name\":\"" + settings.modelName + "\", \"predictionKey\":\"" + settings.predictionKey + "\", \"url\":\"" + settings.url + "\", \"serviceType\":\"" + settings.serviceType + "\"}");
+			return aivison;
+		};
+
+		MobileCRM.Services.AIVision.createFromEntity = function (entityName) {
+			/// <summary>[v12.3]Create AIVsion instance using entity name. The name is used to get settings from Woodford AI Image Recognition configuration.</summary>
+			/// <param name="entityName" type="String">The entity name of Woodford AI Image Recognition configuration.</param>
+			var aivison = new MobileCRM.Services.AIVision();
+			aivison._entityName = entityName;
+			return aivison;
+		};
+
+		MobileCRM.Services.AIVision.prototype.recognizeCapturedPhoto = function (sucessCallback, failureCallback, scope) {
+			/// <summary>[v12.3] Recognize captured photo using AIVison service.</summary>
+			/// <param name="sucessCallback" type="function">A callback function that is called with the object having array of tags and its probability and file path properties. {tags:[{tag:"", probability:""}], filePath:""} </param>
+			/// <param name="failureCallback" type="function(errorMsg)">A callback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			this._executeAction(2, sucessCallback, failureCallback);
+		};
+		MobileCRM.Services.AIVision.prototype.recognizeSelectedPicture = function (sucessCallback, failureCallback, scope) {
+			/// <summary>[v12.3] Select photo and recognize it with AIVison service.</summary>
+			/// <param name="sucessCallback" type="function">A callback function that is called with the object having array of tags and its probability and file path properties. {tags:[{tag:"", probability:""}], filePath:""} </param>
+			/// <param name="failureCallback" type="function(errorMsg)">A callback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			this._executeAction(4, sucessCallback, failureCallback);
+		};
+
+		MobileCRM.Services.AIVision.prototype._executeAction = function (action, sucessCallback, failureCallback, scope) {
+			if (!this._entityName && !this._settings) {
+				failureCallback("Please define entity or settings to construct AIVision service.");
+				return;
+			}
+			var data = {
+				entityName: this._entityName,
+				settings: this._settings,
+				action: action,
+				isNew: this._isNew
+			};
+
+			this._isNew = false;
+
+			MobileCRM.bridge.command("startAIImageRecognition", JSON.stringify(data), function (classifiedResults) {
+				sucessCallback.call(scope, classifiedResults);
+			}, failureCallback, scope);
+		};
 
 	    MobileCRM.Services.DynamicsReport.prototype.download = function (fileName, format, success, failed, scope) {
 	        /// <summary>Downloads the MS Dynamics report into a file.</summary>
@@ -5107,12 +5240,12 @@
 		        this._encoding = encoding;
 		}
 		MobileCRM.Services.HttpWebRequest.prototype.setResponseEncoding = function (encoding) {
-		    /// <summary>[v11.0] Set encoding for content type of http web response.</summary>
-		    /// <param name="encoding" type="String">The encoding (e.g. UTF-8, ASCII, Base64)</param>
+			/// <summary>[v11.0] Set encoding for content type of http web response.</summary>
+			/// <param name="encoding" type="String">The encoding (e.g. UTF-8, ASCII, Base64)</param>
 
-		    if (encoding || encoding !== "Base64")
-		        this.responseEncoding = encoding;
-		}
+			if (encoding || encoding !== "Base64")
+				this.responseEncoding = encoding;
+		};
 		MobileCRM.Services.HttpWebRequest.prototype.setCredentials = function (userName, password) {
 		    /// <summary>[v10.4] Set Network credentials information.</summary>
 		    /// <param name="userName" type="String">The authentication user name.</param>
@@ -5140,218 +5273,220 @@
 		// Platform dependent implementation   /
 		// MobileCRM.bridge singleton creation /
 		/**************************************/
-		if (document.location.search.indexOf("wc_mcrm_bid|") >= 0) {	// when running on webclient, that client appends 'wc_mcrm_bid|' is part of the 'data' attribute
-			var webClientBridgeId = getWCBridgeInstanceId();
-
-			MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
-				if (!webClientBridgeId) {
-					webClientBridgeId = getWCBridgeInstanceId();
-				}
-				var cmdId = this._createCmdObject(success, failed, scope);
-				var cmdText = webClientBridgeId + ';' + cmdId + ';' + command + ';' + params;
-				parent.window.postMessage(cmdText, "*");
-			};
-			MobileCRM.bridge = new MobileCRM.Bridge('WebClient');
-
-			window.addEventListener("message", receiveMessageFromWebClient, false);
-
-			function receiveMessageFromWebClient(event) {
-				var data = event.data;
-				//alert("JSB: " + data);
-				try {
-					// process invokescript method
-					if (data.indexOf("eval") === 0) {
-						var index = data.indexOf(":");
-						if (index >= 0) {
-							var evalCode = data.substr(index + 1);
-							var evalId = data.substr(0, index).split('|')[1];
-							var result = eval(evalCode);
-							if (evalId) {
-								if (!webClientBridgeId) {
-									webClientBridgeId = getWCBridgeInstanceId();
+		if (typeof(window) != "undefined") {
+			if (document.location.search.indexOf("wc_mcrm_bid|") >= 0) {	// when running on webclient, that client appends 'wc_mcrm_bid|' is part of the 'data' attribute
+				var webClientBridgeId = getWCBridgeInstanceId();
+	
+				MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+					if (!webClientBridgeId) {
+						webClientBridgeId = getWCBridgeInstanceId();
+					}
+					var cmdId = this._createCmdObject(success, failed, scope);
+					var cmdText = webClientBridgeId + ';' + cmdId + ';' + command + ';' + params;
+					parent.window.postMessage(cmdText, "*");
+				};
+				MobileCRM.bridge = new MobileCRM.Bridge('WebClient');
+	
+				window.addEventListener("message", receiveMessageFromWebClient, false);
+	
+				function receiveMessageFromWebClient(event) {
+					var data = event.data;
+					//alert("JSB: " + data);
+					try {
+						// process invokescript method
+						if (data.indexOf("eval") === 0) {
+							var index = data.indexOf(":");
+							if (index >= 0) {
+								var evalCode = data.substr(index + 1);
+								var evalId = data.substr(0, index).split('|')[1];
+								var result = eval(evalCode);
+								if (evalId) {
+									if (!webClientBridgeId) {
+										webClientBridgeId = getWCBridgeInstanceId();
+									}
+									parent.window.postMessage(webClientBridgeId + ";" + evalId + ";asyncResponse;" + result, "*");
 								}
-								parent.window.postMessage(webClientBridgeId + ";" + evalId + ";asyncResponse;" + result, "*");
 							}
 						}
 					}
+					catch (ex) {
+						alert("JSBridge on Webclient exception: " + ex);
+						console.log(ex);
+					}
 				}
-				catch (ex) {
-					alert("JSBridge on Webclient exception: " + ex);
-					console.log(ex);
+	
+				function getWCBridgeInstanceId() {
+					args = document.location.search;
+					var index = args.indexOf("wc_mcrm_bid|");
+					var id = null;
+					if (index > 0) {
+						id = args.substr(index + 12);
+					}
+					if (id === null) {
+						throw "JSBridge not registered."
+					}
+					return id;
 				}
 			}
-
-			function getWCBridgeInstanceId() {
-				args = document.location.search;
-				var index = args.indexOf("wc_mcrm_bid|");
-				var id = null;
-				if (index > 0) {
-					id = args.substr(index + 12);
+			else if (typeof CrmBridge !== "undefined") {
+				if (typeof CrmBridge.processCommand !== "undefined") {
+					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+						var cmdId = this._createCmdObject(success, failed, scope);
+						CrmBridge.processCommand(cmdId, command, params);
+					};
+					MobileCRM.bridge = new MobileCRM.Bridge('Windows'); // Chromium Enbedded Framework on Win7 Desktop
 				}
-				if (id === null) {
-					throw "JSBridge not registered."
+				else {
+					// Android
+					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+						var cmdId = this._createCmdObject(success, failed, scope);
+						CrmBridge.println(cmdId + ';' + command + ':' + params);
+					};
+					MobileCRM.bridge = new MobileCRM.Bridge('Android');
 				}
-				return id;
-			}
-		}
-		else if (typeof CrmBridge !== "undefined") {
-			if (typeof CrmBridge.processCommand !== "undefined") {
-				MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
-					var cmdId = this._createCmdObject(success, failed, scope);
-					CrmBridge.processCommand(cmdId, command, params);
-				};
-				MobileCRM.bridge = new MobileCRM.Bridge('Windows'); // Chromium Enbedded Framework on Win7 Desktop
+				if (typeof CrmBridge.invoke !== "undefined") {
+					MobileCRM.Bridge.prototype.invoke = function (command, params) {
+						var result = CrmBridge.invoke(command, params);
+						if (result.length >= 4 && result.substr(0, 4) == 'ERR:')
+							throw new MobileCrmException(result.substr(4));
+						else
+							return eval('(' + result + ')');
+					};
+				}
 			}
 			else {
-				// Android
-				MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
-					var cmdId = this._createCmdObject(success, failed, scope);
-					CrmBridge.println(cmdId + ';' + command + ':' + params);
-				};
-				MobileCRM.bridge = new MobileCRM.Bridge('Android');
-			}
-			if (typeof CrmBridge.invoke !== "undefined") {
-				MobileCRM.Bridge.prototype.invoke = function (command, params) {
-					var result = CrmBridge.invoke(command, params);
-					if (result.length >= 4 && result.substr(0, 4) == 'ERR:')
-						throw new MobileCrmException(result.substr(4));
-					else
-						return eval('(' + result + ')');
-				};
-			}
-		}
-		else {
-			if ("external" in window && external) {
-				var win10 = "win10version" in window;
-				if ("notify" in external || win10) {
-					// WindowsPhone || WindowsRT || Windows10
+				if ("external" in window && external) {
+					var win10 = "win10version" in window;
+					if ("notify" in external || win10) {
+						// WindowsPhone || WindowsRT || Windows10
+						MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+							var cmdId = this._createCmdObject(success, failed, scope);
+							window.external.notify(cmdId + ';' + command + ':' + params);
+						};
+						MobileCRM.Bridge.prototype.invoke = function (command, params) {
+							var result = undefined;
+							var error = null;
+							var cmdId = this._createCmdObject(function (res) { result = res; }, function (err) { error = err; }, this);
+							window.external.notify(cmdId + ';' + command + ':' + params);
+							if (error)
+								throw new MobileCrmException(error);
+							else
+								return result;
+						};
+						if (!("alert" in window)) {
+							window.alert = function (text) {
+								MobileCRM.bridge.invoke("alert", text);
+							};
+						}
+						MobileCRM.Bridge.prototype.alert = function (text, callback, scope) {
+							/// <summary>Shows a message asynchronously and calls the callback after it is closed by user.</summary>
+							/// <param name="callback" type="function(obj)">The callback function that is called asynchronously.</param>
+							/// <param name="scope" type="Object">The scope for callbacks.</param>
+							MobileCRM.bridge.command("alert", text, callback, callback, scope);
+						};
+						var platformName = win10 ? window.win10version : (navigator.userAgent.indexOf("Windows Phone") > 0 ? "WindowsPhone" : "WindowsRT");
+						MobileCRM.bridge = new MobileCRM.Bridge(platformName);
+					}
+					else if ("ProcessCommand" in external) {
+						// Windows Desktop
+						MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+							var cmdId = this._createCmdObject(success, failed, scope);
+							external.ProcessCommand(cmdId, command, params);
+						};
+						if ("InvokeCommand" in external) {
+							MobileCRM.Bridge.prototype.invoke = function (command, params) {
+								var result = window.external.InvokeCommand(command, params);
+								if (result.length >= 4 && result.substr(0, 4) == 'ERR:')
+									throw new MobileCrmException(result.substr(4));
+								else
+									return eval('(' + result + ')');
+							};
+						}
+						MobileCRM.bridge = new MobileCRM.Bridge('Windows');
+					}
+				}
+				else if ("webkit" in window && "messageHandlers" in webkit && "JSBridge" in webkit.messageHandlers) {
 					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
 						var cmdId = this._createCmdObject(success, failed, scope);
-						window.external.notify(cmdId + ';' + command + ':' + params);
+						var cmdText = cmdId + ';' + command + ':' + params;
+						webkit.messageHandlers.JSBridge.postMessage(cmdText);
 					};
-					MobileCRM.Bridge.prototype.invoke = function (command, params) {
+					MobileCRM.bridge = new MobileCRM.Bridge('iOS');
+				}
+				else if (navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad)/)) {
+					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+						var self = MobileCRM.bridge;
+						var cmdId = self._createCmdObject(success, failed, scope);
+						var cmdText = cmdId + ';' + command + ':' + params; //{ Command: command, Id: callbackObj };
+						self.commandQueue.push(cmdText);
+						if (!self.processing) {
+							self.processing = true;
+							document.location.href = 'crm:wake';
+	//						var iframe = document.createElement("IFRAME");
+	//						iframe.setAttribute("src", "crm:wake");
+	//						document.documentElement.appendChild(iframe);
+	//						iframe.parentNode.removeChild(iframe);
+						}
+					};
+					MobileCRM.Bridge.prototype.peekCommand = function () {
+						var cmdText = MobileCRM.bridge.commandQueue.shift();
+						if (cmdText != null) {
+							return cmdText;
+						}
+						return "";
+					};
+	 				MobileCRM.Bridge.prototype.invoke = function (command, params) {
+						var self = MobileCRM.bridge;
 						var result = undefined;
 						var error = null;
-						var cmdId = this._createCmdObject(function (res) { result = res; }, function (err) { error = err; }, this);
-						window.external.notify(cmdId + ';' + command + ':' + params);
-						if (error)
-							throw new MobileCrmException(error);
-						else
-							return result;
+						var cmdId = self._createCmdObject(function (res) { result = res; }, function (err) { error = err; }, self);
+						var cmdText = cmdId + ';' + command + ':' + params;
+						self.commandQueue.push(cmdText);
+	
+	                    var iframe = document.getElementById("MobileCRM_JSBridge_iFrame");
+	                    if (iframe === null) {
+	                        iframe = document.createElement("iframe");
+	                        iframe.id = "MobileCRM_JSBridge_iFrame";
+	                        iframe.style = "visibility:hidden;display:none";
+	                        iframe.src = "crm:wake";
+	                        iframe.height = 0; iframe.width = 0; iframe.hspace = "0"; iframe.vspace = "0";
+	                        iframe.marginheight = "0"; iframe.marginwidth = "0"; iframe.frameBorder = "0";
+	                        iframe.scrolling = "No";
+	                        document.documentElement.appendChild(iframe);
+	                    } else {
+	                        iframe.src = iframe.src;
+	                        document.documentElement.removeChild(iframe);
+	                        document.documentElement.appendChild(iframe);
+	                    }                    
+	                    if(error)
+	                        throw new MobileCrmException(error);
+						return result;
 					};
-					if (!("alert" in window)) {
-						window.alert = function (text) {
-							MobileCRM.bridge.invoke("alert", text);
-						};
-					}
-					MobileCRM.Bridge.prototype.alert = function (text, callback, scope) {
-						/// <summary>Shows a message asynchronously and calls the callback after it is closed by user.</summary>
-						/// <param name="callback" type="function(obj)">The callback function that is called asynchronously.</param>
-						/// <param name="scope" type="Object">The scope for callbacks.</param>
-						MobileCRM.bridge.command("alert", text, callback, callback, scope);
-					};
-					var platformName = win10 ? window.win10version : (navigator.userAgent.indexOf("Windows Phone") > 0 ? "WindowsPhone" : "WindowsRT");
-					MobileCRM.bridge = new MobileCRM.Bridge(platformName);
-				}
-				else if ("ProcessCommand" in external) {
-					// Windows Desktop
-					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
-						var cmdId = this._createCmdObject(success, failed, scope);
-						external.ProcessCommand(cmdId, command, params);
-					};
-					if ("InvokeCommand" in external) {
-						MobileCRM.Bridge.prototype.invoke = function (command, params) {
-							var result = window.external.InvokeCommand(command, params);
-							if (result.length >= 4 && result.substr(0, 4) == 'ERR:')
-								throw new MobileCrmException(result.substr(4));
-							else
-								return eval('(' + result + ')');
-						};
-					}
-					MobileCRM.bridge = new MobileCRM.Bridge('Windows');
-				}
-			}
-			else if ("webkit" in window && "messageHandlers" in webkit && "JSBridge" in webkit.messageHandlers) {
-				MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
-					var cmdId = this._createCmdObject(success, failed, scope);
-					var cmdText = cmdId + ';' + command + ':' + params;
-					webkit.messageHandlers.JSBridge.postMessage(cmdText);
-				};
-				MobileCRM.bridge = new MobileCRM.Bridge('iOS');
-			}
-			else if (navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad)/)) {
-				MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
-					var self = MobileCRM.bridge;
-					var cmdId = self._createCmdObject(success, failed, scope);
-					var cmdText = cmdId + ';' + command + ':' + params; //{ Command: command, Id: callbackObj };
-					self.commandQueue.push(cmdText);
-					if (!self.processing) {
-						self.processing = true;
-						document.location.href = 'crm:wake';
-//						var iframe = document.createElement("IFRAME");
-//						iframe.setAttribute("src", "crm:wake");
-//						document.documentElement.appendChild(iframe);
-//						iframe.parentNode.removeChild(iframe);
-					}
-				};
-				MobileCRM.Bridge.prototype.peekCommand = function () {
-					var cmdText = MobileCRM.bridge.commandQueue.shift();
-					if (cmdText != null) {
-						return cmdText;
-					}
-					return "";
-				};
- 				MobileCRM.Bridge.prototype.invoke = function (command, params) {
-					var self = MobileCRM.bridge;
-					var result = undefined;
-					var error = null;
-					var cmdId = self._createCmdObject(function (res) { result = res; }, function (err) { error = err; }, self);
-					var cmdText = cmdId + ';' + command + ':' + params;
-					self.commandQueue.push(cmdText);
-
-                    var iframe = document.getElementById("MobileCRM_JSBridge_iFrame");
-                    if (iframe === null) {
-                        iframe = document.createElement("iframe");
-                        iframe.id = "MobileCRM_JSBridge_iFrame";
-                        iframe.style = "visibility:hidden;display:none";
-                        iframe.src = "crm:wake";
-                        iframe.height = 0; iframe.width = 0; iframe.hspace = "0"; iframe.vspace = "0";
-                        iframe.marginheight = "0"; iframe.marginwidth = "0"; iframe.frameBorder = "0";
-                        iframe.scrolling = "No";
-                        document.documentElement.appendChild(iframe);
-                    } else {
-                        iframe.src = iframe.src;
-                        document.documentElement.removeChild(iframe);
-                        document.documentElement.appendChild(iframe);
-                    }                    
-                    if(error)
-                        throw new MobileCrmException(error);
-					return result;
-				};
-				MobileCRM.Bridge.prototype.dequeueCommand = function (id) {
-					var queue = MobileCRM.bridge.commandQueue;
-					for (var i in queue) {
-						var cmdText = queue[i];
-						if (cmdText) {
-							var idEnd = cmdText.indexOf(';');
-							if (idEnd > 0 && cmdText.substr(0, idEnd) == id) {
-								queue.splice(i, 1);
-								return cmdText;
+					MobileCRM.Bridge.prototype.dequeueCommand = function (id) {
+						var queue = MobileCRM.bridge.commandQueue;
+						for (var i in queue) {
+							var cmdText = queue[i];
+							if (cmdText) {
+								var idEnd = cmdText.indexOf(';');
+								if (idEnd > 0 && cmdText.substr(0, idEnd) == id) {
+									queue.splice(i, 1);
+									return cmdText;
+								}
 							}
 						}
-					}
-					return "";
-				};
-				MobileCRM.bridge = new MobileCRM.Bridge('iOS');
-
-				MobileCRM.Bridge.prototype.initialize = function () {
-					/// <summary>OBSOLETE: Initializes the bridge to be used for synchronous invokes.</summary>
-				};
-
+						return "";
+					};
+					MobileCRM.bridge = new MobileCRM.Bridge('iOS');
+	
+					MobileCRM.Bridge.prototype.initialize = function () {
+						/// <summary>OBSOLETE: Initializes the bridge to be used for synchronous invokes.</summary>
+					};
+	
+				}
+	
+				//if (MobileCRM.bridge == null)
+				//    throw new Error("MobileCRM bridge does not support this platform.");
 			}
-
-			//if (MobileCRM.bridge == null)
-			//    throw new Error("MobileCRM bridge does not support this platform.");
 		}
 	}
 
