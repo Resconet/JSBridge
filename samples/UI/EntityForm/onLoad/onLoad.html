@@ -32,7 +32,7 @@
             MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
                 var entity = entityForm.entity;
                 // Get Parent customer field from entity.
-                var parentCustomer = entity.properties.prentcustomerid;
+                var parentCustomer = entity.properties.parentcustomerid;
                 // Only in case if parent customer field is not empty
                 if (parentCustomer) {
                     // load associated Parent record
