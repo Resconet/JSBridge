@@ -36,15 +36,18 @@
                 // Only in case if parent customer field is not empty
                 if (parentCustomer) {
                     // load associated Parent record
-                    var contact = new MobileCRM.FetchXml.Entity(parentCustomer.entityName);
-                    contact.addAttributes();
+                    var account = new MobileCRM.FetchXml.Entity(parentCustomer.entityName);
+                    account.addAttributes();
                     // filter contacts only for current entity
                     var filter = new MobileCRM.FetchXml.Filter();
+                    // if we use Dynamics server use following primary kye field name
                     filter.where("accountid", "eq", parentCustomer.id);
+                    // if we use Resco Cloud / Salesforce use following primary key field name
+                    // filter.where("id", "eq", parentCustomer.id);
                     contact.filter = filter;
-                    var fetch_1 = new MobileCRM.FetchXml.Fetch(contact);
+                    var fetch_1 = new MobileCRM.FetchXml.Fetch(account);
                     fetch_1.execute("DynamicEntities", function (res) {
-                        if (res.length > 1) {
+                        if (res.length === 1) {
                             var parentEntity = res[0];
                             var emailAddress_1 = parentEntity.properties.emailaddress1;
                             if (emailAddress_1) {
