@@ -48,7 +48,7 @@ Install the MSI and use Mobile CRM Integration tool to override the HTML root to
 	
 			MobileCRM.app can’t be opened because Apple cannot check it for malicious software.
 	
-		To exclude the app from this security check, press "Show in Finder" button and drag the app path to Terminal as argument of following command in Terminal:
+		To exclude the app from this security check, press "Show in Finder" button and drag the app path to Terminal as argument of following command:
 	
 			sudo xattr -rd com.apple.quarantine [path_to_MobileCRM.app]
 
