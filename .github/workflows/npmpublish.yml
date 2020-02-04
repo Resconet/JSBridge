@@ -3,7 +3,7 @@ name: JSBridge Node.js Package
 on:
   push:
     paths:
-    - '**.js'
+    - 'src/**.js'
 
 jobs:
   build:
