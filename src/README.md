@@ -12,6 +12,35 @@ The directory contians:
 * readme file **README.md**
 * .github/workflows directory with **npmpublish.yml** workflow definition file
 
+# Install package in project
+
+In yor project directory use **npm init** to set up a new or existing npm package, If you want to create default pacakge json file then use --yes parameter. For more information please visit https://docs.npmjs.com/cli/init
+
+* install package **npm i @resconet/jsbridgenpm**
+## Include npm module in project
+
+* **Javascript file**
+You can use require to include npm module from installed pacakge. For example
+
+```javascript
+require ("@resconet/jsbridge/src/JSBridge");
+
+function testAlert(){
+    MobileCRM.bridge.alert("Test");
+}
+```
+
+* **Typescrip file**
+You can use import to include npm module from installed pacakge. For example
+
+```javascript
+import "@resconet/jsbridge/src/JSBridge"
+
+function testAlert(){
+    MobileCRM.bridge.alert("Test");
+}
+```
+
 ## Versioning
 
 The package.json defeines the version of JSBridge. e.g. "version": "12.3.1" , it means
