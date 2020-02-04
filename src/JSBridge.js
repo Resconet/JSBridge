@@ -1,4 +1,4 @@
-// v12.3.1
+// v12.3
 (function () {
 	var _scriptVersion = 12.3;
 	// Private objects & functions
