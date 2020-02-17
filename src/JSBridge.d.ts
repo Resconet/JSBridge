@@ -670,7 +670,15 @@ declare module MobileCRM {
 		 * @param errorCallback The errorCallback which is called asynchronously in case of error.
 		 * @param scope The scope for errorCallback.
 		 */
-		public static getAccessToken(resource, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any)
+		public static getAccessToken(resource, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any);
+		/**
+		 * Checks whether the current user is member of the passed roles. Role can be either the Guid (aeb33d0f-89b4-e111-9c9a-00155d0b710a) or the role Name.
+		 * @param roles Defines the roles to check.
+		 * @param success A callback function for successful asynchronous result. The result will carry a number with the count of matching roles.
+		 * @param failed A callback function for command failure. The error argument will carry the error message.
+		 * @param scope A scope for calling the callback.
+		 */
+		public static checkUserRoles(roles: [string], success?: (roles: number) => void, failed?: (err: string) => void, scope?: any);
 	}
 
 	class AboutInfo {
