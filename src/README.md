@@ -2,7 +2,7 @@
 
 The repository is used to publish **public** npm package to ... https://registry.npmjs.org/
 
-The homepage of package : https://www.npmjs.com/package/@resconet/jsbridgenpm
+The homepage of package : https://www.npmjs.com/package/@resconet/jsbridge
 
 The package can be installed using following command **npm i @resconet/jsbridgenpm**@[version of package]
 
@@ -16,7 +16,7 @@ The directory contians:
 
 In yor project directory use **npm init** to set up a new or existing npm package, If you want to create default pacakge json file then use --yes parameter. For more information please visit https://docs.npmjs.com/cli/init
 
-* install package **npm i @resconet/jsbridgenpm**
+* install package **npm i @resconet/jsbridge**
 ## Include npm module in project
 
 * **Javascript file**
