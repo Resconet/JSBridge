@@ -6,7 +6,7 @@ The homepage of package : https://www.npmjs.com/package/@resconet/jsbridge
 
 The package can be installed using following command **npm i @resconet/jsbridgenpm**@[version of package]
 
-The directory contians:
+The directory contains:
 * javascript **.js** and typescript **.d.ts** source file
 * package definition file **package.json**
 * readme file **README.md**
@@ -14,13 +14,13 @@ The directory contians:
 
 # Install package in project
 
-In yor project directory use **npm init** to set up a new or existing npm package, If you want to create default pacakge json file then use --yes parameter. For more information please visit https://docs.npmjs.com/cli/init
+In your project directory use **npm init** to set up a new or existing npm package. If you want to create default package json file then use --yes parameter. For more information please visit https://docs.npmjs.com/cli/init
 
 * install package **npm i @resconet/jsbridge**
 ## Include npm module in project
 
 * **Javascript file**
-You can use require to include npm module from installed pacakge. For example
+You can use require to include npm module from installed package. For example
 
 ```javascript
 require ("@resconet/jsbridge/src/JSBridge");
@@ -30,8 +30,8 @@ function testAlert(){
 }
 ```
 
-* **Typescrip file**
-You can use import to include npm module from installed pacakge. For example
+* **Typescript file**
+You can use import to include npm module from installed package. For example
 
 ```javascript
 import "@resconet/jsbridge/src/JSBridge"
@@ -43,11 +43,11 @@ function testAlert(){
 
 ## Versioning
 
-The package.json defeines the version of JSBridge. e.g. "version": "12.3.1" , it means
+The package.json defines the version of JSBridge. e.g. "version": "12.3.1", it means
 * 12.3: Major revision (copies the version of underlying Mobile CRM app)
 * 1: Bug fix release
 
-**important** first two numbers mirros the latest version of Mobile CRM native application what supports the features.
+**important** first two numbers mirror the latest version of Mobile CRM native application that supports the features.
 
 ### Api changes
 
@@ -55,7 +55,7 @@ To check the api changes made in the source file, please go to https://www.resco
 
 ## Publishing
 
-The Package is published to npm registiry page by the name **....** in every committed change.
+The Package is published to npm registry page by the name **....** in every committed change.
 
 The Bug fix release number is automatically updated.
 
