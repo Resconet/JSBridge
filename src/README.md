@@ -4,7 +4,7 @@ The repository is used to publish **public** npm package to ... https://registry
 
 The homepage of package : https://www.npmjs.com/package/@resconet/jsbridge
 
-The package can be installed using following command **npm i @resconet/jsbridgenpm**@[version of package]
+The package can be installed using following command **npm i @resconet/jsbridge**@[version of package]
 
 The directory contains:
 * javascript **.js** and typescript **.d.ts** source file
