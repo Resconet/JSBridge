@@ -13,6 +13,33 @@
 </head>
 <body>
     <script>
+        
+        /** Request entity form and check if the button item with name 'ButtonItem' exists, if not, then create it and register click handler*/
+        function registerClickHandlerForButtonItem() {
+            MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
+                var dv = entityForm.getDetailView("General"); // This is (General)Tab
+                if (dv) {
+                    var btn = dv.getItemByName("ButtonItem"); // name of button (from Woodford) if exists.
+                    if (!btn) // button doesn't exists, was not created yet by code or woodford.
+                        btn = new MobileCRM.UI.DetailViewItems.ButtonItem("ButtonItem", "Click Text");
+                    refreshFormClickHandler(dv, btn);
+                }
+                else
+                    MobileCRM.bridge.alert("Detail view 'General' not found.");
+            }, MobileCRM.bridge.alert, null);
+        }
+
+        /**
+        * Register click handler for item like Link / button click. Item must supports register click handler.
+        * @param detailView detail view with item.
+        * @param linkOrClickButtonItem Detail item what will fire this handler after click on it.
+        */
+        function refreshFormClickHandler(detailView, linkOrClickButtonItem) {
+            detailView.registerClickHandler(linkOrClickButtonItem, function (itemName, detailViewName) {
+                MobileCRM.UI.EntityForm.refreshForm();
+            });
+        }
+        
         /** Request entity form and insert all types of custom detail view items on custom view 'Items' */
         function createDetailViewItems() {
             MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
