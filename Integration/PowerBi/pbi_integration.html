@@ -260,7 +260,7 @@
 			}
 
 			if (!componentId)
-				MobileCRM.UI.MessageBox.sayText("Dashboard and report id's are not defined.\nPlease go to 'PowerBiOAuthSettings.js' and define it.");
+				MobileCRM.UI.MessageBox.sayText("Please define id of Dashboard or Report in 'PowerBiOAuthSettings.js'. ");
 			else {
 				PowerBi.authenticateAndGetToken(function (token) {
 					if (!PowerBiOAuthSettings.workspaceGroupId)
