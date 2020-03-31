@@ -4,13 +4,10 @@
 	<title></title>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
 	<script src="js/tinymce/tinymce.min.js"></script>
 	<script src="../JSBridge.js"></script>
 	<script>
-
-		/** SIMPLE TOOLBAR FUNCTIONALITY */
+			/** SIMPLE TOOLBAR FUNCTIONALITY */
 		tinymce.init({
 			selector: 'textarea',
 			plugins: [
@@ -118,6 +115,24 @@
 				}
 			};
 
+			// Loads the editor content from entity property.
+			// Starts watching for content changes.
+			// If the form is non-editable the editor is made readonly. No support for field level permisions yet.
+			var loadEditorContent = function (entityForm) {
+				var text = entityForm.entity.properties[field];
+
+				editor.off('Change'); // Disable change event
+				editor.setContent(text || "");
+				if (entityForm.canEdit) {
+					editor.on('Change', onEditorChanged);
+				} else {
+					editor.setMode('readonly');
+				}
+
+				setReadOnlyFromMetadata(entityForm.entity.entityName);
+			};
+
+			// Set mode to read only based on the field permission.
 			var setReadOnlyFromMetadata = function (entityName) {
 				MobileCRM.Metadata.requestObject(metaData => {
 					var entity = metaData.getEntity(entityName);
@@ -128,23 +143,6 @@
 					}
 				}, MobileCRM.bridge.alert, null);
 			}
-
-			// Loads the editor content from entity property.
-			// Starts watching for content changes.
-			// If the form is non-editable the editor is made readonly. No support for field level permisions yet.
-			var loadEditorContent = function (entityForm) {
-
-				editor.off('Change'); // Disable change event
-				editor.setContent(text || "");
-				if (entityForm.canEdit) {
-					editor.on('Change', onEditorChanged);
-				} else {
-					editor.setMode('readonly');
-				}
-
-				var text = entityForm.entity.properties[field];
-				setReadOnlyFromMetadata(entityForm.entity.entityName);
-			};
 
 			// Registers the entity property change event.
 			var registerOnChange = function () {
