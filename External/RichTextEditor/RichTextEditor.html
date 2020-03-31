@@ -123,7 +123,7 @@
 					var entity = metaData.getEntity(entityName);
 					if (entity) {
 						var prop = entity.getProperty(field);
-						if (!prop || prop.required == 4)
+						if (!prop || ((prop.permission & 2) == 0)) // validate bit mask of permission on field level.
 							editor.setMode('readonly');
 					}
 				}, MobileCRM.bridge.alert, null);
