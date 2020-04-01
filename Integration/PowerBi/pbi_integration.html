@@ -34,10 +34,10 @@
 				var ouathSettings = new MobileCRM.OAuthSettings();
 				ouathSettings.authorityEndPoint = "https://login.microsoftonline.com/common/oauth2/token";
 				ouathSettings.authorizationUrl = "https://login.microsoftonline.com/common/oauth2/authorize";
-				ouathSettings.clientId = PowerBiOAuthSettings.clientId;
-				ouathSettings.clientSecret = PowerBiOAuthSettings.client_secrete;
-				ouathSettings.redirectUrl = PowerBiOAuthSettings.redirectUrl;
 				ouathSettings.resourceUrl = "https://analysis.windows.net/powerbi/api";
+				ouathSettings.clientId = PowerBiOAuthSettings.clientId;
+				ouathSettings.clientSecret = PowerBiOAuthSettings.client_secret;
+				ouathSettings.redirectUrl = PowerBiOAuthSettings.redirectUrl;
 				ouathSettings.scopes = "openid";
 
 				MobileCRM.Integration.getOAuthAccessToken("powerBi", ouathSettings, false, (token) => {
