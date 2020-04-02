@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE html>
 <html>
 <head>
 	<title></title>
@@ -58,7 +58,6 @@
 		*/
 	</script>
 	<style>
-
 		.mce-widget * {
 			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,"Helvetica Neue",sans-serif;
 		}
@@ -120,30 +119,14 @@
 			// Starts watching for content changes.
 			// If the form is non-editable the editor is made readonly. No support for field level permisions yet.
 			var loadEditorContent = function (entityForm) {
-				var text = entityForm.entity.properties[field];
-
 				editor.off('Change'); // Disable change event
-				editor.setContent(text || "");
+				
 				if (entityForm.canEdit) {
 					editor.on('Change', onEditorChanged);
 				} else {
 					editor.setMode('readonly');
 				}
-
-				setReadOnlyFromMetadata(entityForm.entity.entityName);
 			};
-
-			// Set mode to read only based on the field permission.
-			var setReadOnlyFromMetadata = function (entityName) {
-				MobileCRM.Metadata.requestObject(metaData => {
-					var entity = metaData.getEntity(entityName);
-					if (entity) {
-						var prop = entity.getProperty(field);
-						if (!prop || ((prop.permission & 2) == 0)) // validate bit mask of permission on field level.
-							editor.setMode('readonly');
-					}
-				}, MobileCRM.bridge.alert, null);
-			}
 
 			// Registers the entity property change event.
 			var registerOnChange = function () {
@@ -165,6 +148,8 @@
 			// Gets the parent form object and loads the editor.
 			MobileCRM.UI.EntityForm.requestObject(
 				function (entityForm) {
+					var text = entityForm.entity.properties[field];
+					editor.setContent(text || "");
 					/// <param name="entityForm" type="MobileCRM.UI.EntityForm"/>
 					// Get the MobileCRM.DynamicEntity which is being edited on this form
 					loadEditorContent(entityForm);
