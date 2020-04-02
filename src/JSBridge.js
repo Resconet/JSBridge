@@ -1,6 +1,6 @@
-// v12.3.0
+// v13.0
 (function () {
-	var _scriptVersion = 12.3;
+	var _scriptVersion = 13.0;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -163,648 +163,670 @@
 
 	// MobileCRM object definition
 	if (typeof MobileCRM === "undefined") {
-	    MobileCRM = {
-	        /// <summary>An entry point for Mobile CRM data model.</summary>
-	        /// <field name="bridge" type="MobileCRM.Bridge">Singleton instance of <see cref="MobileCRM.Bridge">MobileCRM.Bridge</see> providing the management of the Javascript/native code cross-calls.</field>
-	        bridge: null,
+		MobileCRM = {
+			/// <summary>An entry point for Mobile CRM data model.</summary>
+			/// <field name="bridge" type="MobileCRM.Bridge">Singleton instance of <see cref="MobileCRM.Bridge">MobileCRM.Bridge</see> providing the management of the Javascript/native code cross-calls.</field>
+			bridge: null,
 
-	        Bridge: function (platform) {
-	            /// <summary>Provides the management of the Javascript/native code cross-calls. Its only instance <see cref="MobileCRMbridge">MobileCRM.bridge</see> is created immediately after the &quot;JSBridge.js&quot; script is loaded.</summary>
-	            /// <param name="platform" type="String">A platform name</param>
-	            /// <field name="platform" type="String">A string identifying the device platform (e.g. Android, iOS, Windows, WindowsRT, Windows10 or WindowsPhone).</field>
-	            /// <field name="version" type="Number">A number identifying the version of the JSBridge. This is the version of the script which might not match the version of the application part of the bridge implementation. Application version must be equal or higher than the script version.</field>
-	            this.commandQueue = [];
-	            this.processing = false;
-	            this.callbacks = {};
-	            this.callbackId = 0;
-	            this.version = _scriptVersion;
-	            this.platform = platform;
-	        },
+			Bridge: function (platform) {
+				/// <summary>Provides the management of the Javascript/native code cross-calls. Its only instance <see cref="MobileCRMbridge">MobileCRM.bridge</see> is created immediately after the &quot;JSBridge.js&quot; script is loaded.</summary>
+				/// <param name="platform" type="String">A platform name</param>
+				/// <field name="platform" type="String">A string identifying the device platform (e.g. Android, iOS, Windows, WindowsRT, Windows10 or WindowsPhone).</field>
+				/// <field name="version" type="Number">A number identifying the version of the JSBridge. This is the version of the script which might not match the version of the application part of the bridge implementation. Application version must be equal or higher than the script version.</field>
+				this.commandQueue = [];
+				this.processing = false;
+				this.callbacks = {};
+				this.callbackId = 0;
+				this.version = _scriptVersion;
+				this.platform = platform;
+			},
 
-	        Configuration: function () {
-	            /// <summary>Provides an access to the application configuration.</summary>
-	            /// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.Configuration.requestObject">MobileCRM.Configuration.requestObject</see> function.</remarks>
-	            /// <field name="applicationEdition" type="String">Gets the application edition.</field>
-	            /// <field name="applicationPath" type="String">Gets the application folder.</field>
-	            /// <field name="applicationVersion" type="String">Gets the application version (major.minor.subversion.build).</field>
-	            /// <field name="customizationDirectory" type="String">Gets or sets the runtime customization config root.</field>
-	            /// <field name="externalConfiguration" type="String">Gets the external configuration directory (either customization or legacy configuration).</field>
-	            /// <field name="isBackgroundSync" type="Boolean">Gets or sets whether background synchronization is in progress.</field>
-	            /// <field name="isOnline" type="Boolean">Gets or sets whether the online mode is currently active.</field>
-	            /// <field name="legacyVersion" type="String">Gets or sets the legacy redirect folder.</field>
-	            /// <field name="licenseAlert" type="String">Gets the flag set during sync indicating that the user&apos;s license has expired.</field>
-	            /// <field name="settings" type="MobileCRM._Settings">Gets the application settings.</field>
-	            /// <field name="storageDirectory" type="String">Gets the root folder of the application storage.</field>
-	        },
+			Configuration: function () {
+				/// <summary>Provides an access to the application configuration.</summary>
+				/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.Configuration.requestObject">MobileCRM.Configuration.requestObject</see> function.</remarks>
+				/// <field name="applicationEdition" type="String">Gets the application edition.</field>
+				/// <field name="applicationPath" type="String">Gets the application folder.</field>
+				/// <field name="applicationVersion" type="String">Gets the application version (major.minor.subversion.build).</field>
+				/// <field name="customizationDirectory" type="String">Gets or sets the runtime customization config root.</field>
+				/// <field name="externalConfiguration" type="String">Gets the external configuration directory (either customization or legacy configuration).</field>
+				/// <field name="isBackgroundSync" type="Boolean">Gets or sets whether background synchronization is in progress.</field>
+				/// <field name="isOnline" type="Boolean">Gets or sets whether the online mode is currently active.</field>
+				/// <field name="legacyVersion" type="String">Gets or sets the legacy redirect folder.</field>
+				/// <field name="licenseAlert" type="String">Gets the flag set during sync indicating that the user&apos;s license has expired.</field>
+				/// <field name="settings" type="MobileCRM._Settings">Gets the application settings.</field>
+				/// <field name="storageDirectory" type="String">Gets the root folder of the application storage.</field>
+			},
 
-	        CultureInfo: function () {
-	            /// <summary>[v10.2] Provides information about current device culture. The information includes the names for the culture, the writing system, the calendar used, and formatting for dates.</summary>
-	            /// <field name="name" type="String">Gets the culture name in the format languageCode/region (e.g. &quot;en-US&quot;). languageCode is a lowercase two-letter code derived from ISO 639-1. regioncode is derived from ISO 3166 and usually consists of two uppercase letters.</field>
-	            /// <field name="displayName" type="String">Gets the full localized culture name.</field>
-	            /// <field name="nativeName" type="String">Gets the culture name, consisting of the language, the country/region, and the optional script, that the culture is set to display.</field>
-	            /// <field name="ISOName" type="String">Gets the ISO 639-1 two-letter code for the language of the current CultureInfo.</field>
-	            /// <field name="isRightToLeft" type="Boolean">Gets a value indicating whether the current CultureInfo object represents a writing system where text flows from right to left.</field>
-	            /// <field name="dateTimeFormat" type="MobileCRM.DateTimeFormat">Gets a DateTimeFormat that defines the culturally appropriate format of displaying dates and times.</field>
-	            /// <field name="numberFormat" type="MobileCRM.NumberFormat">Gets a NumberFormat that defines the culturally appropriate format of displaying numbers, currency, and percentage.</field>
-	        },
+			CultureInfo: function () {
+				/// <summary>[v10.2] Provides information about current device culture. The information includes the names for the culture, the writing system, the calendar used, and formatting for dates.</summary>
+				/// <field name="name" type="String">Gets the culture name in the format languageCode/region (e.g. &quot;en-US&quot;). languageCode is a lowercase two-letter code derived from ISO 639-1. regioncode is derived from ISO 3166 and usually consists of two uppercase letters.</field>
+				/// <field name="displayName" type="String">Gets the full localized culture name.</field>
+				/// <field name="nativeName" type="String">Gets the culture name, consisting of the language, the country/region, and the optional script, that the culture is set to display.</field>
+				/// <field name="ISOName" type="String">Gets the ISO 639-1 two-letter code for the language of the current CultureInfo.</field>
+				/// <field name="isRightToLeft" type="Boolean">Gets a value indicating whether the current CultureInfo object represents a writing system where text flows from right to left.</field>
+				/// <field name="dateTimeFormat" type="MobileCRM.DateTimeFormat">Gets a DateTimeFormat that defines the culturally appropriate format of displaying dates and times.</field>
+				/// <field name="numberFormat" type="MobileCRM.NumberFormat">Gets a NumberFormat that defines the culturally appropriate format of displaying numbers, currency, and percentage.</field>
+			},
 
-	        DateTimeFormat: function () {
-	            /// <summary>[v10.2] Provides culture-specific information about the format of date and time values.</summary>
-	            /// <field name="abbreviatedDayNames" type="String[]">Gets a string array containing the culture-specific abbreviated names of the days of the week.</field>
-	            /// <field name="abbreviatedMonthGenitiveNames" type="String[]">Gets a string array of abbreviated month names associated with the current DateTimeFormat object.</field>
-	            /// <field name="abbreviatedMonthNames" type="String[]">Gets a string array that contains the culture-specific abbreviated names of the months.</field>
-	            /// <field name="aMDesignator" type="String">Gets the string designator for hours that are "ante meridiem" (before noon).</field>
-	            /// <field name="dayNames" type="String[]">Gets a string array that contains the culture-specific full names of the days of the week.</field>
-	            /// <field name="firstDayOfWeek" type="Number">Gets the first day of the week (0=Sunday, 1=Monday, ...)</field>
-	            /// <field name="fullDateTimePattern" type="String">Gets the custom format string for a long date and long time value.</field>
-	            /// <field name="longDatePattern" type="String">Gets the custom format string for a long date value.</field>
-	            /// <field name="longTimePattern" type="String">Gets the custom format string for a long time value.</field>
-	            /// <field name="monthDayPattern" type="String">Gets the custom format string for a month and day value.</field>
-	            /// <field name="monthGenitiveNames" type="String[]">Gets a string array of month names associated with the current DateTimeFormat object.</field>
-	            /// <field name="monthNames" type="String[]">Gets a string array containing the culture-specific full names of the months.</field>
-	            /// <field name="pMDesignator" type="String">Gets the string designator for hours that are "post meridiem" (after noon).</field>
-	            /// <field name="shortDatePattern" type="String">Gets the custom format string for a short date value.</field>
-	            /// <field name="shortestDayNames" type="String[]">Gets a string array of the shortest unique abbreviated day names associated with the current DateTimeFormat object.</field>
-	            /// <field name="shortTimePattern" type="String">Gets the custom format string for a short time value.</field>
-	            /// <field name="sortableDateTimePattern" type="String">Gets the custom format string for a sortable date and time value.</field>
-	            /// <field name="universalSortableDateTimePattern" type="String">Gets the custom format string for a universal, sortable date and time string.</field>
-	            /// <field name="yearMonthPattern" type="String">Gets the custom format string for a year and month value.</field>
-	        },
+			DateTimeFormat: function () {
+				/// <summary>[v10.2] Provides culture-specific information about the format of date and time values.</summary>
+				/// <field name="abbreviatedDayNames" type="String[]">Gets a string array containing the culture-specific abbreviated names of the days of the week.</field>
+				/// <field name="abbreviatedMonthGenitiveNames" type="String[]">Gets a string array of abbreviated month names associated with the current DateTimeFormat object.</field>
+				/// <field name="abbreviatedMonthNames" type="String[]">Gets a string array that contains the culture-specific abbreviated names of the months.</field>
+				/// <field name="aMDesignator" type="String">Gets the string designator for hours that are "ante meridiem" (before noon).</field>
+				/// <field name="dayNames" type="String[]">Gets a string array that contains the culture-specific full names of the days of the week.</field>
+				/// <field name="firstDayOfWeek" type="Number">Gets the first day of the week (0=Sunday, 1=Monday, ...)</field>
+				/// <field name="fullDateTimePattern" type="String">Gets the custom format string for a long date and long time value.</field>
+				/// <field name="longDatePattern" type="String">Gets the custom format string for a long date value.</field>
+				/// <field name="longTimePattern" type="String">Gets the custom format string for a long time value.</field>
+				/// <field name="monthDayPattern" type="String">Gets the custom format string for a month and day value.</field>
+				/// <field name="monthGenitiveNames" type="String[]">Gets a string array of month names associated with the current DateTimeFormat object.</field>
+				/// <field name="monthNames" type="String[]">Gets a string array containing the culture-specific full names of the months.</field>
+				/// <field name="pMDesignator" type="String">Gets the string designator for hours that are "post meridiem" (after noon).</field>
+				/// <field name="shortDatePattern" type="String">Gets the custom format string for a short date value.</field>
+				/// <field name="shortestDayNames" type="String[]">Gets a string array of the shortest unique abbreviated day names associated with the current DateTimeFormat object.</field>
+				/// <field name="shortTimePattern" type="String">Gets the custom format string for a short time value.</field>
+				/// <field name="sortableDateTimePattern" type="String">Gets the custom format string for a sortable date and time value.</field>
+				/// <field name="universalSortableDateTimePattern" type="String">Gets the custom format string for a universal, sortable date and time string.</field>
+				/// <field name="yearMonthPattern" type="String">Gets the custom format string for a year and month value.</field>
+			},
 
-	        NumberFormat: function () {
-	            /// <summary>[v10.2] Provides culture-specific information for formatting and parsing numeric values.</summary>
-	            /// <field name="currencyDecimalDigits" type="Number">Gets the number of decimal places to use in currency values.</field>
-	            /// <field name="currencyDecimalSeparator" type="String">Gets the string to use as the decimal separator in currency values.</field>
-	            /// <field name="currencyGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in currency values.</field>
-	            /// <field name="currencyGroupSizes" type="Number[]">Gets the number of digits in each group to the left of the decimal in currency values.</field>
-	            /// <field name="currencyNegativePattern" type="Number">Gets the format pattern for negative currency values.</field>
-	            /// <field name="currencyPositivePattern" type="Number">Gets the format pattern for positive currency values.</field>
-	            /// <field name="currencySymbol" type="String">Gets the string to use as the currency symbol.</field>
-	            /// <field name="naNSymbol" type="String">Gets the string that represents the IEEE NaN (not a number) value.</field>
-	            /// <field name="negativeInfinitySymbol" type="String">Gets the string that represents negative infinity.</field>
-	            /// <field name="negativeSign" type="String">Gets the string that denotes that the associated number is negative.</field>
-	            /// <field name="numberDecimalDigits" type="Number">Gets the number of decimal places to use in numeric values.</field>
-	            /// <field name="numberDecimalSeparator" type="String">Gets the string to use as the decimal separator in numeric values.</field>
-	            /// <field name="numberGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in numeric values.</field>
-	            /// <field name="numberGroupSizes" type="Number[]"> Gets the number of digits in each group to the left of the decimal in numeric values.</field>
-	            /// <field name="numberNegativePattern" type="Number">Gets the format pattern for negative numeric values.</field>
-	            /// <field name="percentDecimalDigits" type="Number">Gets the number of decimal places to use in percent values.</field>
-	            /// <field name="percentDecimalSeparator" type="String">Gets the string to use as the decimal separator in percent values.</field>
-	            /// <field name="percentGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in percent values.</field>
-	            /// <field name="percentGroupSizes" type="Number[]">Gets the number of digits in each group to the left of the decimal in percent values.</field>
-	            /// <field name="percentNegativePattern" type="Number">Gets the format pattern for negative percent values.</field>
-	            /// <field name="percentPositivePattern" type="Number">Gets the format pattern for positive percent values.</field>
-	            /// <field name="percentSymbol" type="String">Gets the string to use as the percent symbol.</field>
-	            /// <field name="perMilleSymbol" type="String">Gets the string to use as the per mille symbol.</field>
-	            /// <field name="positiveInfinitySymbol" type="String">Gets the string that represents positive infinity.</field>
-	            /// <field name="positiveSign" type="String">Gets the string that denotes that the associated number is positive.</field>
-	        },
+			NumberFormat: function () {
+				/// <summary>[v10.2] Provides culture-specific information for formatting and parsing numeric values.</summary>
+				/// <field name="currencyDecimalDigits" type="Number">Gets the number of decimal places to use in currency values.</field>
+				/// <field name="currencyDecimalSeparator" type="String">Gets the string to use as the decimal separator in currency values.</field>
+				/// <field name="currencyGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in currency values.</field>
+				/// <field name="currencyGroupSizes" type="Number[]">Gets the number of digits in each group to the left of the decimal in currency values.</field>
+				/// <field name="currencyNegativePattern" type="Number">Gets the format pattern for negative currency values.</field>
+				/// <field name="currencyPositivePattern" type="Number">Gets the format pattern for positive currency values.</field>
+				/// <field name="currencySymbol" type="String">Gets the string to use as the currency symbol.</field>
+				/// <field name="naNSymbol" type="String">Gets the string that represents the IEEE NaN (not a number) value.</field>
+				/// <field name="negativeInfinitySymbol" type="String">Gets the string that represents negative infinity.</field>
+				/// <field name="negativeSign" type="String">Gets the string that denotes that the associated number is negative.</field>
+				/// <field name="numberDecimalDigits" type="Number">Gets the number of decimal places to use in numeric values.</field>
+				/// <field name="numberDecimalSeparator" type="String">Gets the string to use as the decimal separator in numeric values.</field>
+				/// <field name="numberGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in numeric values.</field>
+				/// <field name="numberGroupSizes" type="Number[]"> Gets the number of digits in each group to the left of the decimal in numeric values.</field>
+				/// <field name="numberNegativePattern" type="Number">Gets the format pattern for negative numeric values.</field>
+				/// <field name="percentDecimalDigits" type="Number">Gets the number of decimal places to use in percent values.</field>
+				/// <field name="percentDecimalSeparator" type="String">Gets the string to use as the decimal separator in percent values.</field>
+				/// <field name="percentGroupSeparator" type="String">Gets the string that separates groups of digits to the left of the decimal in percent values.</field>
+				/// <field name="percentGroupSizes" type="Number[]">Gets the number of digits in each group to the left of the decimal in percent values.</field>
+				/// <field name="percentNegativePattern" type="Number">Gets the format pattern for negative percent values.</field>
+				/// <field name="percentPositivePattern" type="Number">Gets the format pattern for positive percent values.</field>
+				/// <field name="percentSymbol" type="String">Gets the string to use as the percent symbol.</field>
+				/// <field name="perMilleSymbol" type="String">Gets the string to use as the per mille symbol.</field>
+				/// <field name="positiveInfinitySymbol" type="String">Gets the string that represents positive infinity.</field>
+				/// <field name="positiveSign" type="String">Gets the string that denotes that the associated number is positive.</field>
+			},
 
-	        Localization: {
-	            stringTable: {},
-	            initialized: false
-	        },
+			Localization: {
+				stringTable: {},
+				initialized: false
+			},
 
-	        Reference: function (entityName, id, primaryName) {
-	            /// <summary>Represents an entity reference which provides the minimum information about an entity.</summary>
-	            /// <param name="entityName" type="String">The logical name of the reference, e.g. "account".</param>
-	            /// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
-	            /// <param name="primaryName" type="String">The human readable name of the reference, e.g "Alexandro".</param>
-	            /// <field name="entityName" type="String">The logical name of the reference, e.g. "account".</field>
-	            /// <field name="id" type="String">GUID of the existing entity or null for new one.</field>
-	            /// <field name="isNew" type="Boolean">Indicates whether the entity is newly created.</field>
-	            /// <field name="primaryName" type="String">The human readable name of the reference, e.g. "Alexandro".</field>
-	            this.entityName = entityName;
-	            this.id = id;
-	            this.isNew = (id ? false : true);
-	            this.primaryName = primaryName;
-	        },
+			Reference: function (entityName, id, primaryName) {
+				/// <summary>Represents an entity reference which provides the minimum information about an entity.</summary>
+				/// <param name="entityName" type="String">The logical name of the reference, e.g. "account".</param>
+				/// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
+				/// <param name="primaryName" type="String">The human readable name of the reference, e.g "Alexandro".</param>
+				/// <field name="entityName" type="String">The logical name of the reference, e.g. "account".</field>
+				/// <field name="id" type="String">GUID of the existing entity or null for new one.</field>
+				/// <field name="isNew" type="Boolean">Indicates whether the entity is newly created.</field>
+				/// <field name="primaryName" type="String">The human readable name of the reference, e.g. "Alexandro".</field>
+				this.entityName = entityName;
+				this.id = id;
+				this.isNew = (id ? false : true);
+				this.primaryName = primaryName;
+			},
 
-	        Relationship: function (sourceProperty, target, intersectEntity, intersectProperty) {
-	            /// <summary>Represents a relationship between two entities.</summary>
-	            /// <param name="sourceProperty" type="String">Gets the name of the source of the relationship.</param>
-	            /// <param name="target" type="MobileCRM.Reference">Gets the target of the relationship.</param>
-	            /// <param name="intersectEntity" type="String">Gets the intersect entity if any. Used when displaying entities that are associated through a Many to Many relationship.</param>
-	            /// <param name="intersectProperty" type="String">Gets the intersect entity property if any. Used when displaying entities that are associated through a Many to Many relationship.</param>
-	            /// <field name="sourceProperty" type="String">Gets the name of the source of the relationship.</field>
-	            /// <field name="target" type="MobileCRM.Reference">Gets the target of the relationship.</field>
-	            /// <field name="intersectEntity" type="String">Gets the intersect entity if any. Used when displaying entities that are associated through a Many to Many relationship.</field>
-	            /// <field name="intersectProperty" type="String">Gets the intersect entity property if any. Used when displaying entities that are associated through a Many to Many relationship.</field>
-	            this.sourceProperty = sourceProperty;
-	            this.target = target;
-	            this.intersectEntity = intersectEntity;
-	            this.intersectProperty = intersectProperty;
-	        },
+			Relationship: function (sourceProperty, target, intersectEntity, intersectProperty) {
+				/// <summary>Represents a relationship between two entities.</summary>
+				/// <param name="sourceProperty" type="String">Gets the name of the source of the relationship.</param>
+				/// <param name="target" type="MobileCRM.Reference">Gets the target of the relationship.</param>
+				/// <param name="intersectEntity" type="String">Gets the intersect entity if any. Used when displaying entities that are associated through a Many to Many relationship.</param>
+				/// <param name="intersectProperty" type="String">Gets the intersect entity property if any. Used when displaying entities that are associated through a Many to Many relationship.</param>
+				/// <field name="sourceProperty" type="String">Gets the name of the source of the relationship.</field>
+				/// <field name="target" type="MobileCRM.Reference">Gets the target of the relationship.</field>
+				/// <field name="intersectEntity" type="String">Gets the intersect entity if any. Used when displaying entities that are associated through a Many to Many relationship.</field>
+				/// <field name="intersectProperty" type="String">Gets the intersect entity property if any. Used when displaying entities that are associated through a Many to Many relationship.</field>
+				this.sourceProperty = sourceProperty;
+				this.target = target;
+				this.intersectEntity = intersectEntity;
+				this.intersectProperty = intersectProperty;
+			},
 
-	        ManyToManyReference: {
-	        },
+			ManyToManyReference: {
+			},
 
-	        DynamicEntity: function (entityName, id, primaryName, properties, isOnline) {
-	            /// <summary>Represents a CRM entity, with only a subset of properties loaded.</summary>
-	            /// <remarks><p>This class is derived from <see cref="MobileCRM.Reference">MobileCRM.Reference</see></p><p>There is a compatibility issue since the version 7.4 which gets the boolean and numeric properties as native Javascript objects (instead of strings). If you experienced problems with these types of fields, switch on the legacy serialization by setting the static property MobileCRM.DynamicEntity.legacyPropsSerialization to true.</p></remarks>
-	            /// <param name="entityName" type="String">The logical name of the entity, e.g. "account".</param>
-	            /// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
-	            /// <param name="primaryName" type="String">The human readable name of the entity, e.g "Alexandro".</param>
-	            /// <param name="properties" type="Object">An object with entity properties, e.g. {firstname:"Alexandro", lastname:"Puccini"}.</param>
-	            /// <param name="isOnline" type="Boolean">Indicates whether the entity was created by online request or from local data.</param>
-	            /// <field name="entityName" type="String">The logical name of the entity, e.g. "account".</field>
-	            /// <field name="id" type="String">GUID of the existing entity or null for new one.</field>
-	            /// <field name="isNew" type="Boolean">Indicates whether the entity is newly created.</field>
-	            /// <field name="isOnline" type="Boolean">Indicates whether the entity was created by online request or from local data.</field>
-	            /// <field name="forceDirty" type="Boolean">Indicates whether to force save the provided properties even if not modified. Default behavior is to save only properties that were modified.</field>
-	            /// <field name="primaryName" type="String">The human readable name of the entity, e.g. "Alexandro".</field>
-	            /// <field name="properties" type="Object">An object with entity properties, e.g. {firstname:"Alexandro", lastname:"Puccini"}.</field>
-	            MobileCRM.DynamicEntity.superproto.constructor.apply(this, arguments);
-	            this.isOnline = isOnline;
-	            if (properties) {
-	                if (MobileCRM.DynamicEntity.legacyPropsSerialization) {
-	                    // This is a workaround for failing scripts in v7.4 (string/bool issue)
-	                    for (var i in properties) {
-	                        if (typeof (properties[i]) == "boolean")
-	                            properties[i] = properties[i].toString();
-	                    }
-	                }
-	                this.properties = new MobileCRM.ObservableObject(properties);
-	            }
-	            else
-	                this.properties = {};
-	        },
+			DynamicEntity: function (entityName, id, primaryName, properties, isOnline) {
+				/// <summary>Represents a CRM entity, with only a subset of properties loaded.</summary>
+				/// <remarks><p>This class is derived from <see cref="MobileCRM.Reference">MobileCRM.Reference</see></p><p>There is a compatibility issue since the version 7.4 which gets the boolean and numeric properties as native Javascript objects (instead of strings). If you experienced problems with these types of fields, switch on the legacy serialization by setting the static property MobileCRM.DynamicEntity.legacyPropsSerialization to true.</p></remarks>
+				/// <param name="entityName" type="String">The logical name of the entity, e.g. "account".</param>
+				/// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
+				/// <param name="primaryName" type="String">The human readable name of the entity, e.g "Alexandro".</param>
+				/// <param name="properties" type="Object">An object with entity properties, e.g. {firstname:"Alexandro", lastname:"Puccini"}.</param>
+				/// <param name="isOnline" type="Boolean">Indicates whether the entity was created by online request or from local data.</param>
+				/// <field name="entityName" type="String">The logical name of the entity, e.g. "account".</field>
+				/// <field name="id" type="String">GUID of the existing entity or null for new one.</field>
+				/// <field name="isNew" type="Boolean">Indicates whether the entity is newly created.</field>
+				/// <field name="isOnline" type="Boolean">Indicates whether the entity was created by online request or from local data.</field>
+				/// <field name="forceDirty" type="Boolean">Indicates whether to force save the provided properties even if not modified. Default behavior is to save only properties that were modified.</field>
+				/// <field name="primaryName" type="String">The human readable name of the entity, e.g. "Alexandro".</field>
+				/// <field name="properties" type="Object">An object with entity properties, e.g. {firstname:"Alexandro", lastname:"Puccini"}.</field>
+				MobileCRM.DynamicEntity.superproto.constructor.apply(this, arguments);
+				this.isOnline = isOnline;
+				if (properties) {
+					if (MobileCRM.DynamicEntity.legacyPropsSerialization) {
+						// This is a workaround for failing scripts in v7.4 (string/bool issue)
+						for (var i in properties) {
+							if (typeof (properties[i]) == "boolean")
+								properties[i] = properties[i].toString();
+						}
+					}
+					this.properties = new MobileCRM.ObservableObject(properties);
+				}
+				else
+					this.properties = {};
+			},
 
-	        Metadata: {
-	            entities: null
-	        },
+			Metadata: {
+				entities: null
+			},
 
-	        MetaEntity: function (props) {
-	            /// <summary>Represents an entity metadata.</summary>
-	            /// <field name="isEnabled" type="Boolean">Indicates whether an entity is enabled. This field is used for limited runtime customization.</field>
-	            /// <field name="isExternal" type="Boolean">Indicates whether an entity stores data from external  sources Exchange/Google.</field>
-	            /// <field name="name" type="String">Gets the entity (logical) name.</field>
-	            /// <field name="objectTypeCode" type="Number">Gets the unique entity type code.</field>
-	            /// <field name="primaryFieldName" type="String">The name of the entity primary field (name) property.</field>
-	            /// <field name="primaryKeyName" type="String">The name of the entity primary key property.</field>
-	            /// <field name="relationshipName" type="String">Gets the name of the many-to-many relationship name. Defined only for intersect entities.</field>
-	            /// <field name="statusFieldName" type="String">Gets the status property name. In general it is called "statuscode" but there are exceptions.</field>
-	            /// <field name="uploadOnly" type="Boolean">Indicates whether this entity can be downloaded during synchronization.</field>
-	            /// <field name="attributes" type="Number">Gets additional entity attributes.</field>
-	            MobileCRM.MetaEntity.superproto.constructor.apply(this, arguments);
-	        },
+			MetaEntity: function (props) {
+				/// <summary>Represents an entity metadata.</summary>
+				/// <field name="isEnabled" type="Boolean">Indicates whether an entity is enabled. This field is used for limited runtime customization.</field>
+				/// <field name="isExternal" type="Boolean">Indicates whether an entity stores data from external  sources Exchange/Google.</field>
+				/// <field name="name" type="String">Gets the entity (logical) name.</field>
+				/// <field name="objectTypeCode" type="Number">Gets the unique entity type code.</field>
+				/// <field name="primaryFieldName" type="String">The name of the entity primary field (name) property.</field>
+				/// <field name="primaryKeyName" type="String">The name of the entity primary key property.</field>
+				/// <field name="relationshipName" type="String">Gets the name of the many-to-many relationship name. Defined only for intersect entities.</field>
+				/// <field name="statusFieldName" type="String">Gets the status property name. In general it is called "statuscode" but there are exceptions.</field>
+				/// <field name="uploadOnly" type="Boolean">Indicates whether this entity can be downloaded during synchronization.</field>
+				/// <field name="attributes" type="Number">Gets additional entity attributes.</field>
+				MobileCRM.MetaEntity.superproto.constructor.apply(this, arguments);
+			},
 
-	        MetaProperty: function () {
-	            /// <summary>Represents a property (CRM field) metadata.</summary>
-	            /// <field name="name" type="String">Gets the field (logical) name.</field>
-	            /// <field name="required" type="Number">Gets the attribute requirement level (0=None, 1=SystemRequired, 2=Required, 3=Recommended, 4=ReadOnly).</field>
-	            /// <field name="type" type="Number">Gets the attribute CRM type (see <see cref="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">MS Dynamics SDK</see>).</field>
-	            /// <field name="format" type="Number">Gets the attribute display format.</field>
-	            /// <field name="isVirtual" type="Boolean">Gets whether the property is virtual (has no underlying storage). State and PartyList properties are virtual.</field>
-	            /// <field name="isReference" type="Boolean">Gets whether the property is a reference (lookup) to another entity.</field>
-	            /// <field name="isNullable" type="Boolean">Gets whether the property may contain NULL.</field>
-	            /// <field name="defaultValue" type="">Gets the property default value.</field>
-	            /// <field name="targets" type="Array">Gets the names of target entities, if the property is a lookup, or customer.</field>
-	            /// <field name="minimum" type="Number">Gets the attribute minimum value.</field>
-	            /// <field name="maximum" type="Number">Gets the attribute minimum value.</field>
-	            /// <field name="precision" type="Number">Gets the numeric attribute&apos;s precision (decimal places).</field>
-	            /// <field name="permission" type="Number">Gets the attribute&apos;s permission set (0=None, 1=User, 2=BusinessUnit, 4=ParentChild, 8=Organization).</field>
-	            /// <field name="activityPartyType" type="Number">Gets the activity party type (from, to, attendee, etc.)</field>
-	            /// <field name="isMultiParty" type="Boolean">Gets whether the activity party property can have multiple values (multiple to, cc, resources.)</field>
-	            /// <field name="isSingularParty" type="Boolean">Gets whether the property represents a singular activity party property. These properties exists as both a Lookup property on the entity and an ActivytParty record.</field>
-	        },
+			MetaProperty: function () {
+				/// <summary>Represents a property (CRM field) metadata.</summary>
+				/// <field name="name" type="String">Gets the field (logical) name.</field>
+				/// <field name="required" type="Number">Gets the attribute requirement level (0=None, 1=SystemRequired, 2=Required, 3=Recommended, 4=ReadOnly).</field>
+				/// <field name="type" type="Number">Gets the attribute CRM type (see <see cref="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">MS Dynamics SDK</see>).</field>
+				/// <field name="format" type="Number">Gets the attribute display format.</field>
+				/// <field name="isVirtual" type="Boolean">Gets whether the property is virtual (has no underlying storage). State and PartyList properties are virtual.</field>
+				/// <field name="isReference" type="Boolean">Gets whether the property is a reference (lookup) to another entity.</field>
+				/// <field name="isNullable" type="Boolean">Gets whether the property may contain NULL.</field>
+				/// <field name="defaultValue" type="">Gets the property default value.</field>
+				/// <field name="targets" type="Array">Gets the names of target entities, if the property is a lookup, or customer.</field>
+				/// <field name="minimum" type="Number">Gets the attribute minimum value.</field>
+				/// <field name="maximum" type="Number">Gets the attribute minimum value.</field>
+				/// <field name="precision" type="Number">Gets the numeric attribute&apos;s precision (decimal places).</field>
+				/// <field name="permission" type="Number">Gets the attribute&apos;s permission set (0=None, 1=User, 2=BusinessUnit, 4=ParentChild, 8=Organization).</field>
+				/// <field name="activityPartyType" type="Number">Gets the activity party type (from, to, attendee, etc.)</field>
+				/// <field name="isMultiParty" type="Boolean">Gets whether the activity party property can have multiple values (multiple to, cc, resources.)</field>
+				/// <field name="isSingularParty" type="Boolean">Gets whether the property represents a singular activity party property. These properties exists as both a Lookup property on the entity and an ActivytParty record.</field>
+			},
 
-	        FetchXml: {
-	            Fetch: function (entity, count, page) {
-	                /// <summary>Represents a FetchXml query object.</summary>
-	                /// <param name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</param>
-	                /// <param name="count" type="int">the maximum number of records to retrieve.</param>
-	                /// <param name="page" type="int">1-based index of the data page to retrieve.</param>
-	                /// <field name="aggregate" type="Boolean">Indicates whether the fetch is aggregated.</field>
-	                /// <field name="count" type="int">the maximum number of records to retrieve.</field>
-	                /// <field name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</field>
-	                /// <field name="page" type="int">1-based index of the data page to retrieve.</field>
-	                this.entity = entity;
-	                this.count = count;
-	                this.page = page;
-	                this.aggregate = false;
-	            },
-	            Entity: function (name) {
-	                /// <summary>Represents a FetchXml query root entity.</summary>
-	                /// <param name="name" type="String">An entity logical name.</param>
-	                /// <field name="attributes" type="Array">An array of <see cref="MobileCRM.FetchXml.Attribute">MobileCRM.FetchXml.Attribute</see> objects.</field>
-	                /// <field name="filter" type="MobileCRM.FetchXml.Filter">A query filter.</field>
-	                /// <field name="linkentities" type="Array">An array of <see cref="MobileCRM.FetchXml.LinkEntity">MobileCRM.FetchXml.LinkEntity</see> objects.</field>
-	                /// <field name="name" type="String">An entity logical name.</field>
-	                /// <field name="order" type="Array">An array of <see cref="MobileCRM.FetchXml.Order">MobileCRM.FetchXml.Order</see> objects.</field>
-	                this.name = name;
-	                this.attributes = [];
-	                this.order = [];
-	                this.filter = null;
-	                this.linkentities = [];
-	            },
-	            LinkEntity: function (name) {
-	                /// <summary>Represents a FetchXml query linked entity.</summary>
-	                /// <remarks>This object is derived from <see cref="MobileCRM.FetchXml.Entity">MobileCRM.FetchXml.Entity</see></remarks>
-	                /// <field name="alias" type="String">A link alias.</field>
-	                /// <field name="from" type="String">The "from" field (if parent then target entity primary key).</field>
-	                /// <field name="linkType" type="String">The link (join) type ("inner" or "outer").</field>
-	                /// <param name="name" type="String">An entity name</param>
-	                /// <field name="to" type="String">The "to" field.</field>
-	                MobileCRM.FetchXml.LinkEntity.superproto.constructor.apply(this, arguments);
+			FetchXml: {
+				Fetch: function (entity, count, page) {
+					/// <summary>Represents a FetchXml query object.</summary>
+					/// <param name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</param>
+					/// <param name="count" type="int">the maximum number of records to retrieve.</param>
+					/// <param name="page" type="int">1-based index of the data page to retrieve.</param>
+					/// <field name="aggregate" type="Boolean">Indicates whether the fetch is aggregated.</field>
+					/// <field name="count" type="int">the maximum number of records to retrieve.</field>
+					/// <field name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</field>
+					/// <field name="page" type="int">1-based index of the data page to retrieve.</field>
+					this.entity = entity;
+					this.count = count;
+					this.page = page;
+					this.aggregate = false;
+				},
+				Entity: function (name) {
+					/// <summary>Represents a FetchXml query root entity.</summary>
+					/// <param name="name" type="String">An entity logical name.</param>
+					/// <field name="attributes" type="Array">An array of <see cref="MobileCRM.FetchXml.Attribute">MobileCRM.FetchXml.Attribute</see> objects.</field>
+					/// <field name="filter" type="MobileCRM.FetchXml.Filter">A query filter.</field>
+					/// <field name="linkentities" type="Array">An array of <see cref="MobileCRM.FetchXml.LinkEntity">MobileCRM.FetchXml.LinkEntity</see> objects.</field>
+					/// <field name="name" type="String">An entity logical name.</field>
+					/// <field name="order" type="Array">An array of <see cref="MobileCRM.FetchXml.Order">MobileCRM.FetchXml.Order</see> objects.</field>
+					this.name = name;
+					this.attributes = [];
+					this.order = [];
+					this.filter = null;
+					this.linkentities = [];
+				},
+				LinkEntity: function (name) {
+					/// <summary>Represents a FetchXml query linked entity.</summary>
+					/// <remarks>This object is derived from <see cref="MobileCRM.FetchXml.Entity">MobileCRM.FetchXml.Entity</see></remarks>
+					/// <field name="alias" type="String">A link alias.</field>
+					/// <field name="from" type="String">The "from" field (if parent then target entity primary key).</field>
+					/// <field name="linkType" type="String">The link (join) type ("inner" or "outer").</field>
+					/// <param name="name" type="String">An entity name</param>
+					/// <field name="to" type="String">The "to" field.</field>
+					MobileCRM.FetchXml.LinkEntity.superproto.constructor.apply(this, arguments);
 
-	                this.from = null;
-	                this.to = null;
-	                this.linktype = null;
-	                this.alias = null;
-	            },
-	            Attribute: function (name) {
-	                /// <summary>Represents a FetchXml select statement (CRM field).</summary>
-	                /// <param name="name" type="String">A lower-case entity attribute name (CRM logical field name).</param>
-	                /// <field name="aggregate" type="String">An aggregation function.</field>
-	                /// <field name="alias" type="String">Defines an attribute alias.</field>
-	                /// <field name="dategrouping" type="String">A date group by modifier (year, quarter, month, week, day).</field>
-	                /// <field name="groupby" type="Boolean">Indicates whether to group by this attribute.</field>
-	                /// <field name="name" type="String">A lower-case entity attribute name (CRM logical field name).</field>
-	                this.name = name;
-	                this.aggregate = null;
-	                this.groupby = false;
-	                this.alias = null;
-	                this.dategrouping = null;
-	            },
-	            Order: function (attribute, descending) {
-	                /// <summary>Represents a FetchXml order statement.</summary>
-	                /// <param name="attribute" type="String">An attribute name (CRM logical field name).</param>
-	                /// <param name="descending" type="Boolean">true, for descending order; false, for ascending order</param>
-	                /// <field name="alias" type="String">Defines an order alias.</field>
-	                /// <field name="attribute" type="String">An attribute name (CRM logical field name).</field>
-	                /// <field name="descending" type="Boolean">true, for descending order; false, for ascending order.</field>
-	                this.attribute = attribute;
-	                this.alias = null;
-	                this.descending = descending ? true : false;
-	            },
-	            Filter: function () {
+					this.from = null;
+					this.to = null;
+					this.linktype = null;
+					this.alias = null;
+				},
+				Attribute: function (name) {
+					/// <summary>Represents a FetchXml select statement (CRM field).</summary>
+					/// <param name="name" type="String">A lower-case entity attribute name (CRM logical field name).</param>
+					/// <field name="aggregate" type="String">An aggregation function.</field>
+					/// <field name="alias" type="String">Defines an attribute alias.</field>
+					/// <field name="dategrouping" type="String">A date group by modifier (year, quarter, month, week, day).</field>
+					/// <field name="groupby" type="Boolean">Indicates whether to group by this attribute.</field>
+					/// <field name="name" type="String">A lower-case entity attribute name (CRM logical field name).</field>
+					this.name = name;
+					this.aggregate = null;
+					this.groupby = false;
+					this.alias = null;
+					this.dategrouping = null;
+				},
+				Order: function (attribute, descending) {
+					/// <summary>Represents a FetchXml order statement.</summary>
+					/// <param name="attribute" type="String">An attribute name (CRM logical field name).</param>
+					/// <param name="descending" type="Boolean">true, for descending order; false, for ascending order</param>
+					/// <field name="alias" type="String">Defines an order alias.</field>
+					/// <field name="attribute" type="String">An attribute name (CRM logical field name).</field>
+					/// <field name="descending" type="Boolean">true, for descending order; false, for ascending order.</field>
+					this.attribute = attribute;
+					this.alias = null;
+					this.descending = descending ? true : false;
+				},
+				Filter: function () {
 
-	                /// <summary>Represents a FetchXml filter statement. A logical combination of <see cref="MobileCRM.FetchXml.Condition">Conditions</see> and child-filters.</summary>
-	                /// <field name="conditions" type="Array">An array of <see cref="MobileCRM.FetchXml.Condition">Condition</see> objects.</field>
-	                /// <field name="filters" type="Array">An array of <see cref="MobileCRM.FetchXml.Filter">Filter</see> objects representing child-filters.</field>
-	                /// <field name="type" type="String">Defines the filter operator ("or" / "and").</field>
-	                this.type = null;
-	                this.conditions = [];
-	                this.filters = [];
-	            },
-	            Condition: function () {
-	                /// <summary>Represents a FetchXml attribute condition statement.</summary>
-	                /// <field name="attribute" type="String">The attribute name (CRM logical field name).</field>
-	                /// <field name="operator" type="String">The condition operator. "eq", "ne", "in", "not-in", "between", "not-between", "lt", "le", "gt", "ge", "like", "not-like", "null", "not-null", "eq-userid", "eq-userteams", "today", "yesterday", "tomorrow", "this-year", "last-week", "last-x-hours", "next-x-years", "olderthan-x-months", ...</field>
-	                /// <field name="uiname" type="String">The lookup target entity display name.</field>
-	                /// <field name="uitype" type="String">The lookup target entity logical name.</field>
-	                /// <field name="value" type="">The value to compare to.</field>
-	                /// <field name="values" type="Array">The list of values to compare to.</field>
-	                this.attribute = null;
-	                this.operator = null;
-	                this.uitype = null;
-	                this.uiname = null;
-	                this.value = null;
-	                this.values = [];
-	            }
-	        },
+					/// <summary>Represents a FetchXml filter statement. A logical combination of <see cref="MobileCRM.FetchXml.Condition">Conditions</see> and child-filters.</summary>
+					/// <field name="conditions" type="Array">An array of <see cref="MobileCRM.FetchXml.Condition">Condition</see> objects.</field>
+					/// <field name="filters" type="Array">An array of <see cref="MobileCRM.FetchXml.Filter">Filter</see> objects representing child-filters.</field>
+					/// <field name="type" type="String">Defines the filter operator ("or" / "and").</field>
+					this.type = null;
+					this.conditions = [];
+					this.filters = [];
+				},
+				Condition: function () {
+					/// <summary>Represents a FetchXml attribute condition statement.</summary>
+					/// <field name="attribute" type="String">The attribute name (CRM logical field name).</field>
+					/// <field name="operator" type="String">The condition operator. "eq", "ne", "in", "not-in", "between", "not-between", "lt", "le", "gt", "ge", "like", "not-like", "null", "not-null", "eq-userid", "eq-userteams", "today", "yesterday", "tomorrow", "this-year", "last-week", "last-x-hours", "next-x-years", "olderthan-x-months", ...</field>
+					/// <field name="uiname" type="String">The lookup target entity display name.</field>
+					/// <field name="uitype" type="String">The lookup target entity logical name.</field>
+					/// <field name="value" type="">The value to compare to.</field>
+					/// <field name="values" type="Array">The list of values to compare to.</field>
+					this.attribute = null;
+					this.operator = null;
+					this.uitype = null;
+					this.uiname = null;
+					this.value = null;
+					this.values = [];
+				}
+			},
 
-	        Platform: function (props) {
-	            /// <summary>Represents object for querying platform specific information and executing platform integrated actions.</summary>
-	            /// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.Platform.requestObject">MobileCRM.Platform.requestObject</see> function.</remarks>
-	            /// <field name="capabilities" type="Number">Gets the mask of capability flags supported by this device (MakePhoneCalls=1; HasMapView=2).</field>
-	            /// <field name="deviceIdentifier" type="String">Gets the unique identifier of this device.</field>
-	            /// <field name="screenWidth" type="Number">Gets the current screen width in pixels.</field>
-	            /// <field name="screenHeight" type="Number">Gets the current screen width in pixels.</field>
-	            /// <field name="screenDensity" type="Number">Gets the screen density (DPI).</field>
-	            /// <field name="isMultiPanel" type="Boolean">Gets whether the device has tablet or phone UI.</field>
-	            /// <field name="customImagePath" type="String">Gets or sets the custom image path that comes from customization.</field>
-	            MobileCRM.Platform.superproto.constructor.apply(this, arguments);
-	        },
+			Platform: function (props) {
+				/// <summary>Represents object for querying platform specific information and executing platform integrated actions.</summary>
+				/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.Platform.requestObject">MobileCRM.Platform.requestObject</see> function.</remarks>
+				/// <field name="capabilities" type="Number">Gets the mask of capability flags supported by this device (MakePhoneCalls=1; HasMapView=2).</field>
+				/// <field name="deviceIdentifier" type="String">Gets the unique identifier of this device.</field>
+				/// <field name="screenWidth" type="Number">Gets the current screen width in pixels.</field>
+				/// <field name="screenHeight" type="Number">Gets the current screen width in pixels.</field>
+				/// <field name="screenDensity" type="Number">Gets the screen density (DPI).</field>
+				/// <field name="isMultiPanel" type="Boolean">Gets whether the device has tablet or phone UI.</field>
+				/// <field name="customImagePath" type="String">Gets or sets the custom image path that comes from customization.</field>
+				MobileCRM.Platform.superproto.constructor.apply(this, arguments);
+			},
 
-	        Application: function () {
-	            /// <summary>Encapsulates the application-related functionality.</summary>
-	        },
-	        AboutInfo: function() {
-	            /// <summary>[v8.2] Represents the branding information.</summary>
-	            /// <field name="manufacturer" type="String">Gets the manufacturer text.</field>
-	            /// <field name="productTitle" type="String">Gets the product title text.</field>
-	            /// <field name="productTitleAndVersion" type="String">[v9.0] Gets the string with product title and version.</field>
-	            /// <field name="productSubTitle" type="String">Gets the product subtitle text.</field>
-	            /// <field name="poweredBy" type="String">Gets the powered by text.</field>
-	            /// <field name="icon" type="String">Gets the icon name.</field>
-	            /// <field name="website" type="String">Gets the website url.</field>
-	            /// <field name="supportEmail" type="String">Gets the support email.</field>
-	            this.manufacturer = "";
-	            this.productTitle = "";
-	            this.productTitleAndVersion = "";
-	            this.productSubTitle = "";
-	            this.poweredBy = "";
-	            this.icon = "";
-	            this.website = "";
-	            this.supportEmail = "";
-	        },
-	        MobileReport: function () {
-	            /// <summary>Provides a functionality of mobile reporting.</summary>
-	        },
-	        Questionnaire: function () {
-	            /// <summary>Provides a functionality for questionnaires.</summary>
-	        },
-	        UI: {
-	            FormManager: {
-	            },
-	            EntityForm: function (props) {
-	                /// <summary>Represents the Javascript equivalent of native entity form object.</summary>
-	                /// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">MobileCRM.UI.EntityForm.requestObject</see> function.</remarks>
-	                /// <field name="associatedViews" type="Array">Gets the associated views as an array of <see cref="MobileCRM.UI._EntityList">MobileCRM.UI._EntityList</see> objects.</field>
-	                /// <field name="canEdit" type="Boolean">Gets whether the form can be edited.</field>
-	                /// <field name="canClose" type="Boolean">Determines if form can be closed, i.e. there are no unsaved data being edited.</field>
-	                /// <field name="context" type="Object">Gets the specific context object for onChange and onSave handlers. The onChange context contains single property &quot;changedItem&quot; with the name of the changed detail item and the onSave context contains property &quot;errorMessage&quot; which can be used to break the save process with certain error message.</field>
-	                /// <field name="controllers" type="Array">Gets the form controllers (map, web) as an array of <see cref="MobileCRM.UI._Controller">MobileCRM.UI._Controller</see> objects.</field>
-	                /// <field name="detailViews" type="Array">Gets the detailView controls  as an array of <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> objects.</field>
-	                /// <field name="entity" type="MobileCRM.DynamicEntity">Gets or sets the entity instance the form is showing.</field>
-	                /// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
-	                /// <field name="iFrameOptions" type="Object">Carries the custom parameters that can be specified when opening the form using <see cref="MobileCRM.UI.FormManager">MobileCRM.UI.FormManager</see>.</field>
-	                /// <field name="isDirty" type="Boolean">Indicates whether the form  has unsaved data.</field>
-	                /// <field name="relationship" type="MobileCRM.Relationship">Defines relationship with parent entity.</field>
-	                /// <field name="visible" type="Boolean">Gets whether the underlying form is visible.</field>
-	                MobileCRM.UI.EntityForm.superproto.constructor.apply(this, arguments);
-	            },
+			Application: function () {
+				/// <summary>Encapsulates the application-related functionality.</summary>
+			},
+			AboutInfo: function () {
+				/// <summary>[v8.2] Represents the branding information.</summary>
+				/// <field name="manufacturer" type="String">Gets the manufacturer text.</field>
+				/// <field name="productTitle" type="String">Gets the product title text.</field>
+				/// <field name="productTitleAndVersion" type="String">[v9.0] Gets the string with product title and version.</field>
+				/// <field name="productSubTitle" type="String">Gets the product subtitle text.</field>
+				/// <field name="poweredBy" type="String">Gets the powered by text.</field>
+				/// <field name="icon" type="String">Gets the icon name.</field>
+				/// <field name="website" type="String">Gets the website url.</field>
+				/// <field name="supportEmail" type="String">Gets the support email.</field>
+				this.manufacturer = "";
+				this.productTitle = "";
+				this.productTitleAndVersion = "";
+				this.productSubTitle = "";
+				this.poweredBy = "";
+				this.icon = "";
+				this.website = "";
+				this.supportEmail = "";
+			},
+			Integration: {
+				///<summary>Encapsulate methods and properties what can be used for integration.</summary>
+			},
+			OAuthSettings: function () {
+				/// <summary>[v12.4] Represents the settings what are used to authenticate using OAuth server account.</summary>
+				/// <field name="authorityEndPoint" type="String">Gets or sets the OAuth token url.</field>
+				/// <field name="authorizationUrl" type="String">Gets or sets the authorization url to get authorization code.</field>
+				/// <field name="clientId" type="String">Gets or sets the authentication Client Id.</field>
+				/// <field name="clientSecret" type="String">Gets or sets the Authentication Client Secret.</field>
+				/// <field name="redirectUrl" type="String">Gets or sets the authorization redirect url for service.</field>
+				/// <field name="resourceUrl" type="String">Gets or sets the App ID URI of the target web API (secured resource).</field>
+				/// <field name="scopes" type="String">Gets or sets the scope to limit an application's access to a user's account.</field>
 
-	            QuestionnaireForm: function () {
-	                /// <summary>[v10.3] Represents the Javascript equivalent of native questionnaire form object.</summary>
-	                /// <field name="form" type="MobileCRM.UI.Form">Gets the form which hosts the questionnaire.</field>
-	            	/// <field name="groups" type="MobileCRM.UI.QuestionnaireForm.Group[]">A list of <see cref="MobileCRM.UI.QuestionnaireForm.Group">QuestionnaireForm.Group</see> objects.</field>
-	            	/// <field name="questions" type="MobileCRM.UI.QuestionnaireForm.Question[]">A list of <see cref="MobileCRM.UI.QuestionnaireForm.Question">QuestionnaireForm.Question</see> objects.</field>
-	                /// <field name="relationship" type="MobileCRM.Relationship">Gets the relation source and related entity. &quot;null&quot;, if there is no relationship.</field>
-	                MobileCRM.UI.QuestionnaireForm.superproto.constructor.apply(this, arguments);
-	            },
+				this.authorityEndPoint = "";
+				this.authorizationUrl = "";
+				this.authorityEndPoint = "";
+				this.resourceUrl = "";
+				this.scopes = "";
+				this.clientSecret = "";
+				this.redirectUrl = "";
+			},
+			MobileReport: function () {
+				/// <summary>Provides a functionality of mobile reporting.</summary>
+			},
+			Questionnaire: function () {
+				/// <summary>Provides a functionality for questionnaires.</summary>
+			},
+			UI: {
+				FormManager: {
+				},
+				EntityForm: function (props) {
+					/// <summary>Represents the Javascript equivalent of native entity form object.</summary>
+					/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">MobileCRM.UI.EntityForm.requestObject</see> function.</remarks>
+					/// <field name="associatedViews" type="Array">Gets the associated views as an array of <see cref="MobileCRM.UI._EntityList">MobileCRM.UI._EntityList</see> objects.</field>
+					/// <field name="canEdit" type="Boolean">Gets whether the form can be edited.</field>
+					/// <field name="canClose" type="Boolean">Determines if form can be closed, i.e. there are no unsaved data being edited.</field>
+					/// <field name="context" type="Object">Gets the specific context object for onChange and onSave handlers. The onChange context contains single property &quot;changedItem&quot; with the name of the changed detail item and the onSave context contains property &quot;errorMessage&quot; which can be used to break the save process with certain error message.</field>
+					/// <field name="controllers" type="Array">Gets the form controllers (map, web) as an array of <see cref="MobileCRM.UI._Controller">MobileCRM.UI._Controller</see> objects.</field>
+					/// <field name="detailViews" type="Array">Gets the detailView controls  as an array of <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> objects.</field>
+					/// <field name="entity" type="MobileCRM.DynamicEntity">Gets or sets the entity instance the form is showing.</field>
+					/// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
+					/// <field name="iFrameOptions" type="Object">Carries the custom parameters that can be specified when opening the form using <see cref="MobileCRM.UI.FormManager">MobileCRM.UI.FormManager</see>.</field>
+					/// <field name="isDirty" type="Boolean">Indicates whether the form  has unsaved data.</field>
+					/// <field name="relationship" type="MobileCRM.Relationship">Defines relationship with parent entity.</field>
+					/// <field name="visible" type="Boolean">Gets whether the underlying form is visible.</field>
+					/// <field name="documentView" type="MobileCRM.UI._DocumentView">NoteForm only. Gets the view containing the note attachment.</field>
+					MobileCRM.UI.EntityForm.superproto.constructor.apply(this, arguments);
+				},
 
-	            EntityList: function (props) {
-	                /// <summary>[v9.2] Represents the Javascript equivalent of native entity list object.</summary>
-	                /// <field name="allowAddExisting" type="Boolean">Gets or sets whether adding an existing entity is allowed.</field>
-	                /// <field name="allowCreateNew" type="Boolean">Gets or sets whether create a new entity (or managing the N:N entities in the case of N:N list) is allowed.</field>
-	                /// <field name="allowedDocActions" type="Number">Gets or sets a mask of document actions (for Note and Sharepoint document lists).</field>
-	                /// <field name="allowSearch" type="Boolean">Gets or sets whether to show the search bar.</field>
-	                /// <field name="autoWideWidth" type="String">Gets the view auto width pixel size.</field>
-	                /// <field name="context" type="Object">[v10.0] Gets the specific context object for onChange, onSave and onCommand handlers.<p>The onSave context contains property &quot;entities&quot; with the list of all changed entities and property &quot;errorMessage&quot; which can be used to cancel the save process with certain error message.</p><p>The onChange handler context contains &quot;entities&quot; property with the list of currently changed entities (typically just one entity) and property &quot;propertyName&quot; with the field name that was changed.</p><p>Command handler context contains the &quot;cmdParam&quot; property and &quot;entities&quot; property with the list of currently selected entities.</p></field>
-	                /// <field name="currentView" type="String">[v10.0] Gets currently selected entity list view.
-	                /// <field name="entityName" type="String">Gets the name of the entities in this list.</field>
-	                /// <field name="flipMode" type="Number">Gets or sets the flip configuration (which views to show and which one is the initial).</field>
-	                /// <field name="hasMapViews" type="Boolean">Gets whether the list has a view that can be displayed on map.</field>
-	                /// <field name="hasCalendarViews" type="Boolean">Gets or sets whether there is a view with &quot;CalendarFields&quot;.</field>
-	                /// <field name="hasMoreButton" type="Boolean">Gets whether the list needs a more button.</field>
-	                /// <field name="internalName" type="String">Gets the internal list name. Used for localization and image lookup.</field>
-	                /// <field name="isDirty" type="Boolean">Gets or sets whether the list is dirty.</field>
-	                /// <field name="isLoaded" type="Boolean">Gets or sets whether the list is loaded.</field>
-	                /// <field name="isMultiSelect" type="Boolean">Gets whether multi selection is active.</field>
-	                /// <field name="listButtons" type="Array">Gets the read-only array of strings defining the list buttons.</field>
-	                /// <field name="listMode" type="Number">Gets the current list mode.</field>
-	                /// <field name="listView" type="MobileCRM.UI._ListView">Gets the controlled listView control.</field>
-	                /// <field name="lookupSource" type="MobileCRM.Relationship">Gets the lookup source. If the list is used for lookup this is the entity whose property is being &quot;looked-up&quot;.</field>
-	                /// <field name="options" type="Number">Gets the kinds of views available on the list.</field>
-	                /// <field name="relationship" type="MobileCRM.Relationship">Gets the relation source and related entity. &quot;null&quot;, if there is no relationship (if it is not an associated list).</field>
-	                /// <field name="selectedEntity" type="MobileCRM.DynamicEntity">Gets currently selected entity. &quot;null&quot;, if there&apos;s no selection.</field>
-	                /// <field name="uniqueName" type="Number">Gets or sets the unique name of the list. Used to save/load list specific settings.</field>
-	                MobileCRM.UI.EntityList.superproto.constructor.apply(this, arguments);
-	            },
+				QuestionnaireForm: function () {
+					/// <summary>[v10.3] Represents the Javascript equivalent of native questionnaire form object.</summary>
+					/// <field name="form" type="MobileCRM.UI.Form">Gets the form which hosts the questionnaire.</field>
+					/// <field name="groups" type="MobileCRM.UI.QuestionnaireForm.Group[]">A list of <see cref="MobileCRM.UI.QuestionnaireForm.Group">QuestionnaireForm.Group</see> objects.</field>
+					/// <field name="questions" type="MobileCRM.UI.QuestionnaireForm.Question[]">A list of <see cref="MobileCRM.UI.QuestionnaireForm.Question">QuestionnaireForm.Question</see> objects.</field>
+					/// <field name="relationship" type="MobileCRM.Relationship">Gets the relation source and related entity. &quot;null&quot;, if there is no relationship.</field>
+					MobileCRM.UI.QuestionnaireForm.superproto.constructor.apply(this, arguments);
+				},
 
-	            HomeForm: function (props) {
-	                /// <summary>[v8.0] Represents the Javascript equivalent of the home form object which contains the Home/UI replacement iFrame.</summary>
-	                /// <remarks><p>This class works only from Home/UI replacement iFrame.</p><p>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.HomeForm.requestObject">MobileCRM.UI.HomeForm.requestObject</see> function.</p></remarks>
-	                /// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
-	                /// <field name="items" type="Array">Gets the list of the home items.</field>
-	                /// <field name="listView" type="MobileCRM.UI._ListController">Gets the list view with home items.</field>
-	                /// <field name="lastSyncResult" type="MobileCRM.Services.SynchronizationResult">[v8.1] An object with last sync results. Contains following boolean properties: newCustomizationReady, customizationDownloaded, dataErrorsEncountered, appWasLocked, syncAborted, adminFullSync, wasBackgroundSync</field>
-	                /// <field name="syncResultText" type="String">[v8.1] The last synchronization error text.</field>
-	                /// <field name="syncProgress" type="Object">[v8.1] An object with current sync progress. Contains following properties: labels, percent. It is undefined if no sync is running.</field>
-	                MobileCRM.UI.HomeForm.superproto.constructor.apply(this, arguments);
-	            },
+				EntityList: function (props) {
+					/// <summary>[v9.2] Represents the Javascript equivalent of native entity list object.</summary>
+					/// <field name="allowAddExisting" type="Boolean">Gets or sets whether adding an existing entity is allowed.</field>
+					/// <field name="allowCreateNew" type="Boolean">Gets or sets whether create a new entity (or managing the N:N entities in the case of N:N list) is allowed.</field>
+					/// <field name="allowedDocActions" type="Number">Gets or sets a mask of document actions (for Note and Sharepoint document lists).</field>
+					/// <field name="allowSearch" type="Boolean">Gets or sets whether to show the search bar.</field>
+					/// <field name="autoWideWidth" type="String">Gets the view auto width pixel size.</field>
+					/// <field name="context" type="Object">[v10.0] Gets the specific context object for onChange, onSave and onCommand handlers.<p>The onSave context contains property &quot;entities&quot; with the list of all changed entities and property &quot;errorMessage&quot; which can be used to cancel the save process with certain error message.</p><p>The onChange handler context contains &quot;entities&quot; property with the list of currently changed entities (typically just one entity) and property &quot;propertyName&quot; with the field name that was changed.</p><p>Command handler context contains the &quot;cmdParam&quot; property and &quot;entities&quot; property with the list of currently selected entities.</p></field>
+					/// <field name="currentView" type="String">[v10.0] Gets currently selected entity list view.
+					/// <field name="entityName" type="String">Gets the name of the entities in this list.</field>
+					/// <field name="flipMode" type="Number">Gets or sets the flip configuration (which views to show and which one is the initial).</field>
+					/// <field name="hasMapViews" type="Boolean">Gets whether the list has a view that can be displayed on map.</field>
+					/// <field name="hasCalendarViews" type="Boolean">Gets or sets whether there is a view with &quot;CalendarFields&quot;.</field>
+					/// <field name="hasMoreButton" type="Boolean">Gets whether the list needs a more button.</field>
+					/// <field name="internalName" type="String">Gets the internal list name. Used for localization and image lookup.</field>
+					/// <field name="isDirty" type="Boolean">Gets or sets whether the list is dirty.</field>
+					/// <field name="isLoaded" type="Boolean">Gets or sets whether the list is loaded.</field>
+					/// <field name="isMultiSelect" type="Boolean">Gets whether multi selection is active.</field>
+					/// <field name="listButtons" type="Array">Gets the read-only array of strings defining the list buttons.</field>
+					/// <field name="listMode" type="Number">Gets the current list mode.</field>
+					/// <field name="listView" type="MobileCRM.UI._ListView">Gets the controlled listView control.</field>
+					/// <field name="lookupSource" type="MobileCRM.Relationship">Gets the lookup source. If the list is used for lookup this is the entity whose property is being &quot;looked-up&quot;.</field>
+					/// <field name="options" type="Number">Gets the kinds of views available on the list.</field>
+					/// <field name="relationship" type="MobileCRM.Relationship">Gets the relation source and related entity. &quot;null&quot;, if there is no relationship (if it is not an associated list).</field>
+					/// <field name="selectedEntity" type="MobileCRM.DynamicEntity">Gets currently selected entity. &quot;null&quot;, if there&apos;s no selection.</field>
+					/// <field name="uniqueName" type="Number">Gets or sets the unique name of the list. Used to save/load list specific settings.</field>
+					MobileCRM.UI.EntityList.superproto.constructor.apply(this, arguments);
+				},
 
-	            ReportForm: function() {
-	                /// <summary>[v8.1] Represents the Dynamics CRM report form object.</summary>
-	                /// <field name="allowedReportIds" type="Array">The list of report entity ids that has to be included in the report form selector.</field>
-	                /// <field name="allowedLanguages" type="Array">The list of LCID codes of the languages that has to be included into the report form selector. The number -1 stands for "Any language".</field>
-	                /// <field name="defaultReport" type="String">The primary name of the report entity that should be pre-selected on the report form.</field>
-	                this.allowedReportIds = [];
-	                this.allowedLanguages = [];
-	                this.defaultReport = null;
-	            },
+				HomeForm: function (props) {
+					/// <summary>[v8.0] Represents the Javascript equivalent of the home form object which contains the Home/UI replacement iFrame.</summary>
+					/// <remarks><p>This class works only from Home/UI replacement iFrame.</p><p>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.HomeForm.requestObject">MobileCRM.UI.HomeForm.requestObject</see> function.</p></remarks>
+					/// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
+					/// <field name="items" type="Array">Gets the list of the home items.</field>
+					/// <field name="listView" type="MobileCRM.UI._ListController">Gets the list view with home items.</field>
+					/// <field name="lastSyncResult" type="MobileCRM.Services.SynchronizationResult">[v8.1] An object with last sync results. Contains following boolean properties: newCustomizationReady, customizationDownloaded, dataErrorsEncountered, appWasLocked, syncAborted, adminFullSync, wasBackgroundSync</field>
+					/// <field name="syncResultText" type="String">[v8.1] The last synchronization error text.</field>
+					/// <field name="syncProgress" type="Object">[v8.1] An object with current sync progress. Contains following properties: labels, percent. It is undefined if no sync is running.</field>
+					MobileCRM.UI.HomeForm.superproto.constructor.apply(this, arguments);
+				},
 
-	            IFrameForm: function () {
-	                /// <summary>[v9.0] Represents the iFrame form object.</summary>
-	                /// <field name="form" type="MobileCRM.UI.Form">Gets the form hosting the iFrame.</field>
-	                /// <field name="isDirty" type="Boolean">[v10.0] Controls whether the form is dirty and requires save, or whether it can be closed.</field>
-	                /// <field name="options" type="Object">Carries the custom parameters that can be specified when opening the form using <see cref="MobileCRM.UI.IFrameForm.show">MobileCRM.UI.IFrameForm.show</see> function.</field>
-	                /// <field name="preventCloseMessage" type="String">[v9.3] Prevents closing the form if non-empty string is set. No other home-item can be opened and synchronization is not allowed to be started. Provided message is shown when user tries to perform those actions.</field>
-	                /// <field name="saveBehavior" type="Number">[v10.0] Controls the behavior of the Save command on this form (0=Default, 1=SaveOnly, 2=SaveAndClose).</field>
-	                MobileCRM.UI.IFrameForm.superproto.constructor.apply(this, arguments);
-	            },
+				ReportForm: function () {
+					/// <summary>[v8.1] Represents the Dynamics CRM report form object.</summary>
+					/// <field name="allowedReportIds" type="Array">The list of report entity ids that has to be included in the report form selector.</field>
+					/// <field name="allowedLanguages" type="Array">The list of LCID codes of the languages that has to be included into the report form selector. The number -1 stands for "Any language".</field>
+					/// <field name="defaultReport" type="String">The primary name of the report entity that should be pre-selected on the report form.</field>
+					this.allowedReportIds = [];
+					this.allowedLanguages = [];
+					this.defaultReport = null;
+				},
 
-	            Form: function (props) {
-	                /// <summary>[v8.0] Represents the Javascript equivalent of the form object.</summary>
-	                /// <field name="canMaximize" type="Boolean">Gets or sets whether form can be maximized to fullscreen (full application frame).</field>
-	                /// <field name="isMaximized" type="Boolean">Gets or sets whether form is currently maximized to fullscreen (full application frame).</field>
-	                /// <field name="caption" type="String">Gets or sets the form caption.</field>
-	                /// <field name="selectedViewIndex" type="Number">Gets or sets the selected view (tab) index.</field>
-	                /// <field name="showTitle" type="Boolean">[v8.1] Determines whether the form caption bar should be visible.</field>
-	                /// <field name="viewCount" type="Number">Gets the count of views in the form.</field>
-	                /// <field name="visible" type="Boolean">Gets whether the form is visible.</field>
-	                MobileCRM.UI.Form.superproto.constructor.apply(this, arguments);
-	            },
+				IFrameForm: function () {
+					/// <summary>[v9.0] Represents the iFrame form object.</summary>
+					/// <field name="form" type="MobileCRM.UI.Form">Gets the form hosting the iFrame.</field>
+					/// <field name="isDirty" type="Boolean">[v10.0] Controls whether the form is dirty and requires save, or whether it can be closed.</field>
+					/// <field name="options" type="Object">Carries the custom parameters that can be specified when opening the form using <see cref="MobileCRM.UI.IFrameForm.show">MobileCRM.UI.IFrameForm.show</see> function.</field>
+					/// <field name="preventCloseMessage" type="String">[v9.3] Prevents closing the form if non-empty string is set. No other home-item can be opened and synchronization is not allowed to be started. Provided message is shown when user tries to perform those actions.</field>
+					/// <field name="saveBehavior" type="Number">[v10.0] Controls the behavior of the Save command on this form (0=Default, 1=SaveOnly, 2=SaveAndClose).</field>
+					MobileCRM.UI.IFrameForm.superproto.constructor.apply(this, arguments);
+				},
 
-	            ViewController: function () {
-	                /// <summary>Represents the Javascript equivalent of view controller (map/web content).</summary>
-	            },
+				Form: function (props) {
+					/// <summary>[v8.0] Represents the Javascript equivalent of the form object.</summary>
+					/// <field name="canMaximize" type="Boolean">Gets or sets whether form can be maximized to fullscreen (full application frame).</field>
+					/// <field name="isMaximized" type="Boolean">Gets or sets whether form is currently maximized to fullscreen (full application frame).</field>
+					/// <field name="caption" type="String">Gets or sets the form caption.</field>
+					/// <field name="selectedViewIndex" type="Number">Gets or sets the selected view (tab) index.</field>
+					/// <field name="showTitle" type="Boolean">[v8.1] Determines whether the form caption bar should be visible.</field>
+					/// <field name="viewCount" type="Number">Gets the count of views in the form.</field>
+					/// <field name="visible" type="Boolean">Gets whether the form is visible.</field>
+					MobileCRM.UI.Form.superproto.constructor.apply(this, arguments);
+				},
 
-	            ProcessController: function() {
-	                /// <summary>[v8.2] Represents the Javascript equivalent of view process controller.</summary>
-	                /// <remarks>It is not intended to create an instance of this class. To obtain this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">EntityForm.requestObject</see> function and locate the controller in form&apos;s "controllers" list.</remarks>
-	                /// <field name="currentStateInfo" type="Object">Gets the information about the current process flow state (active stage, visible stage and process).</field>
-	                MobileCRM.UI.ProcessController.superproto.constructor.apply(this, arguments);
-	            },
+				ViewController: function () {
+					/// <summary>Represents the Javascript equivalent of view controller (map/web content).</summary>
+				},
 
-	            ViewDefinition: function() {
-	                /// <summary>Represents the entity view definition.</summary>
-	                /// <field name="entityName" type="String">Gets the entity this view is for.</field>
-	                /// <field name="name" type="String">Gets the name of the view.</field>
-	                /// <field name="fetch" type="String">Gets the fetchXml query.</field>
-	                /// <field name="kind" type="Number">Gets the kind of the view (public, associated, etc.).</field>
-	                /// <field name="version" type="Number">Gets the version.</field>
-	                /// <field name="buttons" type="String">Gets the view buttons.</field>
-	                /// <field name="selector" type="String">Gets the view template selector workflow.</field>
-	                /// <field name="templates" type="Array">Gets the list templates.</summary>
-	                /// <field name="entityLabel" type="String">Gets the entity label.</summary>
-	            },
+				ProcessController: function () {
+					/// <summary>[v8.2] Represents the Javascript equivalent of view process controller.</summary>
+					/// <remarks>It is not intended to create an instance of this class. To obtain this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">EntityForm.requestObject</see> function and locate the controller in form&apos;s "controllers" list.</remarks>
+					/// <field name="currentStateInfo" type="Object">Gets the information about the current process flow state (active stage, visible stage and process).</field>
+					MobileCRM.UI.ProcessController.superproto.constructor.apply(this, arguments);
+				},
 
-	            MessageBox: function (title, defaultText) {
-	                /// <summary>This object allows the user to show a popup window and choose one of the actions.</summary>
-	                /// <param name="title" type="string">The message box title.</param>
-	                /// <param name="defaultText" type="string">The cancel button title text.</param>
-	                /// <field name="items" type="Array">An array of button names.</field>
-	                /// <field name="title" type="string">The message box title.</field>
-	                /// <field name="defaultText" type="string">The cancel button title text.</field>
-	                /// <field name="multiLine" type="Boolean">Indicates whether the message is multi line.</field>
-	                var nArgs = arguments.length;
-	                var arr = [];
-	                for (var i = 2; i < nArgs; i++)
-	                    arr.push(arguments[i]);
+				ViewDefinition: function () {
+					/// <summary>Represents the entity view definition.</summary>
+					/// <field name="entityName" type="String">Gets the entity this view is for.</field>
+					/// <field name="name" type="String">Gets the name of the view.</field>
+					/// <field name="fetch" type="String">Gets the fetchXml query.</field>
+					/// <field name="kind" type="Number">Gets the kind of the view (public, associated, etc.).</field>
+					/// <field name="version" type="Number">Gets the version.</field>
+					/// <field name="buttons" type="String">Gets the view buttons.</field>
+					/// <field name="selector" type="String">Gets the view template selector workflow.</field>
+					/// <field name="templates" type="Array">Gets the list templates.</summary>
+					/// <field name="entityLabel" type="String">Gets the entity label.</summary>
+				},
 
-	                this.title = title || null;
-	                this.defaultText = defaultText || null;
-	                this.multiLine = false;
-	                this.items = arr;
-	            },
+				MessageBox: function (title, defaultText) {
+					/// <summary>This object allows the user to show a popup window and choose one of the actions.</summary>
+					/// <param name="title" type="string">The message box title.</param>
+					/// <param name="defaultText" type="string">The cancel button title text.</param>
+					/// <field name="items" type="Array">An array of button names.</field>
+					/// <field name="title" type="string">The message box title.</field>
+					/// <field name="defaultText" type="string">The cancel button title text.</field>
+					/// <field name="multiLine" type="Boolean">Indicates whether the message is multi line.</field>
+					var nArgs = arguments.length;
+					var arr = [];
+					for (var i = 2; i < nArgs; i++)
+						arr.push(arguments[i]);
 
-	            LookupForm: function () {
-	                /// <summary>This object allows user to select an entity from a configurable list of entity types.</summary>
-	                /// <field name="entities" type="Array">An array of allowed entity kinds (schema names).</field>
-	                /// <field name="allowedViews" type="String">OBSOLETE: Allowed views, or null if all are allowed.</field>
-	                /// <field name="source" type="MobileCRM.Relationship">The entity whose property will be set to the chosen value.</field>
-	                /// <field name="prevSelection" type="MobileCRM.Reference">The entity whose property will be set to the chosen value.</field>
-	                /// <field name="allowNull" type="Boolean">Whether to allow selecting no entity.</field>
-	            	/// <field name="preventClose" type="Boolean">Whether to prevent closing form without choosing a value.</field>
-	            	var nEntities = arguments.length;
-	                var arr = [];
-	                for (var i = 0; i < nEntities; i++)
-	                    arr.push(arguments[i]);
+					this.title = title || null;
+					this.defaultText = defaultText || null;
+					this.multiLine = false;
+					this.items = arr;
+				},
 
-	                this._views = [];
-	                this.allowedViews = "";
-	                this.entities = arr;
-	                this.source = null;
-	                this.prevSelection = null;
-	                this.allowNull = false;
-	                this.preventClose = false;
-	            },
-	            MultiLookupForm: function () {
-	                /// <summary>[v9.3] This object allows user to select a list of entities from a configurable list of entity types. Derived from LookupForm so you can use the addView() and addEntityFilter() methods.</summary>
-	                /// <field name="entities" type="Array">An array of allowed entity kinds (schema names).</field>
-	                /// <field name="source" type="MobileCRM.Relationship">The entity whose property will be set to the chosen value.</field>
-	                /// <field name="dataSource" type="MobileCRM.Reference[]">The list of entities that should be displayed as selected.</field>
-	                /// <field name="prevSelection" type="MobileCRM.Reference">The entity whose property will be set to the chosen value.</field>
-	                /// <field name="allowNull" type="Boolean">Whether to allow selecting no entity.</field>
-	            	/// <field name="preventClose" type="Boolean">Whether to prevent closing form without choosing a value.</field>
-	            	MobileCRM.UI.MultiLookupForm.superproto.constructor.apply(this, arguments);
-	                this.dataSource = [];
-	            },
-                TourplanForm: function (props) {
-                    /// <summary>Represents the Javascript equivalent tourplan form object.</summary>
-                    /// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.TourplanForm.requestObject">MobileCRM.UI.TourplanForm.requestObject</see> function.</remarks>
-                    /// <field name="isDirty" type="Boolean">Indicates whether the form has been modified.</field>
-                    /// <field name="isLoaded" type="Boolean">Gets or sets whether the form is loaded.</field>
-                    /// <field name="view" type="MobileCRM.UI._AppointmentView">Gets tourplan form view <see cref="MobileCRM.UI._AppointmentView">MobileCRM.UI.AppointmentView</see>.</field>
-                    MobileCRM.UI.TourplanForm.superproto.constructor.apply(this, arguments);
-                },
-                
-	            _DetailView: function (props) {
-	                /// <summary>Represents the Javascript equivalent of detail view with set of items responsible for fields editing.</summary>
-	                /// <field name="isDirty" type="Boolean">Indicates whether the value of an item has been modified.</field>
-	                /// <field name="isEnabled" type="Boolean">Gets or sets whether the all items are enabled or disabled.</field>
-	                /// <field name="isVisible" type="Boolean">Gets or sets whether the view is visible.</field>
-	                /// <field name="items" type="Array">An array of <see cref="MobileCRM.UI._DetailItem">MobileCRM.UI._DetailItem</see> objects</field>
-	                /// <field name="name" type="String">Gets the name of the view</field>
-	                MobileCRM.UI._DetailView.superproto.constructor.apply(this, arguments);
-	            },
-	            DetailViewItems: {
-	                Item: function (name, label) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    /// <field name="name" type="String">Gets or sets the item name.</field>
-	                    /// <field name="label" type="String">Gets or sets the item label.</field>
-	                    /// <field name="dataMember" type="String">Gets or sets the name of the property containing the item value in data source objects.</field>
-	                    /// <field name="errorMessage" type="String">Gets or sets the item error message.</field>
-	                    /// <field name="isEnabled" type="Boolean">Gets or sets whether the item is editable.</field>
-	                    /// <field name="isVisible" type="Boolean">Gets or sets whether the item is visible.</field>
-	                    /// <field name="value" type="Object">Gets or sets the bound item value.</field>
-	                    /// <field name="isNullable" type="Boolean">Gets or sets whether the item value can be &quot;null&quot;.</field>
-	                    /// <field name="validate" type="Boolean">Gets or sets whether the item needs validation.</field>
-	                    /// <field name="style" type="String">The name of the Woodford item style.</field>
-	                    this._type = null;
-	                    this.name = name;
-	                    this.label = label;
-	                },
-	                SeparatorItem: function (name, label) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> separator item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    MobileCRM.UI.DetailViewItems.SeparatorItem.superproto.constructor.apply(this, arguments);
-	                    this._type = "Separator";
-	                },
-	                TextBoxItem: function (name, label) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> text item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    /// <field name="numberOfLines" type="Number">Gets or sets the number of lines to display. Default is one.</field>
-	                    /// <field name="isPassword" type="Boolean">Gets or sets whether the text value should be masked. Used for password entry.</field>
-	                    /// <field name="maxLength" type="Number">Gets to sets the maximum text length.</field>
-	                    /// <field name="kind" type="Number">Gets or sets the value kind (Text=0, Email=1, Url=2, Phone=3, Barcode=4).</field>
-	                    /// <field name="placeholderText" type="Number">Gets or sets the text that is displayed in the control until the value is changed by a user action or some other operation. Default is empty string.</field>
-	                    MobileCRM.UI.DetailViewItems.TextBoxItem.superproto.constructor.apply(this, arguments);
-	                    this._type = "TextBox";
-	                },
-	                NumericItem: function (name, label) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> numeric item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    /// <field name="minimum" type="Number">Gets or sets the minimum allowed value.</field>
-	                    /// <field name="maximum" type="Number">Gets or sets the maximum allowed value.</field>
-	                    /// <field name="increment" type="Number">Gets or sets the increment (if the upDownVisible is true).</field>
-	                    /// <field name="upDownVisible" type="Boolean">Gets or sets whether the up/down control is visible.</field>
-	                    /// <field name="decimalPlaces" type="Number">Gets or sets the number of decimal places.</field>
-	                    /// <field name="displayFormat" type="String">Gets or sets the value format string.</field>
-	                    MobileCRM.UI.DetailViewItems.NumericItem.superproto.constructor.apply(this, arguments);
-	                    this._type = "Numeric";
-	                    //this.minimum = 0;
-	                    //this.maximum = 0;
-	                    //this.increment = 1;
-	                    //this.upDownVisible = false;
-	                    //this.decimalPlaces = 2;
-	                    //this.displayFormat = "";
-	                },
-	                CheckBoxItem: function (name, label) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> checkbox item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    /// <field name="textChecked" type="String">Gets or sets the text for checked state.</field>
-	                    /// <field name="textUnchecked" type="String">Gets or sets the text for unchecked state.</field>
-	                    MobileCRM.UI.DetailViewItems.CheckBoxItem.superproto.constructor.apply(this, arguments);
-	                    this._type = "CheckBox";
-	                    this.isNullable = false;
-	                },
-	                DateTimeItem: function (name, label) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> date/time item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    /// <field name="minimum" type="Date">Gets or sets the minimum allowed value.</field>
-	                    /// <field name="maximum" type="Date">Gets or sets the maximum allowed value.</field>
-	                    /// <field name="parts" type="Number"> Gets or sets whether to display and edit the date, time or both.</field>
-	                    MobileCRM.UI.DetailViewItems.DateTimeItem.superproto.constructor.apply(this, arguments);
-	                    this._type = "DateTime";
-	                },
-	                DurationItem: function (name, label) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> duration item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    MobileCRM.UI.DetailViewItems.DurationItem.superproto.constructor.apply(this, arguments);
-	                    this._type = "Duration";
-	                },
-	                ComboBoxItem: function (name, label) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> combobox item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    /// <field name="listDataSource" type="Object">Gets or sets the object with props and values to be displayed in the combo list (e.g. {&quot;label1&quot;:1, &quot;label2&quot;:2}).</field>
-	                    /// <field name="listDataSourceValueType" type="String">Type of list data source element value. Default is string, allowed int, string.</param></param>
-	                    MobileCRM.UI.DetailViewItems.ComboBoxItem.superproto.constructor.apply(this, arguments);
-	                    this._type = "ComboBox";
-	                },
-	                LinkItem: function (name, label, listDropDownFormat) {
-	                    /// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> link item.</summary>
-	                    /// <param name="name" type="String">Defines the item name.</param>
-	                    /// <param name="label" type="String">Defines the item label.</param>
-	                    /// <param name="listDropDownFormat" type="MobileCRM.UI.DetailViewItems.DropDownFormat">Defines item&apos;s drop down format.</param>
-	                    /// <field name="isMultiLine" type="Boolean">Gets or sets whether the item is multiline. Default is false.</field>
-	                    MobileCRM.UI.DetailViewItems.LinkItem.superproto.constructor.apply(this, arguments);
-	                    this._type = "Link";
-	                    if (listDropDownFormat)
-	                        this.listDropDownFormat = listDropDownFormat;
+				LookupForm: function () {
+					/// <summary>This object allows user to select an entity from a configurable list of entity types.</summary>
+					/// <field name="entities" type="Array">An array of allowed entity kinds (schema names).</field>
+					/// <field name="allowedViews" type="String">OBSOLETE: Allowed views, or null if all are allowed.</field>
+					/// <field name="source" type="MobileCRM.Relationship">The entity whose property will be set to the chosen value.</field>
+					/// <field name="prevSelection" type="MobileCRM.Reference">The entity whose property will be set to the chosen value.</field>
+					/// <field name="allowNull" type="Boolean">Whether to allow selecting no entity.</field>
+					/// <field name="preventClose" type="Boolean">Whether to prevent closing form without choosing a value.</field>
+					var nEntities = arguments.length;
+					var arr = [];
+					for (var i = 0; i < nEntities; i++)
+						arr.push(arguments[i]);
+
+					this._views = [];
+					this.allowedViews = "";
+					this.entities = arr;
+					this.source = null;
+					this.prevSelection = null;
+					this.allowNull = false;
+					this.preventClose = false;
+				},
+				MultiLookupForm: function () {
+					/// <summary>[v9.3] This object allows user to select a list of entities from a configurable list of entity types. Derived from LookupForm so you can use the addView() and addEntityFilter() methods.</summary>
+					/// <field name="entities" type="Array">An array of allowed entity kinds (schema names).</field>
+					/// <field name="source" type="MobileCRM.Relationship">The entity whose property will be set to the chosen value.</field>
+					/// <field name="dataSource" type="MobileCRM.Reference[]">The list of entities that should be displayed as selected.</field>
+					/// <field name="prevSelection" type="MobileCRM.Reference">The entity whose property will be set to the chosen value.</field>
+					/// <field name="allowNull" type="Boolean">Whether to allow selecting no entity.</field>
+					/// <field name="preventClose" type="Boolean">Whether to prevent closing form without choosing a value.</field>
+					MobileCRM.UI.MultiLookupForm.superproto.constructor.apply(this, arguments);
+					this.dataSource = [];
+				},
+				TourplanForm: function (props) {
+					/// <summary>Represents the Javascript equivalent tourplan form object.</summary>
+					/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.TourplanForm.requestObject">MobileCRM.UI.TourplanForm.requestObject</see> function.</remarks>
+					/// <field name="isDirty" type="Boolean">Indicates whether the form has been modified.</field>
+					/// <field name="isLoaded" type="Boolean">Gets or sets whether the form is loaded.</field>
+					/// <field name="view" type="MobileCRM.UI._AppointmentView">Gets tourplan form view <see cref="MobileCRM.UI._AppointmentView">MobileCRM.UI.AppointmentView</see>.</field>
+					MobileCRM.UI.TourplanForm.superproto.constructor.apply(this, arguments);
+				},
+
+				_DetailView: function (props) {
+					/// <summary>Represents the Javascript equivalent of detail view with set of items responsible for fields editing.</summary>
+					/// <field name="isDirty" type="Boolean">Indicates whether the value of an item has been modified.</field>
+					/// <field name="isEnabled" type="Boolean">Gets or sets whether the all items are enabled or disabled.</field>
+					/// <field name="isVisible" type="Boolean">Gets or sets whether the view is visible.</field>
+					/// <field name="items" type="Array">An array of <see cref="MobileCRM.UI._DetailItem">MobileCRM.UI._DetailItem</see> objects</field>
+					/// <field name="name" type="String">Gets the name of the view</field>
+					MobileCRM.UI._DetailView.superproto.constructor.apply(this, arguments);
+				},
+				DetailViewItems: {
+					Item: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <field name="name" type="String">Gets or sets the item name.</field>
+						/// <field name="label" type="String">Gets or sets the item label.</field>
+						/// <field name="dataMember" type="String">Gets or sets the name of the property containing the item value in data source objects.</field>
+						/// <field name="errorMessage" type="String">Gets or sets the item error message.</field>
+						/// <field name="isEnabled" type="Boolean">Gets or sets whether the item is editable.</field>
+						/// <field name="isVisible" type="Boolean">Gets or sets whether the item is visible.</field>
+						/// <field name="value" type="Object">Gets or sets the bound item value.</field>
+						/// <field name="isNullable" type="Boolean">Gets or sets whether the item value can be &quot;null&quot;.</field>
+						/// <field name="validate" type="Boolean">Gets or sets whether the item needs validation.</field>
+						/// <field name="style" type="String">The name of the Woodford item style.</field>
+						this._type = null;
+						this.name = name;
+						this.label = label;
+					},
+					SeparatorItem: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> separator item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						MobileCRM.UI.DetailViewItems.SeparatorItem.superproto.constructor.apply(this, arguments);
+						this._type = "Separator";
+					},
+					TextBoxItem: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> text item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <field name="numberOfLines" type="Number">Gets or sets the number of lines to display. Default is one.</field>
+						/// <field name="isPassword" type="Boolean">Gets or sets whether the text value should be masked. Used for password entry.</field>
+						/// <field name="maxLength" type="Number">Gets to sets the maximum text length.</field>
+						/// <field name="kind" type="Number">Gets or sets the value kind (Text=0, Email=1, Url=2, Phone=3, Barcode=4).</field>
+						/// <field name="placeholderText" type="Number">Gets or sets the text that is displayed in the control until the value is changed by a user action or some other operation. Default is empty string.</field>
+						MobileCRM.UI.DetailViewItems.TextBoxItem.superproto.constructor.apply(this, arguments);
+						this._type = "TextBox";
+					},
+					NumericItem: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> numeric item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <field name="minimum" type="Number">Gets or sets the minimum allowed value.</field>
+						/// <field name="maximum" type="Number">Gets or sets the maximum allowed value.</field>
+						/// <field name="increment" type="Number">Gets or sets the increment (if the upDownVisible is true).</field>
+						/// <field name="upDownVisible" type="Boolean">Gets or sets whether the up/down control is visible.</field>
+						/// <field name="decimalPlaces" type="Number">Gets or sets the number of decimal places.</field>
+						/// <field name="displayFormat" type="String">Gets or sets the value format string.</field>
+						MobileCRM.UI.DetailViewItems.NumericItem.superproto.constructor.apply(this, arguments);
+						this._type = "Numeric";
+						//this.minimum = 0;
+						//this.maximum = 0;
+						//this.increment = 1;
+						//this.upDownVisible = false;
+						//this.decimalPlaces = 2;
+						//this.displayFormat = "";
+					},
+					CheckBoxItem: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> checkbox item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <field name="textChecked" type="String">Gets or sets the text for checked state.</field>
+						/// <field name="textUnchecked" type="String">Gets or sets the text for unchecked state.</field>
+						MobileCRM.UI.DetailViewItems.CheckBoxItem.superproto.constructor.apply(this, arguments);
+						this._type = "CheckBox";
+						this.isNullable = false;
+					},
+					DateTimeItem: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> date/time item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <field name="minimum" type="Date">Gets or sets the minimum allowed value.</field>
+						/// <field name="maximum" type="Date">Gets or sets the maximum allowed value.</field>
+						/// <field name="parts" type="Number"> Gets or sets whether to display and edit the date, time or both.</field>
+						MobileCRM.UI.DetailViewItems.DateTimeItem.superproto.constructor.apply(this, arguments);
+						this._type = "DateTime";
+					},
+					DurationItem: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> duration item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						MobileCRM.UI.DetailViewItems.DurationItem.superproto.constructor.apply(this, arguments);
+						this._type = "Duration";
+					},
+					ComboBoxItem: function (name, label) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> combobox item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <field name="listDataSource" type="Object">Gets or sets the object with props and values to be displayed in the combo list (e.g. {&quot;label1&quot;:1, &quot;label2&quot;:2}).</field>
+						/// <field name="listDataSourceValueType" type="String">Type of list data source element value. Default is string, allowed int, string.</param></param>
+						MobileCRM.UI.DetailViewItems.ComboBoxItem.superproto.constructor.apply(this, arguments);
+						this._type = "ComboBox";
+					},
+					LinkItem: function (name, label, listDropDownFormat) {
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> link item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <param name="listDropDownFormat" type="MobileCRM.UI.DetailViewItems.DropDownFormat">Defines item&apos;s drop down format.</param>
+						/// <field name="isMultiLine" type="Boolean">Gets or sets whether the item is multiline. Default is false.</field>
+						MobileCRM.UI.DetailViewItems.LinkItem.superproto.constructor.apply(this, arguments);
+						this._type = "Link";
+						if (listDropDownFormat)
+							this.listDropDownFormat = listDropDownFormat;
 					},
 					ButtonItem: function (name, clickText) {
 						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> duration item.</summary>
@@ -818,25 +840,25 @@
 						this.style = "Button";
 						this.clickText = clickText;
 					},
-	                DropDownFormat: {
-	                    StringList: 17,
-	                    StringListInput: 18,
-	                    MultiStringList: 19,
-	                    MultiStringListInput: 20
-	                },
-	            },
+					DropDownFormat: {
+						StringList: 17,
+						StringListInput: 18,
+						MultiStringList: 19,
+						MultiStringListInput: 20
+					},
+				},
 
-	            MediaTab: function (index, name) {
-	                /// <summary>Represents the MediaTab controller.</summary>
-	                /// <remarks>An instance of this class can only be obtained by calling the <see cref="MobileCRM.UI.EntityForm.getMediaTab">MobileCRM.UI.EntityForm.getMediaTab</see> method.</remarks>
-	                /// <param name="index" type="Number">The index of an associated media tab.</param>
-	                /// <param name="name" type="String">The name of an associated media tab.</param>
+				MediaTab: function (index, name) {
+					/// <summary>Represents the MediaTab controller.</summary>
+					/// <remarks>An instance of this class can only be obtained by calling the <see cref="MobileCRM.UI.EntityForm.getMediaTab">MobileCRM.UI.EntityForm.getMediaTab</see> method.</remarks>
+					/// <param name="index" type="Number">The index of an associated media tab.</param>
+					/// <param name="name" type="String">The name of an associated media tab.</param>
 
-	                this.index = index;
-	                this.name = name;
-	            }
-	        },
-	        Services: {
+					this.index = index;
+					this.name = name;
+				}
+			},
+			Services: {
 				FileInfo: function (filePath, url, mimeType, nextInfo) {
 					/// <summary>Carries the result of a DocumentService operation.</summary>
 					/// <remarks>In case of canceled document service operation, all properties in this object will be set to &quot;null&quot;.</remarks>
@@ -849,96 +871,102 @@
 					this.mimeType = mimeType;
 					this.nextInfo = nextInfo || null;
 				},
-	            ChatService:function(){
-	                /// <summary>[v9.3] Represents a service for sending instant messages to users or shared channels.</summary>
-	                /// <remarks>Instance of this object cannot be created directly. Use <see cref="MobileCRM.Services.ChatService.getService">MobileCRM.Services.ChatService.getService</see> to create new instance.</remarks>
-	                /// <field name="chatUser" type="MobileCRM.DynamicEntity">An instance of the resco_chatuser entity for current user (either system or external).</field>
-	                /// <field name="userEntity" type="String">The user entity name (either systemuser or external user entity name).</field>
-	                /// <field name="userId" type="String">Primary key (id) of the current user (either system or external).</field>
-	                MobileCRM.Services.ChatService.superproto.constructor.apply(this, arguments);
-	            },
-	            DocumentService: function () {
-	                /// <summary>[v8.1] Represents a service for acquiring the documents.</summary>
-	                /// <field name="maxImageSize" type="Number">Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size.</field>
-	                /// <field name="recordQuality" type="Number">Gets or sets the record quality for audio/video recordings.</field>
-	                /// <field name="allowChooseVideo" type="Boolean">Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.</field>
-	                /// <field name="allowMultipleFiles" type="Boolean">Indicates whether to allow multiple files for DocumentActions SelectPhoto and SelectFile.[Not implemented on iOS.]</field>
+				ChatService: function () {
+					/// <summary>[v9.3] Represents a service for sending instant messages to users or shared channels.</summary>
+					/// <remarks>Instance of this object cannot be created directly. Use <see cref="MobileCRM.Services.ChatService.getService">MobileCRM.Services.ChatService.getService</see> to create new instance.</remarks>
+					/// <field name="chatUser" type="MobileCRM.DynamicEntity">An instance of the resco_chatuser entity for current user (either system or external).</field>
+					/// <field name="userEntity" type="String">The user entity name (either systemuser or external user entity name).</field>
+					/// <field name="userId" type="String">Primary key (id) of the current user (either system or external).</field>
+					MobileCRM.Services.ChatService.superproto.constructor.apply(this, arguments);
+				},
+				DocumentService: function () {
+					/// <summary>[v8.1] Represents a service for acquiring the documents.</summary>
+					/// <field name="maxImageSize" type="Number">Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size.</field>
+					/// <field name="recordQuality" type="Number">Gets or sets the record quality for audio/video recordings.</field>
+					/// <field name="allowChooseVideo" type="Boolean">Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.</field>
+					/// <field name="allowMultipleFiles" type="Boolean">Indicates whether to allow multiple files for DocumentActions SelectPhoto and SelectFile.[Not implemented on iOS.]</field>
 					/// <field name="allowCancelHandler" type="Boolean">Indicates whether to allow handling of cancel event. Callback will pass the null argument in this case.</field>
-	            },
-	            AudioRecorder: function () {
-	                /// <summary>[v10.0] Represents a service for recording an audio.</summary>
-	            },
-	            AddressBookService: function () {
-	                /// <summary>[v9.1] Represents a service for accessing the address book.</summary>
-	            },
-	            DynamicsReport: function(reportId, regarding){
-	                /// <summary>[v10.0] Represents a service for downloading MS Dynamics reports.</summary>
-	                /// <param name="reportId" type="String">ID of the &quot;report&quot; entity record.<param>
-	                /// <param name="regarding" type="MobileCRM.Reference">Regarding entity reference.<param>
-	                /// <field name="reportId" type="String">ID of the &quot;report&quot; entity record.<field>
-	                /// <field name="regarding" type="MobileCRM.Reference">Regarding entity reference.<field>
-	                /// <field name="outputFolder" type="String">AppData-relative or absolute path to the output folder where the file should be stored. Leave undefined to put them into platform-specific temporary folder.<field>
-	                this.reportId = reportId;
-	                this.regarding = regarding;
-	                this.outputFolder = null;
-	            },
-	            HttpWebRequest: function () {
-	                /// <summary>[v11.0] Instance of http web request.</summary>
-	                /// <field name="userName" type="String">The authentication user name.</field>
-	                /// <field name="password" type="name="password" type="String">The authentication password.</field>
-	                /// <field name="method" type="String">The http method to use for the request (e.g. "POST", "GET", "PUT").</field>
-	                /// <field name="headers" type="Object">An object of additional header key/value pairs to send along with requests using the HttpWebRequest.</field>
-	                /// <field name="contentType" type="String">The htt request data content type.</field>
-	                /// <field name="allowRedirect" type="Boolean">The http allows servers to redirect a client request to a different location.</field>
-	                /// <field name="responseEncoding" type="String">The http web response encoding type. (default: UTF-8), e.g. Base64, ASCII, UTF-8, Binary in case of blob.</field>
-	                /// <field name="responseType" type="String">The HttpWebResponse content type.</field>
+				},
+				AudioRecorder: function () {
+					/// <summary>[v10.0] Represents a service for recording an audio.</summary>
+				},
+				AddressBookService: function () {
+					/// <summary>[v9.1] Represents a service for accessing the address book.</summary>
+				},
+				DynamicsReport: function (reportId, regarding) {
+					/// <summary>[v10.0] Represents a service for downloading MS Dynamics reports.</summary>
+					/// <param name="reportId" type="String">ID of the &quot;report&quot; entity record.<param>
+					/// <param name="regarding" type="MobileCRM.Reference">Regarding entity reference.<param>
+					/// <field name="reportId" type="String">ID of the &quot;report&quot; entity record.<field>
+					/// <field name="regarding" type="MobileCRM.Reference">Regarding entity reference.<field>
+					/// <field name="outputFolder" type="String">AppData-relative or absolute path to the output folder where the file should be stored. Leave undefined to put them into platform-specific temporary folder.<field>
+					this.reportId = reportId;
+					this.regarding = regarding;
+					this.outputFolder = null;
+				},
+				HttpWebRequest: function () {
+					/// <summary>[v11.0] Instance of http web request.</summary>
+					/// <field name="userName" type="String">The authentication user name.</field>
+					/// <field name="password" type="name="password" type="String">The authentication password.</field>
+					/// <field name="method" type="String">The http method to use for the request (e.g. "POST", "GET", "PUT").</field>
+					/// <field name="headers" type="Object">An object of additional header key/value pairs to send along with requests using the HttpWebRequest.</field>
+					/// <field name="contentType" type="String">The htt request data content type.</field>
+					/// <field name="allowRedirect" type="Boolean">The http allows servers to redirect a client request to a different location.</field>
+					/// <field name="responseEncoding" type="String">The http web response encoding type. (default: UTF-8), e.g. Base64, ASCII, UTF-8, Binary in case of blob.</field>
+					/// <field name="responseType" type="String">The HttpWebResponse content type.</field>
 
-	                this.userName = "";
-	                this.password = "";
-	                this.method = "";
-	                this.headers = {};
-	                this.contentType = null;
-	                this.allowRedirect = false;
-	                this._body = null;
-	                this._encoding = "UTF-8";
-	                this._credentials = {};
-	                this.responseType = null;
-	                this.responseEncoding = this._encoding;
-	            },
-	            SynchronizationResult: function (syncResult) {
-	                /// <summary>[v8.1] Represents the synchronization result.</summary>
-	                /// <field name="newCustomizationReady" type="Boolean">Indicates whether the new customization is ready.</field>
-	                /// <field name="customizationDownloaded" type="Boolean">Indicates whether the new customization was applied.</field>
-	                /// <field name="dataErrorsEncountered" type="Boolean">Indicates whether some data errors were encountered during sync (cannot upload, delete, change status, owner, etc.).</field>
-	                /// <field name="appWasLocked" type="Boolean">Application was locked.</field>
-	                /// <field name="syncAborted" type="Boolean">Sync was aborted.</field>
-	                /// <field name="adminFullSync" type="Boolean">Full sync was requested so background sync was aborted.</field>
-	                /// <field name="webError" type="Boolean">Indicates whether sync failed due to a communication error (HttpException, for example).</field>
-	                /// <field name="connectFailed" type="Boolean">Indicates whether sync could not start because of a connection failure.</field>
-	                /// <field name="wasBackgroundSync" type="Boolean">Indicates whether the last sync was background sync or foreground sync.</field>
-
-	                if (typeof (syncResult) != "undefined") {
-	                    var res = new Number(syncResult);
-	                    this.newCustomizationReady = (res & 1) != 0;
-	                    this.customizationDownloaded = (res & 2) != 0;
-	                    this.dataErrorsEncountered = (res & 8) != 0;
-	                    this.appWasLocked = (res & 16) != 0;
-	                    this.syncAborted = (res & 32) != 0;
-	                    this.adminFullSync = (res & 64) != 0;
-	                    this.webError = (res & 128) != 0,
-		                this.connectFailed = (res & 256) != 0,
+					this.userName = "";
+					this.password = "";
+					this.method = "";
+					this.headers = {};
+					this.contentType = null;
+					this.allowRedirect = false;
+					this._body = null;
+					this._encoding = "UTF-8";
+					this._credentials = {};
+					this.responseType = null;
+					this.responseEncoding = this._encoding;
+				},
+				SynchronizationResult: function (syncResult) {
+					/// <summary>[v8.1] Represents the synchronization result.</summary>
+					/// <field name="newCustomizationReady" type="Boolean">Indicates whether the new customization is ready.</field>
+					/// <field name="customizationDownloaded" type="Boolean">Indicates whether the new customization was applied.</field>
+					/// <field name="dataErrorsEncountered" type="Boolean">Indicates whether some data errors were encountered during sync (cannot upload, delete, change status, owner, etc.).</field>
+					/// <field name="appWasLocked" type="Boolean">Application was locked.</field>
+					/// <field name="syncAborted" type="Boolean">Sync was aborted.</field>
+					/// <field name="adminFullSync" type="Boolean">Full sync was requested so background sync was aborted.</field>
+					/// <field name="webError" type="Boolean">Indicates whether sync failed due to a communication error (HttpException, for example).</field>
+					/// <field name="connectFailed" type="Boolean">Indicates whether sync could not start because of a connection failure.</field>
+					/// <field name="wasBackgroundSync" type="Boolean">Indicates whether the last sync was background sync or foreground sync.</field>
+					/// <field name="OAuthError" type="Boolean">Sync failed because the OAuth access token can't be acquired or refreshed.</field>
+					/// <field name="syncDownloadRestartedOnBackground" type="Boolean">New customization was downloaded. Sync is still downloading data on background.</field>
+					/// <field name="warning" type="Boolean">Sync result contains some warnings that are not critical.</field>
+					if (typeof (syncResult) != "undefined") {
+						this._rawValue = syncResult;
+						var res = new Number(syncResult);
+						this.newCustomizationReady = (res & 1) != 0;
+						this.customizationDownloaded = (res & 2) != 0;
+						this.dataErrorsEncountered = (res & 8) != 0;
+						this.appWasLocked = (res & 16) != 0;
+						this.syncAborted = (res & 32) != 0;
+						this.adminFullSync = (res & 64) != 0;
+						this.webError = (res & 128) != 0;
+						this.connectFailed = (res & 256) != 0;
+						this.OAuthError = (res & 512) != 0;
+						this.syncDownloadRestartedOnBackground = (res & 1024) != 0;
+						this.warning = (res & 2048) != 0;
 						this.wasBackgroundSync = (res & 0x80000000) != 0;
-	                }
-	            },
-	            GeoAddress: function () {
-	                /// <summary>[v9.3] Represents a service for translating geo position into the civic address and back.</summary>
-	                /// <field name="streetNumber" type="String">Gets or sets the street number.</field>
-	                /// <field name="street" type="String">Gets or sets the street.</field>
-	                /// <field name="city" type="String">Gets or sets the city.</field>
-	                /// <field name="zip" type="String">Gets or sets the zip code.</field>
-	                /// <field name="stateOrProvince" type="String">Gets or sets the state or province.</field>
-	                /// <field name="country" type="String">Gets or sets the country.</field>
-	                /// <field name="isValid" type="String">Indicates whether the address is valid.</field>
+					}
+				},
+				GeoAddress: function () {
+					/// <summary>[v9.3] Represents a service for translating geo position into the civic address and back.</summary>
+					/// <field name="streetNumber" type="String">Gets or sets the street number.</field>
+					/// <field name="street" type="String">Gets or sets the street.</field>
+					/// <field name="city" type="String">Gets or sets the city.</field>
+					/// <field name="zip" type="String">Gets or sets the zip code.</field>
+					/// <field name="stateOrProvince" type="String">Gets or sets the state or province.</field>
+					/// <field name="country" type="String">Gets or sets the country.</field>
+					/// <field name="isValid" type="String">Indicates whether the address is valid.</field>
 				},
 				AIVision: function () {
 					/// <summary>[v12.3] Represents a service for AI image recognition.</summary>
@@ -1291,14 +1319,19 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.command("getWindowSize", "", callback, errorCallback, scope);
 	    };
+	    var _alertQueue = [];
 	    MobileCRM.Bridge.prototype.alert = function (text, callback, scope) {
 	        /// <summary>Shows a message asynchronously and calls the callback after it is closed by user.</summary>
 	        /// <param name="callback" type="function(obj)">The callback function that is called asynchronously.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
-	        window.setTimeout(function () {
+	        _alertQueue.push(function () {
 	            window.alert(text); // when called directly, alert hangs up on iOS9 (if called from callback invoked from native code)
 	            if (callback)
 	                callback.call(scope);
+	        });
+	        window.setTimeout(function(){
+	        	var nextWorker = _alertQueue.splice(0, 1);
+	        	nextWorker[0]();
 	        });
 	    };
 	    MobileCRM.Bridge.prototype.log = function (text) {
@@ -2350,7 +2383,7 @@
 	    	var _this = this;
 	    	return new Promise(function (resolve, reject) {
 	    		var format = "";
-	    		if (online === true && online === false)
+	    		if (online === true || online === false)
 	    			format = online ? "Online." : "Offline.";
 	    		if (output)
 	    			format += output;
@@ -2827,9 +2860,8 @@
 	            // otherwise it throws 3 object not exposed and method not found errors on web client 
 	            // we want to show one nicer message instead.
 	            // in future: lets not go mad with all those exposings of C# objects and lets use the single method invocations or javascriptcallbacks
-	            if (failed) {
-	                failed.call(scope || this, "You cannot read a file on the Web Client");
-	            }
+	        	var params = { path: path };
+	        	MobileCRM.bridge.command("readFromLocalStorage", JSON.stringify(params), success, failed, scope);
 	        }
 	        else {
 	            var reader = MobileCRM.bridge.exposeObjectAsync("MobileCrm.Data:MobileCrm.Configuration.Instance.OpenStorageReader", [path]);
@@ -2850,9 +2882,8 @@
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        if (MobileCRM.bridge.platform === "WebClient") {
 	            // MR: see comment in readFile function
-	            if (failed) {
-	                failed.call(scope || this, "You cannot write to a file on the Web Client");
-	            }
+	        	var params = { path: path, text: text };
+	        	MobileCRM.bridge.command("writeToLocalStorage", JSON.stringify(params), success, failed, scope);
 	        }
 	        else {
 	            var reader = MobileCRM.bridge.exposeObjectAsync("MobileCrm.Data:MobileCrm.Configuration.Instance.OpenStorageWriter", [path, append]);	// MR: same comment as in function above
@@ -2912,6 +2943,25 @@
 
 	    	MobileCRM.bridge.command("GetAccessToken", JSON.stringify({ resource: resourceUrl }), successCallback, failureCallback, scope);
 	    };
+
+		MobileCRM.Integration.getOAuthAccessToken = function (configurationName, oauthSettings, prompt, successCallback, failureCallback, scope) {
+			/// <summary>[12.3]Asynchronously gets the token using passed OAuth settings and parameters. Configuration name is used to find already settings.</summary>
+			/// <param name="configurationName" type="String">Define the name of oauth configuration, what is key for saved setting if any.</param>
+			/// <param name="oauthSettings" type="MobileCRM.OAuthSettings">Defines the OAuth settings for authentication.</param>
+			/// <param name="prompt" type="Boolean">Whether to force the user to enter credentials again.</param>
+			/// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> will carry a string with the access token.</param>
+			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+
+			if (!oauthSettings) {
+				failureCallback("OAuthSettings are undefined");
+				return;
+			}
+
+			oauthSettings.configName = configurationName;
+			oauthSettings.prompt = prompt;
+			MobileCRM.bridge.command("GetOAuthAccessToken", JSON.stringify(oauthSettings), successCallback, failureCallback, scope);
+		};
 
 	    // MobileCRM.UI.FormManager
 	    MobileCRM.UI.FormManager.showEditDialog = function (entityName, id, relationship, options) {
@@ -3505,13 +3555,13 @@
 	    };
 	    MobileCRM.UI.HomeForm.closeHomeItemAsync = function (name, errorCallback, scope) {
 	        /// <summary>[v8.0] Close the specified HomeItem.</summary>
-	        /// <param name="name" type="String">The name of the HomeItem to be opened. It can be either the entity logical name (e.g. &quot;contact&quot;) or one of following special forms names: &quot;@Dashboard&quot;, &quot;@Map&quot;, &quot;@activity&quot;, &quot;@Tourplan&quot;,&quot;@CallImport&quot;,&quot;@Setup&quot;,&quot;@About&quot;.</param>
+	        /// <param name="name" type="String">The name of the HomeItem to be opened. It can be either the entity logical name (e.g. &quot;contact&quot;), custom name as defined in Woodford or one of following special names: &quot;@Dashboard&quot;, &quot;@Map&quot;, &quot;@activity&quot;, &quot;@Tourplan&quot;,&quot;@CallImport&quot;,&quot;@Setup&quot;,&quot;@About&quot;.</param>
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.UI.HomeForm.requestObject(function (homeForm) {
 	            for (var i in homeForm.items) {
 	                var item = homeForm.items[i];
-	                if (item.name == name) {
+                    if (item.name == name || item.uniqueName === name) {
 	                    var item = MobileCRM.bridge.exposeObjectAsync("HomeForm.Items.get_Item", [i]);
 	                    item.invokeMethodAsync("CloseForm", [], null, errorCallback, scope);
 	                    item.release();
@@ -4375,7 +4425,27 @@
 	            }
 	        }
 	        return undefined;
-	    };
+		};
+
+		MobileCRM.UI.EntityForm.prototype.getEntityList = function (name) {
+			/// <summary>Returns the entity list by its view name.</summary>
+			/// <param name="name" type="String">A name of entity list view.</param>
+			/// <returns type="MobileCRM.UI._EntityList">A <see cref="MobileCRM.UI._EntityList">MobileCRM.UI._EntityList</see> object with requested view name.</returns>
+			var list = undefined;
+			var controller = this.getController(name);
+			if (controller)
+				list = controller.list;
+			else {
+				for (var i = 0; i < this.associatedViews.length; i++) {
+					var v = this.associatedViews[i];
+					if (v.listView.name == name) {
+						list = v;
+						break;
+					}
+				}
+			}
+			return list;
+		};
 
 	    MobileCRM.UI.EntityForm.prototype.updateAddressFields = function (latitude, longitude) {
 	        /// <summary>Sets the address fields according to the current geo-location from platform-specific location service.</summary>
