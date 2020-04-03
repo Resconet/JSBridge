@@ -8,7 +8,7 @@
 	<script src="js/tinymce/tinymce.min.js"></script>
 	<script src="../JSBridge.js"></script>
 	<script>
-			/** SIMPLE TOOLBAR FUNCTIONALITY */
+		/** SIMPLE TOOLBAR FUNCTIONALITY */
 		tinymce.init({
 			selector: 'textarea',
 			plugins: [
@@ -120,7 +120,7 @@
 			// If the form is non-editable the editor is made readonly. No support for field level permisions yet.
 			var loadEditorContent = function (entityForm) {
 				editor.off('Change'); // Disable change event
-				
+
 				if (entityForm.canEdit) {
 					editor.on('Change', onEditorChanged);
 				} else {
@@ -145,15 +145,27 @@
 				}
 			};
 
+			var SetReadOnlyBasedOnTheFieldPermission = function (entityName) {
+				MobileCRM.Metadata.requestObject(metaData => {
+					var entity = metaData.getEntity(entityName);
+					if (entity) {
+						var prop = entity.getProperty(field);
+						if (!prop || ((prop.permission & 2) == 0)) // validate bit mask of permission on field level.
+							editor.setMode('readonly');
+					}
+				}, MobileCRM.bridge.alert, null);
+			}
+
 			// Gets the parent form object and loads the editor.
 			MobileCRM.UI.EntityForm.requestObject(
 				function (entityForm) {
 					var text = entityForm.entity.properties[field];
+					SetReadOnlyBasedOnTheFieldPermission(entityForm.entity.entityName);
 					editor.setContent(text || "");
 					/// <param name="entityForm" type="MobileCRM.UI.EntityForm"/>
 					// Get the MobileCRM.DynamicEntity which is being edited on this form
 					loadEditorContent(entityForm);
-
+					
 					if (handleOnChange)
 						registerOnChange();
 
