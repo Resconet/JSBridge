@@ -160,6 +160,7 @@ class EntityFormFoRichText {
 function loadEditor(editMode: editorMode, continueWith: (edtior: any) => void) {
 	if (editMode === editorMode.readOnly) {
 		tinymce.init({
+			plugins : 'autoresize',
 			selector: 'textarea',
 			toolbar: false,
 			menubar: false,
@@ -176,6 +177,7 @@ function loadEditor(editMode: editorMode, continueWith: (edtior: any) => void) {
 		tinymce.init({
 			selector: 'textarea',
 			plugins: [
+				'autoresize',
 				'advlist autolink lists link charmap hr anchor pagebreak',
 				'paste textcolor colorpicker'
 			],
