@@ -5,3 +5,5 @@ It can be used by organizations with older Offline HTML solution having problems
 Despite we recommend upgrading your JSBridge.js script to the latest version, these scripts can be used to fix the issue with minimal change to the source code.
 
 JSBridge v10.1 and newer is not affected by this issue and it identifies iOS 13 devices correctly.
+
+See [this issue](https://github.com/Resconet/JSBridge/issues/8) for more details.
