@@ -1,231 +1,194 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+
+<html lang="en">
 <head>
-	<title></title>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
-	<script src="js/tinymce/tinymce.min.js"></script>
-	<script src="../JSBridge.js"></script>
-	<style>
-
-
-		.mce-widget * {
-			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,"Helvetica Neue",sans-serif;
-		}
-
-		.mce-container.mce-tinymce {
-			border: 0 !important;
-		}
-
-		.mce-branding-powered-by {
-			display: none;
-		}
-	</style>
+    <meta charset="utf-8" />
+    <title>Fetch method sample</title>
+    <!-- Activate IE9 document mode, if available. -->
+    <!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <!-- Defined iOS viewport -->
+    <!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+    <meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <script type="text/javascript" src="JSBridge.js"></script>
 </head>
 <body>
-	<textarea></textarea>
-	<script>
-var tinymce;
-// Whether to automatically update the html editor when the entity property changes.
-var handleOnChange = true;
-// Whether to update the entity property when the content of the html editor is changed.
-var updateEntityOnChange = true;
-class EntityFormFoRichText {
-    constructor(editorMode) {
-        var url = this.getUrlParams();
-        this._field = url['field'];
-        this._editorMode = editorMode;
-    }
-    CheckMode(entityForm, continueWith) {
-        if (!entityForm.canEdit) {
-            continueWith(false);
-        }
-        else {
-            MobileCRM.Metadata.requestObject(metaData => {
-                var entity = metaData.getEntity(entityForm.entity.entityName);
-                if (entity) {
-                    var prop = entity.getProperty(this._field);
-                    if (!prop)
-                        continueWith(true);
-                    else if (prop.permission === 2) //can create
-                        continueWith(false);
-                    else if ((prop.permission & 2) == 0)
-                        continueWith(true);
-                    else
-                        continueWith(false);
+    <script>
+        function executeFromXml(resultFormat) {
+            var xmlFetch = "<fetch resultformat='" + resultFormat + "' aggregate='false'>" +
+                                           "<entity name='salesorder'>" +
+                                               "<attribute name='name' />" +
+                                               "<attribute name='shipto_city' />" +
+                                               "<attribute name='shipto_line1' />" +
+                                               "<attribute name='totalamount' />" +
+                                                   "<filter>" +
+                                                       "<condition attribute='name' operator='like' value='Bike%'  />" +
+                                                       "<condition attribute='totalamount' operator='gt' value='1500'  />" +
+                                                   "</filter>" +
+                                           "</entity>" +
+                                       "</fetch>";
+
+            MobileCRM.FetchXml.Fetch.executeFromXML(xmlFetch, function (result) {
+                if (result.length < 1) {
+                    MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
                 }
-            }, MobileCRM.bridge.alert, [this]);
-        }
-    }
-    initialize() {
-        if (!this._field) {
-            MobileCRM.bridge.alert("Parsed RichTextEditor field is undefined");
-            return;
-        }
-        MobileCRM.UI.EntityForm.requestObject(entityF => {
-            this.CheckMode(entityF, (isReadOnly) => {
-                if (isReadOnly)
-                    loadEditor(editorMode.readOnly, (editor) => {
-                        editor.setMode('readonly');
-                        this.onEditorLoaded(entityF, editor);
-                    });
                 else {
-                    loadEditor(this._editorMode, (editor) => {
-                        this.onEditorLoaded(entityF, editor);
-                    });
+                    var info = "Info [Missing ship - to address]: \n";
+                    switch (resultFormat) {
+                        case "Array":
+                            for (var i in result) {
+                                var entity = result[i];
+                                /// Append orders what doesn't have filled 'ship to address' to info message
+                                /// indexes are ordered by attributes in xml
+                                var shipToCity = entity[1];
+                                var shipToAddress = entity[2];
+                                if (!(shipToAddress && shipToCity))
+                                    info += "\nName: " + entity[0] + " Total amount: " + entity[3];
+                            }
+                            break;
+                        case "JSON":
+                            for (var i in result) {
+                                /// Deserialize json object
+                                var entity = result[i];
+                                var shipToCity = entity.shipto_city;
+                                var shipToAddress = entity.shipto_line1;
+                                if (!(shipToAddress && shipToCity))
+                                    info += "\nName: " + entity.name + " Total amount: " + entity.totalamount;
+                            }
+                            break;
+                        default: //DynamicEntities
+                            for (var i in result) {
+                                /// Deserialize json object
+                                var entity = result[i];
+                                var shipToCity = entity.properties.shipto_city;
+                                var shipToAddress = entity.properties.shipto_line1;
+                                if (!(shipToAddress && shipToCity))
+                                    info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
+                            }
+                            break;
+                    }
+                    MobileCRM.bridge.alert(info);
                 }
+            }, MobileCRM.bridge.alert, null);
+        }
+
+        function executeFetch(online) {
+            var fetchEntity = new MobileCRM.FetchXml.Entity("salesorder");
+            fetchEntity.addAttribute("name");
+            fetchEntity.addAttribute("shipto_city");
+            fetchEntity.addAttribute("totalamount");
+
+            var filter = new MobileCRM.FetchXml.Filter();
+            filter.type = "and";
+
+            var cond1 = new MobileCRM.FetchXml.Condition();
+            cond1.attribute = "name";
+            cond1.operator = "like";
+            cond1.value = "Bike%";
+
+            var cond2 = new MobileCRM.FetchXml.Condition();
+            cond2.attribute = "totalamount";
+            cond2.operator = "gt"
+            cond2.value = "1500%";
+
+            filter.conditions.push(cond1, cond2);
+
+            fetchEntity.filter = filter;
+
+            var fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
+
+            var info = "Info [Missing ship - to address]: \n";
+
+            if (online) {
+                fetch.executeOnline("DynamicEntities", function (result) {
+                    if (result.length < 1) {
+                        MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
+                    }
+                    else {
+                        for (var i in result) {
+                            var entity = result[i];
+                            var shipToCity = entity.properties.shipto_city;
+                            var shipToAddress = entity.properties.shipto_line1;
+                            if (!(shipToAddress && shipToCity))
+                                info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
+                        }
+                    }
+                }, MobileCRM.bridge.alert, null);
+            }
+            else {
+                fetch.executeOffline("DynamicEntities", function (result) {
+                    if (result.length < 1) {
+                        MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
+                    }
+                    else {
+                        for (var i in result) {
+                            var entity = result[i];
+                            var shipToCity = entity.properties.shipto_city;
+                            var shipToAddress = entity.properties.shipto_line1;
+                            if (!(shipToAddress && shipToCity))
+                                info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
+                        }
+                    }
+                }, MobileCRM.bridge.alert, null);
+            }
+        }
+
+        function executeAsync() {
+            var fetchEntity = new MobileCRM.FetchXml.Entity("salesorder");
+            fetchEntity.addAttribute("name");
+            fetchEntity.addAttribute("shipto_city");
+            fetchEntity.addAttribute("totalamount");
+
+            var filter = new MobileCRM.FetchXml.Filter();
+            filter.type = "and";
+
+            var cond1 = new MobileCRM.FetchXml.Condition();
+            cond1.attribute = "name";
+            cond1.operator = "like";
+            cond1.value = "Bike%";
+
+            var cond2 = new MobileCRM.FetchXml.Condition();
+            cond2.attribute = "totalamount";
+            cond2.operator = "gt"
+            cond2.value = "1500%";
+
+            filter.conditions.push(cond1, cond2);
+
+            fetchEntity.filter = filter;
+
+            var fetch = new MobileCRM.FetchXml.Fetch(fetchEntity);
+
+            var info = "Info [Missing ship - to address]: \n";
+
+            fetch.executeAsync(null).then((result) => { // "null" stands for default "DynamicEntities" result format
+                if (result.length < 1) {
+                    MobileCRM.bridge.alert("Not any order begins with 'Bike' and total amount grater than 1500 was found");
+                }
+                else {
+                    for (var i in result) {
+                        var entity = result[i];
+                        var shipToCity = entity.properties.shipto_city;
+                        var shipToAddress = entity.properties.shipto_line1;
+                        if (!(shipToAddress && shipToCity))
+                            info += "\nName: " + entity.primaryName + " Total amount: " + entity.properties.totalamount;
+                    }
+                }
+                MobileCRM.bridge.alert(info);
+            }).catch((err) => {
+                MobileCRM.bridge.alert(err);
             });
-        }, MobileCRM.bridge.alert, null);
-    }
-    onEditorLoaded(entityForm, editor) {
-        if (!editor)
-            MobileCRM.bridge.alert("Editor is undefined");
-        else {
-            this._editor = editor;
-            //this._editor.getBody().firstChild.scrollIntoView();
-            this._editor.off('Change'); // Disable change event
-            var text = entityForm.entity.properties[this._field];
-            this._editor.setContent(text || "");
-            this.registerOnSave();
-            if (handleOnChange) {
-                this._editor.on('Change', this.onEditorChanged.bind(this));
-                this.registerOnChangeHandlers();
-            }
         }
-    }
-    registerOnSave() {
-        MobileCRM.UI.EntityForm.onSave(this.saveEditorContent, true, this);
-    }
-    onEditorChanged(obj) {
-        MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [true]);
-        if (updateEntityOnChange)
-            MobileCRM.UI.EntityForm.requestObject(this.saveEditorContent, MobileCRM.bridge.alert, this);
-    }
-    registerOnChangeHandlers() {
-        // If available, use the 11.2 itemChange event.
-        if (MobileCRM.UI.EntityForm.onItemChange) {
-            MobileCRM.UI.EntityForm.onItemChange(this._field, entityF => {
-                if (!entityF.canEdit && this._editorMode !== editorMode.readOnly) {
-                    tinymce.remove();
-                    loadEditor(editorMode.readOnly, (editor) => {
-                        this._editor = editor;
-                    });
-                }
-                else if (entityF.canEdit && this._editorMode == editorMode.readOnly) {
-                    tinymce.remove();
-                    loadEditor(editorMode.readOnly, (editor) => {
-                        this._editor = editor;
-                    });
-                }
-                this.onEditorChanged(entityF);
-            }, true, this);
-        }
-        else {
-            MobileCRM.UI.EntityForm.onChange(function (entityForm) {
-                var context = entityForm.context;
-                if (context.changedItem === this._field) {
-                    if (!entityForm.canEdit && this._editorMode !== editorMode.readOnly) {
-                        tinymce.remove();
-                        loadEditor(editorMode.readOnly, (editor) => {
-                            this._editor = editor;
-                        });
-                    }
-                    else if (entityForm.canEdit && this._editorMode == editorMode.readOnly) {
-                        tinymce.remove();
-                        loadEditor(editorMode.readOnly, (editor) => {
-                            this._editor = editor;
-                        });
-                    }
-                    this.onEditorChanged();
-                }
-            }, true, null);
-        }
-    }
-    saveEditorContent(entityForm) {
-        var entity = entityForm.entity;
-        entity.properties[this._field] = this._editor.getContent();
-        return true;
-    }
-    getUrlParams() {
-        var match, pl = /\+/g, // Regex for replacing addition symbol with a space
-        search = /([^&=]+)=?([^&]*)/g, decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); }, query = window.location.search.substring(1);
-        var urlParams = {};
-        while (match = search.exec(query))
-            urlParams[decode(match[1])] = decode(match[2]);
-        return urlParams;
-    }
-}
-function loadEditor(editMode, continueWith) {
-    if (editMode === editorMode.readOnly) {
-        tinymce.init({
-            selector: 'textarea',
-            toolbar: false,
-            menubar: false,
-            statusbar: false,
-            setup: function (editor) {
-                editor.on('init', function (e) {
-                    editor.execCommand('mceFullScreen');
-                    continueWith(editor);
-                });
-            }
-        });
-    }
-    else if (editMode === editorMode.simpleMode) {
-        tinymce.init({
-            selector: 'textarea',
-            plugins: [
-                'advlist autolink lists link charmap hr anchor pagebreak',
-                'paste textcolor colorpicker'
-            ],
-            menubar: false,
-            toolbar1: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor',
-            removed_menuitems: "fullscreen",
-            statusbar: false,
-            setup: function (editor) {
-                editor.on('init', function (e) {
-                    editor.execCommand('mceFullScreen');
-                    continueWith(editor);
-                });
-            }
-        });
-    }
-    else if (editMode === editorMode.fullMode) {
-        tinymce.init({
-            selector: 'textarea',
-            plugins: [
-                'advlist autolink lists link image charmap preview hr anchor pagebreak',
-                'searchreplace visualblocks visualchars code fullscreen',
-                'insertdatetime media nonbreaking save table contextmenu directionality',
-                'emoticons template paste textcolor colorpicker textpattern imagetools codesample toc help'
-            ],
-            toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-            toolbar2: 'visualblocks preview media | forecolor backcolor emoticons | codesample help',
-            //menubar: 'file edit insert format table tools',
-            menubar: 'edit insert format table',
-            removed_menuitems: "fullscreen",
-            statusbar: false,
-            setup: function (editor) {
-                editor.on('init', function (e) {
-                    editor.execCommand('mceFullScreen');
-                    continueWith(editor);
-                });
-            }
-        });
-    }
-    else
-        continueWith(null);
-}
-var editorMode;
-(function (editorMode) {
-    editorMode[editorMode["readOnly"] = 0] = "readOnly";
-    editorMode[editorMode["simpleMode"] = 1] = "simpleMode";
-    editorMode[editorMode["fullMode"] = 2] = "fullMode";
-})(editorMode || (editorMode = {}));
-window.onload = function () {
-    var er = new EntityFormFoRichText(editorMode.simpleMode);
-    er.initialize();
-};
-	</script>
+
+    </script>
+    <h3>Welcome to sample page for fetchXml method.</h3>
+    Help: <a href="https://github.com/Resconet/JSBridge">Git repository...</a>
+    <br />
+    <h4>Run sample</h4>
+    <button onclick="executeFromXml('Array')">ExecuteXml to Array</button>
+    <button onclick="executeFromXml('JSON')">ExecuteXml to Json</button>
+    <button onclick="executeFromXml('DynamicEntities')">ExecuteXml to DynamicEntities</button>
+
+    <button onclick="executeFetch()">Fetch to DynamicEntities</button> <b>offline</b><br />
+    <button onclick="executeFetch(true)">Fetch to DynamicEntities</button>  <b>online</b>
 </body>
 </html>
