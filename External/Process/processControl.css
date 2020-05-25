@@ -1,0 +1,249 @@
+.processContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.processArrow:hover {
+  opacity: 50%;
+}
+
+.processArrowContainer {
+  display: inline-flex;
+  flex: 0 1 auto;
+  height: 50%;
+}
+.processArrowContainer:hover {
+  opacity: 50%;
+}
+
+.arrow {
+  display: inline-flex;
+  flex: 0 1 auto;
+  position: relative;
+  /*.processArrow{
+      background-color: dodgerblue;
+      border-radius: 2px;
+      height: 100px;         
+      width: 100px;
+      display: inline-flex;
+      position: relative;
+      margin: 25px;
+
+  }
+  .processArrow::after {
+      color: dodgerblue;
+      border-left: 50px solid;
+      border-top: 50px solid transparent;
+      border-bottom: 50px solid transparent;
+      display: inline-block;
+      content: '';
+      position: absolute;
+      right: -50px;
+  }
+
+  .processArrow2::before {
+      color: white;
+      border-left: 50px solid;
+      border-top: 50px solid transparent;
+      border-bottom: 50px solid transparent;
+      display: inline-block;
+      content: '';
+      position: absolute;
+
+  }
+
+  .processArrow:active{
+      background-color: greenyellow;
+      color: greenyellow;
+  }*/
+}
+.arrow.left {
+  width: 0;
+  height: 0;
+  border-top: 50px solid dodgerblue;
+  border-bottom: 50px solid dodgerblue;
+  border-left: 50px solid transparent;
+}
+.arrow.left.completed {
+  border-top: 50px solid #90EE90;
+  border-bottom: 50px solid #90EE90;
+}
+.arrow.left.active {
+  border-top: 50px solid orange;
+  border-bottom: 50px solid orange;
+}
+.arrow.center {
+  width: 100px;
+  background: dodgerblue;
+  min-height: 100px;
+  left: -4px;
+}
+.arrow.center.completed {
+  background: #90EE90;
+}
+.arrow.center.active {
+  background: orange;
+}
+.arrow.right {
+  height: 0;
+  border-top: 50px solid transparent;
+  border-bottom: 50px solid transparent;
+  border-left: 50px solid dodgerblue;
+  position: relative;
+  left: -8px;
+}
+.arrow.right.completed {
+  border-left: 50px solid #90EE90;
+}
+.arrow.right.active {
+  border-left: 50px solid orange;
+}
+
+.steps {
+  padding-left: 0;
+  list-style: none;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  margin: 30px auto;
+  border-radius: 3px;
+  text-overflow: ellipsis;
+}
+
+.steps strong {
+  font-size: 14px;
+  display: block;
+  line-height: 1.4;
+}
+
+.steps > li {
+  position: relative;
+  display: block;
+  /* border: 1px solid #ddd; */
+  padding: 12px 50px 8px 50px;
+  min-width: 10px;
+  height: 40px;
+}
+
+.steps > li {
+  float: left;
+}
+
+.steps .completed {
+  color: green;
+  background: #90EE90;
+}
+
+.steps .active {
+  color: #000;
+}
+
+.steps .future {
+  color: DodgerBlue;
+  background: #87CEFA;
+}
+
+.steps li > span:after,
+.steps li > span:before {
+  content: "";
+  display: block;
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: solid transparent;
+  border-left-color: #f0f0f0;
+  border-width: 30px;
+}
+
+.steps li > span:after {
+  top: -5px;
+  z-index: 1;
+  border-left-color: white;
+  border-width: 34px;
+}
+
+.steps li > span:before {
+  z-index: 2;
+}
+
+.steps li.completed + li > span:before {
+  border-left-color: #90EE90;
+}
+
+.steps li.active + li > span:before {
+  border-left-color: #fff;
+}
+
+.steps li.future + li > span:before {
+  border-left-color: #87CEFA;
+}
+
+.steps li:first-child > span:after,
+.steps li:first-child > span:before {
+  display: none;
+}
+
+/* Arrows at start and end */
+.steps li:first-child i,
+.steps li:last-child i {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: solid transparent;
+  border-left-color: white;
+  border-width: 30px;
+}
+
+.steps li:last-child i {
+  left: auto;
+  right: -30px;
+  border-left-color: transparent;
+  border-top-color: white;
+  border-bottom-color: white;
+}
+
+@media screen and (max-width: 601px) {
+  .steps {
+    font-size: 0;
+    margin: 30px auto;
+    border-radius: 2px;
+  }
+
+  .steps strong {
+    font-size: 12px;
+  }
+
+  .steps > li {
+    height: 20px;
+    padding: 6px 25px 4px 25px;
+    min-width: 5px;
+    margin-bottom: 5px;
+  }
+
+  /* Arrows at start and end */
+  .steps li:first-child i,
+.steps li:last-child i {
+    border-width: 15px;
+  }
+
+  .steps li:last-child i {
+    right: -15px;
+  }
+
+  .steps li > span:after,
+.steps li > span:before {
+    border-width: 15px;
+  }
+
+  .steps li > span:after {
+    top: -2px;
+    z-index: 1;
+    border-left-color: white;
+    border-width: 17px;
+  }
+}
+
+/*# sourceMappingURL=processControl.css.map */

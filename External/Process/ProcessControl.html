@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <script src="../JSBridge.js"></script>
+    <link rel="stylesheet" type="text/css" href="processControl.css">
+</head>
+<body onload="init()">
+	<script>
+        var activeState = "active";
+        var completedState = "completed";
+        var futureState = "future";
+        var processControlConfiguration;
+        var stepArray;
+        
+        function init(){
+            var urlParams = new URLSearchParams(window.location.search);
+            var processControlName = urlParams.get('name');
+            MobileCRM.bridge.command("getProcessControlConfiguration", processControlName, setUpProcessArrows, reportError, null);            
+        }
+
+        function reportError(error){
+            MobileCRM.bridge.alert(error);
+        }
+
+        function setUpProcessArrows(jsonConfig){
+            processControlConfiguration = jsonConfig;
+            stepArray = jsonConfig.steps;
+            var stepContainer = document.getElementById("stepContainer");
+            for(var field of jsonConfig.steps){
+                let desc = field.description !== "undefined" ? field.description : "";
+                stepContainer.appendChild(htmlToElements(createArrow2(field.label, field.value, desc)))
+            }
+            loadCurrentStepFromEntity();
+        }   
+
+        function createArrow2(name, value, description){
+            var arrowHtml = "<li id="+ value +" class=\"future\" onclick=\"arrowClicked(this.id)\">" +
+            "<span>" +
+            "<strong>" + name + "</strong>" +
+            description +
+            "</span><i></i>" +
+            "</li>";
+            return arrowHtml;
+        }
+
+        /**
+        * @param {String} HTML representing any number of sibling elements
+        * @return {NodeList} 
+        */
+        function htmlToElements(html) {
+            var template = document.createElement('template');
+            html = html.trim();
+            template.innerHTML = html;
+            return template.content.firstChild;
+        }
+
+        function arrowClicked(elementId){ 
+            var element = document.getElementById(elementId);
+            var stateFromClass = element.className;
+            var step = stepArray.find(s => s.value === elementId);         
+            if(step){
+                var stepIndex = stepArray.indexOf(step); 
+                switch(stateFromClass) {
+                case activeState:                                     
+                    setArrowCssClass(element, completedState);
+                    setPreviousElementsToState(stepIndex, completed);
+                    setNextElementsToState(stepIndex, futureState);
+                    break;
+                case completedState:
+                    setArrowCssClass(element, futureState);  // Reset state
+                    setPreviousElementsToState(stepIndex, completedState);
+                    break;
+                case futureState:                
+                    setStepOnEntity(elementId);
+                    setArrowCssClass(element, activeState);
+                    setPreviousElementsToState(stepIndex, completedState);
+                    setNextElementsToState(stepIndex, futureState);
+                    break;
+                } 
+            }
+            
+        }
+
+        function setStepOnEntity(stepValue){
+            MobileCRM.UI.EntityForm.requestObject(
+                function (entityForm) {
+                    entityForm.entity.properties[processControlConfiguration.field] = stepValue;
+                },
+                function (err) { MobileCRM.bridge.alert(err); }
+            );   
+        }
+
+        function loadCurrentStepFromEntity(){
+            MobileCRM.UI.EntityForm.requestObject(
+                function (entityForm) {
+                    var stepValue = entityForm.entity.properties[processControlConfiguration.field];
+                    var step = stepArray.find(s => s.value === stepValue + "");
+                    var element = document.getElementById(stepValue);              
+                    if(element){
+                        var stepIndex = stepArray.indexOf(step); 
+                        setArrowCssClass(element, activeState);
+                        setPreviousElementsToState(stepIndex, completedState);
+                        setNextElementsToState(stepIndex, futureState);
+                    }
+                    
+                },
+                function (err) { MobileCRM.bridge.alert(err); }
+            );   
+        }
+
+        function setPreviousElementsToState(index, state){
+            for(var i = 0; i < index; i++){
+                var element = document.getElementById(stepArray[i].value);
+                setArrowCssClass(element, state);
+            }
+        }
+
+        function setNextElementsToState(index, state){
+            for(var i = index + 1; i < stepArray.length; i++){
+                var element = document.getElementById(stepArray[i].value);
+                setArrowCssClass(element, state);
+            }
+        }
+
+        function setArrowCssClass(element, state){
+            element.className = state;            
+        }
+
+        function setArrowCssClass2(elementId, state){
+            var element = document.getElementById(elementId);
+            element.className = state;            
+        }
+
+    </script>
+    </div>
+    <ul id="stepContainer" class="steps"></ul>
+</body>
