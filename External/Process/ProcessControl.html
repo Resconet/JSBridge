@@ -95,7 +95,7 @@
         function setStepOnEntity(stepValue){
             MobileCRM.UI.EntityForm.requestObject(
                 function (entityForm) {
-                    entityForm.entity.properties[processControlConfiguration.field] = stepValue;
+                    entityForm.entity.properties[processControlConfiguration.field] = classNameStepValueDict[stepValue];
                 },
                 function (err) { MobileCRM.bridge.alert(err); }
             );   
