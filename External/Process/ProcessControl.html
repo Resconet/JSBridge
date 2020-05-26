@@ -106,7 +106,7 @@
                 function (entityForm) {
                     var stepValue = entityForm.entity.properties[processControlConfiguration.field];
                     var step = stepArray.find(s => s.value === stepValue + "");
-                    var element = document.getElementById(stepValue);              
+                    var element = document.getElementById(stepValueClassNameDict[stepValue]);            
                     if(element){
                         var stepIndex = stepArray.indexOf(step); 
                         setArrowCssClass(element, activeState);

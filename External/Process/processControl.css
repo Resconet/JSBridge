@@ -123,6 +123,7 @@
   padding: 12px 50px 8px 50px;
   min-width: 10px;
   height: 40px;
+  margin-bottom: 5px;
 }
 
 .steps > li {
@@ -134,11 +135,12 @@
   background: #90EE90;
 }
 
-.steps .active {
-  color: #000;
+.steps .future {
+  color: black;
+  background: white;
 }
 
-.steps .future {
+.steps .active {
   color: DodgerBlue;
   background: #87CEFA;
 }
@@ -172,11 +174,11 @@
   border-left-color: #90EE90;
 }
 
-.steps li.active + li > span:before {
-  border-left-color: #fff;
+.steps li.future + li > span:before {
+  border-left-color: white;
 }
 
-.steps li.future + li > span:before {
+.steps li.active + li > span:before {
   border-left-color: #87CEFA;
 }
 
@@ -193,7 +195,6 @@
   top: 0;
   left: 0;
   border: solid transparent;
-  border-left-color: white;
   border-width: 30px;
 }
 
@@ -201,8 +202,6 @@
   left: auto;
   right: -30px;
   border-left-color: transparent;
-  border-top-color: white;
-  border-bottom-color: white;
 }
 
 @media screen and (max-width: 601px) {
