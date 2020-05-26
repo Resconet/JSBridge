@@ -15,7 +15,9 @@
         var futureState = "future";
         var processControlConfiguration;
         var stepArray;
-        
+        var classNameStepValueDict = {};
+        var stepValueClassNameDict = {};
+
         function init(){
             var urlParams = new URLSearchParams(window.location.search);
             var processControlName = urlParams.get('name');
@@ -27,6 +29,7 @@
         }
 
         function setUpProcessArrows(jsonConfig){
+            loadColorSettings();
             processControlConfiguration = jsonConfig;
             stepArray = jsonConfig.steps;
             var stepContainer = document.getElementById("stepContainer");
@@ -38,7 +41,10 @@
         }   
 
         function createArrow2(name, value, description){
-            var arrowHtml = "<li id="+ value +" class=\"future\" onclick=\"arrowClicked(this.id)\">" +
+            var sanitizedVal = makeSafeForCSS(value);
+            classNameStepValueDict[sanitizedVal] = value;
+            stepValueClassNameDict[value] = sanitizedVal;
+            var arrowHtml = "<li id="+ sanitizedVal +" class=\"future\" onclick=\"arrowClicked(this.id)\">" +
             "<span>" +
             "<strong>" + name + "</strong>" +
             description +
@@ -61,7 +67,8 @@
         function arrowClicked(elementId){ 
             var element = document.getElementById(elementId);
             var stateFromClass = element.className;
-            var step = stepArray.find(s => s.value === elementId);         
+            let val = classNameStepValueDict[elementId];
+            var step = stepArray.find(s => s.value === val);         
             if(step){
                 var stepIndex = stepArray.indexOf(step); 
                 switch(stateFromClass) {
@@ -112,16 +119,26 @@
             );   
         }
 
+        function loadColorSettings(){
+            // Loads background color for now - more customization options to come
+            MobileCRM.Application.getAppColor("FormBackground", function (color) {
+                /// <param name="color" type="String">String containing the color definition (e.g. "#FF0000" for red color).</param>
+                if (color) {
+                    document.body.style.backgroundColor = color;
+                }
+            });     
+        }
+
         function setPreviousElementsToState(index, state){
             for(var i = 0; i < index; i++){
-                var element = document.getElementById(stepArray[i].value);
+                var element = document.getElementById(stepValueClassNameDict[stepArray[i].value]);
                 setArrowCssClass(element, state);
             }
         }
 
         function setNextElementsToState(index, state){
             for(var i = index + 1; i < stepArray.length; i++){
-                var element = document.getElementById(stepArray[i].value);
+                var element = document.getElementById(stepValueClassNameDict[stepArray[i].value]);
                 setArrowCssClass(element, state);
             }
         }
@@ -130,11 +147,14 @@
             element.className = state;            
         }
 
-        function setArrowCssClass2(elementId, state){
-            var element = document.getElementById(elementId);
-            element.className = state;            
+        function makeSafeForCSS(name) {
+            return name.replace(/[^a-z0-9]/g, function(s) {
+                var c = s.charCodeAt(0);
+                if (c == 32) return '-';
+                if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
+                return '__' + ('000' + c.toString(16)).slice(-4);
+            });
         }
-
     </script>
     </div>
     <ul id="stepContainer" class="steps"></ul>
