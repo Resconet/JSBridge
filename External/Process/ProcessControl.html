@@ -96,6 +96,7 @@
             MobileCRM.UI.EntityForm.requestObject(
                 function (entityForm) {
                     entityForm.entity.properties[processControlConfiguration.field] = classNameStepValueDict[stepValue];
+                    MobileCRM.UI.EntityForm.save();
                 },
                 function (err) { MobileCRM.bridge.alert(err); }
             );   
