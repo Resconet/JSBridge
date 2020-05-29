@@ -39,7 +39,10 @@
 			}
 			CheckMode(entityForm, continueWith) {
 				if (!entityForm.canEdit) {
-					continueWith(false);
+					continueWith(true);
+				}
+				else if (!this.isFieldEditable(entityForm)) {
+					continueWith(true);
 				}
 				else {
 					MobileCRM.Metadata.requestObject(metaData => {
@@ -65,7 +68,6 @@
 				}
 				MobileCRM.UI.EntityForm.requestObject(entityF => {
 					this.CheckMode(entityF, (isReadOnly) => {
-						isReadOnly = false;
 						if (isReadOnly)
 							loadEditor(editorMode.readOnly, (editor) => {
 								editor.setMode('readonly');
@@ -95,6 +97,26 @@
 					}
 				}
 			}
+			isFieldEditable(entityForm) {
+				var detailViews = entityForm.detailViews;
+				var item;
+				if (detailViews) {
+					var nItems = detailViews.length;
+					for (var i = 0; i < nItems; i++) {
+						var dv = detailViews[i];
+						for (var itm of dv.items) {
+							if (itm.name === this._field) {
+								item = itm;
+								break;
+							}
+						}
+					}
+				}
+				if (item) {
+					return item.isEnabled;
+				}
+				return false;
+			}
 			registerOnSave() {
 				MobileCRM.UI.EntityForm.onSave(this.saveEditorContent, true, this);
 			}
@@ -106,42 +128,36 @@
 			registerOnChangeHandlers() {
 				// If available, use the 11.2 itemChange event.
 				if (MobileCRM.UI.EntityForm.onItemChange) {
-					MobileCRM.UI.EntityForm.onItemChange(this._field, entityF => {
-						if (!entityF.canEdit && this._editorMode !== editorMode.readOnly) {
-							tinymce.remove();
-							loadEditor(editorMode.readOnly, (editor) => {
-								this._editor = editor;
-							});
-						}
-						else if (entityF.canEdit && this._editorMode == editorMode.readOnly) {
-							tinymce.remove();
-							loadEditor(editorMode.readOnly, (editor) => {
-								this._editor = editor;
-							});
-						}
-						this.onEditorChanged(entityF);
+					MobileCRM.UI.EntityForm.onItemChange(this._field, function (entityForm) {
+						this.onChangeHandler(entityForm);
 					}, true, this);
 				}
 				else {
 					MobileCRM.UI.EntityForm.onChange(function (entityForm) {
 						var context = entityForm.context;
 						if (context.changedItem === this._field) {
-							if (!entityForm.canEdit && this._editorMode !== editorMode.readOnly) {
-								tinymce.remove();
-								loadEditor(editorMode.readOnly, (editor) => {
-									this._editor = editor;
-								});
-							}
-							else if (entityForm.canEdit && this._editorMode == editorMode.readOnly) {
-								tinymce.remove();
-								loadEditor(editorMode.readOnly, (editor) => {
-									this._editor = editor;
-								});
-							}
-							this.onEditorChanged();
+							this.onChangeHandler(entityForm);
 						}
 					}, true, null);
 				}
+			}
+			onChangeHandler(entityForm) {
+				if (!this.isFieldEditable(entityForm) || !entityForm.canEdit)
+					this._editorMode = editorMode.readOnly;
+				if (this._editorMode !== editorMode.readOnly) {
+					tinymce.remove();
+					loadEditor(editorMode.readOnly, function (editor) {
+						editor.setMode('readonly');
+						this._editor = editor;
+					});
+				}
+				else if (this._editorMode == editorMode.readOnly) {
+					tinymce.remove();
+					loadEditor(editorMode.readOnly, function (editor) {
+						this._editor = editor;
+					});
+				}
+				this.onEditorChanged();
 			}
 			saveEditorContent(entityForm) {
 				var entity = entityForm.entity;
