@@ -122,8 +122,14 @@
 			}
 			onEditorChanged(obj) {
 				MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [true]);
-				if (updateEntityOnChange)
+				if (obj instanceof MobileCRM.UI.EntityForm) {
+					var eVal = obj.entity.properties[this._field];
+					if (this._editor.getContent() !== eVal)
+						this._editor.setContent(eVal);
+				}
+				else if (updateEntityOnChange)
 					MobileCRM.UI.EntityForm.requestObject(this.saveEditorContent, MobileCRM.bridge.alert, this);
+
 			}
 			registerOnChangeHandlers() {
 				// If available, use the 11.2 itemChange event.
@@ -138,31 +144,40 @@
 						if (context.changedItem === this._field) {
 							this.onChangeHandler(entityForm);
 						}
-					}, true, null);
+					}, true, this);
 				}
 			}
 			onChangeHandler(entityForm) {
+				var mode = null;
 				if (!this.isFieldEditable(entityForm) || !entityForm.canEdit)
-					this._editorMode = editorMode.readOnly;
-				if (this._editorMode !== editorMode.readOnly) {
+					mode = editorMode.readOnly;
+
+				if ((this._editorMode !== editorMode.readOnly) && mode === editorMode.readOnly) {
 					tinymce.remove();
 					loadEditor(editorMode.readOnly, function (editor) {
 						editor.setMode('readonly');
 						this._editor = editor;
-					});
+						this.onEditorChanged(entityForm);
+					}, this);
 				}
-				else if (this._editorMode == editorMode.readOnly) {
+				else if ((this._editorMode === editorMode.readOnly) && mode !== editorMode.readOnly) {
 					tinymce.remove();
-					loadEditor(editorMode.readOnly, function (editor) {
+					loadEditor(editorMode.simpleMode, function (editor) {
 						this._editor = editor;
-					});
+						this.onEditorChanged(entityForm);
+					}, this);
 				}
-				this.onEditorChanged();
+				else
+					this.onEditorChanged(entityForm);
 			}
 			saveEditorContent(entityForm) {
+				var eVal = this._editor.getContent();
+
 				var entity = entityForm.entity;
-				entity.properties[this._field] = this._editor.getContent();
-				return true;
+				if (eVal !== entity.properties[this._field]) {
+					entity.properties[this._field] = this._editor.getContent();
+					return true;
+				}
 			}
 			getUrlParams() {
 				var match, pl = /\+/g, // Regex for replacing addition symbol with a space
@@ -173,7 +188,7 @@
 				return urlParams;
 			}
 		}
-		function loadEditor(editMode, continueWith) {
+		function loadEditor(editMode, continueWith, scope) {
 			if (editMode === editorMode.readOnly) {
 				tinymce.init({
 					selector: 'textarea',
@@ -186,7 +201,7 @@
 					setup: function (editor) {
 						editor.on('init', function (e) {
 							editor.execCommand('mceFullScreen');
-							continueWith(editor);
+							continueWith.call(scope, editor);
 						});
 					}
 				});
@@ -205,7 +220,7 @@
 					setup: function (editor) {
 						editor.on('init', function (e) {
 							editor.execCommand('mceFullScreen');
-							continueWith(editor);
+							continueWith.call(scope, editor);
 						});
 					}
 				});
@@ -227,13 +242,13 @@
 					setup: function (editor) {
 						editor.on('init', function (e) {
 							editor.execCommand('mceFullScreen');
-							continueWith(editor);
+							continueWith.call(scope, editor);
 						});
 					}
 				});
 			}
 			else
-				continueWith(null);
+				continueWith.call(scope, null);
 		}
 		var editorMode;
 		(function (editorMode) {
