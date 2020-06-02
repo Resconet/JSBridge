@@ -1,3 +1,7 @@
+body {
+  overflow: hidden;
+}
+
 .steps {
   padding-left: 0;
   list-style: none;
@@ -47,37 +51,30 @@
   background: #87CEFA;
 }
 
-.steps li > span:before,
 .steps li > span:after {
   content: "";
   display: block;
-  width: 0px;
-  height: 0px;
+  width: 60px;
+  height: 60px;
   position: absolute;
   top: 0;
-  right: -58px;
-  border: solid transparent;
-  border-width: 30px;
-  border-left-color: white;
+  right: -28px;
+  border: solid white;
+  border-width: 1px 1px 0px 0px;
   z-index: 2;
-}
-
-.steps li > span::before {
-  z-index: 1;
-  border-width: 30px;
-  right: -60px;
+  transform: scale(0.707) rotate(45deg);
 }
 
 .steps li.completed > span:after {
-  border-left-color: #90EE90;
+  background: #90EE90;
 }
 
 .steps li.future > span:after {
-  border-left-color: white;
+  background: white;
 }
 
 .steps li.active > span:after {
-  border-left-color: #87CEFA;
+  background: #87CEFA;
 }
 
 .steps li:first-child i,
@@ -114,28 +111,12 @@
     margin-bottom: 5px;
   }
 
-  /* Arrows at start and end */
-  .steps li:first-child i,
-.steps li:last-child i {
-    border-width: 15px;
-  }
-
-  .steps li:last-child i {
-    right: -15px;
-  }
-
-  .steps li > span:after,
-.steps li > span:before {
-    border-width: 15px;
+  .steps li > span:after {
     top: 0;
-    right: -28px;
+    right: -13px;
     z-index: 1;
-    border-width: 15px;
-  }
-
-  .steps li > span:before {
-    border-left-color: white;
-    right: -30px;
+    width: 30px;
+    height: 30px;
   }
 }
 
