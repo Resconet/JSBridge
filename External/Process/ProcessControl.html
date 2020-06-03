@@ -18,11 +18,12 @@
         var classNameStepValueDict = {};
         var stepValueClassNameDict = {};
         var selectedView = "General";
+        var readOnly = false;
 
         function init(){
             var urlParams = new URLSearchParams(window.location.search);
             var processControlName = urlParams.get('name');
-            MobileCRM.bridge.command("getProcessControlConfiguration", processControlName, setUpProcessArrows, reportError, null);            
+            MobileCRM.bridge.command("getProcessControlConfiguration", processControlName, setUpProcessArrows, reportError, null);       
             initOnChangeHandlers();
         }
 
@@ -32,7 +33,6 @@
                 // First check whether the change handler is called due to desired item change
                 var changedItem = entityForm.context.changedItem;
                 if (changedItem == processControlConfiguration.field) {
-                    MobileCRM.bridge.alert(JSON.stringify(entityForm.context));
                     var detailView = null;
                     detailView = entityForm.getDetailView(selectedView);                   
                     if(detailView != null) {
@@ -52,11 +52,62 @@
             }, true, null);
         }
 
+        function checkMode(entityForm, continueWith) {
+			if (!entityForm.canEdit) {
+				continueWith(true);
+			}			
+            else if (!isFieldEditable(entityForm)) {
+				continueWith(true);
+			}	
+			else {
+				MobileCRM.Metadata.requestObject(metaData => {		
+                    var entity = metaData.getEntity(entityForm.entity.entityName);
+                    if (entity) {
+                        var prop = entity.getProperty(processControlConfiguration.field);
+                        if (!prop)
+                            continueWith(true);
+                        else if (prop.permission === 2) //can create
+                            continueWith(true);
+                        else if ((prop.permission & 2) == 0)
+                            continueWith(true);
+                        else
+                            continueWith(false);
+                    }
+				}, MobileCRM.bridge.alert, [this]);
+			}
+        }
+                
+
+        function isFieldEditable(entityForm) {
+			var detailViews = entityForm.detailViews;
+			var item;
+			if (detailViews) {
+				var nItems = detailViews.length;
+				for (var i = 0; i < nItems; i++) {
+					var dv = detailViews[i];
+					for (var itm of dv.items) {
+						if (itm.name === processControlConfiguration.field) {
+							item = itm;
+							break;
+						}
+					}
+				}
+			}
+			if (item) {
+				return item.isEnabled;
+			}
+			return false;
+		}
+
+        function setMode(isReadonly){
+            readOnly = isReadonly;
+        }
+
         function reportError(error){
             MobileCRM.bridge.alert(error);
         }
 
-        function setUpProcessArrows(jsonConfig){
+        function setUpProcessArrows(jsonConfig){      
             loadColorSettings();
             processControlConfiguration = jsonConfig;
             stepArray = jsonConfig.steps;
@@ -93,33 +144,34 @@
         }
 
         function arrowClicked(elementId){ 
-            var element = document.getElementById(elementId);
-            var stateFromClass = element.className;
-            let val = classNameStepValueDict[elementId];
-            var step = stepArray.find(s => s.value === val);         
-            if(step){
-                var stepIndex = stepArray.indexOf(step); 
-                switch(stateFromClass) {
-                case activeState:                                     
-                    setArrowCssClass(element, completedState);
-                    setPreviousElementsToState(stepIndex, completed);
-                    setNextElementsToState(stepIndex, futureState);
-                    break;
-                case completedState:
-                    setStepOnEntity(elementId);
-                    setArrowCssClass(element, activeState);
-                    setPreviousElementsToState(stepIndex, completedState);
-                    setNextElementsToState(stepIndex, futureState);
-                    break;
-                case futureState:                
-                    setStepOnEntity(elementId);
-                    setArrowCssClass(element, activeState);
-                    setPreviousElementsToState(stepIndex, completedState);
-                    setNextElementsToState(stepIndex, futureState);
-                    break;
-                } 
+            if(!readOnly){
+                var element = document.getElementById(elementId);
+                var stateFromClass = element.className;
+                let val = classNameStepValueDict[elementId];
+                var step = stepArray.find(s => s.value === val);         
+                if(step){
+                    var stepIndex = stepArray.indexOf(step); 
+                    switch(stateFromClass) {
+                    case activeState:                                     
+                        setArrowCssClass(element, completedState);
+                        setPreviousElementsToState(stepIndex, completed);
+                        setNextElementsToState(stepIndex, futureState);
+                        break;
+                    case completedState:
+                        setStepOnEntity(elementId);
+                        setArrowCssClass(element, activeState);
+                        setPreviousElementsToState(stepIndex, completedState);
+                        setNextElementsToState(stepIndex, futureState);
+                        break;
+                    case futureState:                
+                        setStepOnEntity(elementId);
+                        setArrowCssClass(element, activeState);
+                        setPreviousElementsToState(stepIndex, completedState);
+                        setNextElementsToState(stepIndex, futureState);
+                        break;
+                    } 
+                }
             }
-            
         }
 
         function setStepOnEntity(stepValue){
@@ -135,13 +187,14 @@
         function loadCurrentStepFromEntity(){
             MobileCRM.UI.EntityForm.requestObject(
                 function (entityForm) {
+                    checkMode(entityForm, setMode);
                     var stepValue = entityForm.entity.properties[processControlConfiguration.field];
-                    loadStep(stepValue);
+                    loadStep(stepValue);             
                 },
                 function (err) { MobileCRM.bridge.alert(err); }
             );   
         }
-
+   
         function loadStep(stepValue){
             var step = stepArray.find(s => s.value === stepValue + "");
             var element = document.getElementById(stepValueClassNameDict[stepValue]);            
