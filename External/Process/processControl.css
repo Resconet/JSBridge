@@ -1,16 +1,43 @@
 body {
   overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.stepScrollableContrainer {
+  overflow-x: auto;
+}
+
+.descriptionContainer {
+  font-size: 14px;
+}
+
+.stepProperties {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.completeButton {
+  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+  display: inline-flex;
+  height: auto;
+  width: auto;
+  font-size: 14px;
+  background-color: white;
+  border: 2px solid dodgerblue;
+  color: dodgerblue;
+  transition: all 0.2s linear 0s;
 }
 
 .steps {
   padding-left: 0;
   list-style: none;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 12px;
   line-height: 1;
-  margin: 30px auto;
   text-overflow: ellipsis;
-  display: inline-block;
+  display: inline-flex;
+  width: max-content;
 }
 
 .steps strong {
@@ -26,7 +53,7 @@ body {
   position: relative;
   display: block;
   border-radius: 5px;
-  padding: 12px 50px 8px 50px;
+  padding: 12px 40px 8px 40px;
   min-width: 10px;
   height: 40px;
   margin-bottom: 5px;
@@ -65,6 +92,10 @@ body {
   transform: scale(0.707) rotate(45deg);
 }
 
+.steps li:last-child > span:after {
+  display: none;
+}
+
 .steps li.completed > span:after {
   background: #90EE90;
 }
@@ -93,31 +124,32 @@ body {
   border-left-color: transparent;
 }
 
-@media screen and (max-width: 601px) {
+/*@media screen and (max-width: 601px) {
   .steps {
-    font-size: 0;
-    margin: 30px auto;
-    border-radius: 2px;
+      font-size: 0;
+      margin: 30px auto;
+      border-radius: 2px;      
   }
 
   .steps strong {
-    font-size: 12px;
+      font-size: 12px;
   }
 
-  .steps > li {
-    height: 20px;
-    padding: 6px 25px 4px 25px;
-    min-width: 5px;
-    margin-bottom: 5px;
+  .steps>li {
+      height: 20px;
+      padding: 6px 25px 4px 25px; 
+      min-width: 5px;
+      margin-bottom: 5px;
   }
 
-  .steps li > span:after {
+  .steps li > span:after{
     top: 0;
     right: -13px;
     z-index: 1;
     width: 30px;
     height: 30px;
   }
-}
+
+}*/
 
 /*# sourceMappingURL=processControl.css.map */

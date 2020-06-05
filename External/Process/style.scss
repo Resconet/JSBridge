@@ -1,0 +1,137 @@
+$base-color: #87CEFA;
+$finished-color: #90EE90;
+$future-color: white;
+
+body{
+  overflow: hidden;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.stepScrollableContrainer{
+  overflow-x: auto;
+}
+
+.descriptionContainer{
+  font-size: 14px;
+}
+
+.stepProperties{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.completeButton{
+  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+  display: inline-flex;
+  height: auto;
+  width: auto;
+  font-size: 14px;
+  background-color: white;
+  border: 2px solid dodgerblue;
+  color: dodgerblue;
+  transition: all 0.2s linear 0s;
+}
+
+.steps {
+    padding-left: 0;
+    list-style: none;
+    font-size: 12px;
+    line-height: 1;
+    //margin: 30px auto;
+    text-overflow: ellipsis; 
+    display: inline-flex;
+    width: max-content;
+  } 
+  
+  .steps strong {
+    font-size: 14px;
+    display: block;
+    line-height: 1.4;
+  }
+  
+  /*.steps>li:hover {
+    opacity: 50%;
+  }*/
+
+  .steps>li {
+    position: relative;
+    display: block;
+    border-radius: 5px;
+    padding: 12px 40px 8px 40px; 
+    min-width: 10px;
+    height: 40px;
+    margin-bottom: 5px;
+  }
+
+  .steps>li { float: left; }
+    .steps .completed { color: green; background: $finished-color; }
+    .steps .future { color: black; background: $future-color; }
+    .steps .active { color: DodgerBlue ; background: $base-color; }
+  
+    .steps li > span:after {
+      content: "";
+      display: block;
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      top: 0;
+      right: -28px;
+      border: solid white;
+      border-width: 1px 1px 0px 0px;
+      z-index: 2;
+      transform: scale(0.707) rotate(45deg);
+    }
+
+    .steps li:last-child > span:after {display: none;}
+  
+    .steps li.completed  > span:after { background: $finished-color; }
+    .steps li.future > span:after { background: $future-color; }
+    .steps li.active > span:after { background: $base-color; }
+  
+    .steps li:first-child i,
+    .steps li:last-child i {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: solid transparent;
+        border-width: 30px;
+    }
+  
+    .steps li:last-child i {
+        left: auto;
+        right: -30px;
+        border-left-color: transparent;
+    }
+  
+  /*@media screen and (max-width: 601px) {
+    .steps {
+        font-size: 0;
+        margin: 30px auto;
+        border-radius: 2px;      
+    }
+
+    .steps strong {
+        font-size: 12px;
+    }
+
+    .steps>li {
+        height: 20px;
+        padding: 6px 25px 4px 25px; 
+        min-width: 5px;
+        margin-bottom: 5px;
+    }
+
+    .steps li > span:after{
+      top: 0;
+      right: -13px;
+      z-index: 1;
+      width: 30px;
+      height: 30px;
+    }
+  
+  }*/
+  
+
