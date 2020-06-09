@@ -19,10 +19,15 @@
         var stepValueClassNameDict = {};
         var selectedView = "General";
         var readOnly = false;
+        var selectedStepElement;
+        var descElement;
 
         function init(){
             var urlParams = new URLSearchParams(window.location.search);
-            var processControlName = urlParams.get('name');
+            var processControlName = urlParams.get("name");
+            descElement = document.getElementById("descriptionContainer");
+            var btn = document.getElementById('completeBtn');
+            btn.innerHTML = MobileCRM.Localization.getTextOrDefault("Process.Button", "Mark as Current Stage");
             MobileCRM.bridge.command("getProcessControlConfiguration", processControlName, setUpProcessArrows, reportError, null);       
             initOnChangeHandlers();
         }
@@ -114,20 +119,20 @@
             var stepContainer = document.getElementById("stepContainer");
             for(var field of jsonConfig.steps){
                 let desc = field.description !== "undefined" ? field.description : "";
-                stepContainer.appendChild(htmlToElements(createArrow2(field.label, field.value, desc)))
+                stepContainer.appendChild(htmlToElements(createArrow2(field.label, field.value, desc, stepArray.indexOf(field) + 1)))
             }
             loadCurrentStepFromEntity();
         }   
 
-        function createArrow2(name, value, description){
+        function createArrow2(name, value, description, index){
             var sanitizedVal = makeSafeForCSS(value);
             classNameStepValueDict[sanitizedVal] = value;
             stepValueClassNameDict[value] = sanitizedVal;
-            var arrowHtml = "<li id="+ sanitizedVal +" class=\"future\" onclick=\"arrowClicked(this.id)\">" +
-            "<span>" +
-            "<strong>" + name + "</strong>" +
-            description +
-            "</span><i></i>" +
+            var arrowHtml = "<li id="+ value +" class=\"future\" onclick=\"arrowClicked(this.id)\">" +
+            "<i class=\"steps__index\">"+ index +"</i>"+
+            "<span class=\"steps__text\">" +
+            name
+            "</span>" +
             "</li>";
             return arrowHtml;
         }
@@ -144,8 +149,61 @@
         }
 
         function arrowClicked(elementId){ 
-            if(!readOnly){
-                var element = document.getElementById(elementId);
+            var element = document.getElementById(elementId);
+            setSelectedArrowState(element);
+        }
+
+        function buttonClicked(){
+            if(selectedStepElement){
+                setArrowActive(selectedStepElement);
+            }
+        }
+
+        function setSelectedArrowState(element){
+            element.scrollIntoView(true);
+            var oldSelectedElement = selectedStepElement;           
+            if(selectedStepElement){
+                // Deselect
+                selectedStepElement.classList.remove("selected");
+                selectedStepElement = null    
+                var btnElement = document.getElementById("completeBtn");
+                btnElement.className += " disabled";   
+                descElement.innerHTML = "";   
+            }
+            if(element !== oldSelectedElement){
+                // Select
+                element.className += " selected";
+                selectedStepElement = element;
+                var btnElement = document.getElementById("completeBtn");
+                btnElement.classList.remove("disabled");
+                btnElement.className += " active";
+                let val = classNameStepValueDict[element.id];
+                var step = stepArray.find(s => s.value === val);
+                var stepDesc = (step.description === "undefined" ? "": step.description);
+                descElement.innerHTML = stepDesc;              
+            }                    
+        }
+
+        function setArrowActive(element){
+            if(!readOnly){           
+                var elementId = element.id;   
+                var stateFromClass = element.className;
+                let val = classNameStepValueDict[elementId];
+                var step = stepArray.find(s => s.value === val);         
+                if(step){
+                    var stepIndex = stepArray.indexOf(step); 
+                    setStepOnEntity(elementId);
+                    setArrowCssClass(element, activeState);
+                    setPreviousElementsToState(stepIndex, completedState);
+                    setNextElementsToState(stepIndex, futureState);
+                }
+            }
+        }
+
+
+        function setArrowState(element){
+            if(!readOnly){           
+                var elementId = element.id;   
                 var stateFromClass = element.className;
                 let val = classNameStepValueDict[elementId];
                 var step = stepArray.find(s => s.value === val);         
@@ -196,14 +254,19 @@
         }
    
         function loadStep(stepValue){
-            var step = stepArray.find(s => s.value === stepValue + "");
-            var element = document.getElementById(stepValueClassNameDict[stepValue]);            
-            if(element){
-                var stepIndex = stepArray.indexOf(step); 
-                setArrowCssClass(element, activeState);
-                setPreviousElementsToState(stepIndex, completedState);
-                setNextElementsToState(stepIndex, futureState);
-            }             
+            if(!stepValue){
+                setNextElementsToState(-1, futureState);
+            }
+            else{
+                var step = stepArray.find(s => s.value === stepValue + "");
+                var element = document.getElementById(stepValueClassNameDict[stepValue]);            
+                if(element){
+                    var stepIndex = stepArray.indexOf(step); 
+                    setArrowCssClass(element, activeState);
+                    setPreviousElementsToState(stepIndex, completedState);
+                    setNextElementsToState(stepIndex, futureState);
+                }      
+            }       
         }
 
         function loadColorSettings(){
@@ -231,7 +294,8 @@
         }
 
         function setArrowCssClass(element, state){
-            element.className = state;            
+            element.scrollIntoView(true);
+            element.className = state;                
         }
 
         function makeSafeForCSS(name) {
@@ -243,8 +307,13 @@
             });
         }
     </script>
-    </div>
     <div class="stepScrollableContrainer">
+        <!--div class="scroll-arrow scroll-arrow--left"></div-->
         <ul id="stepContainer" class="steps"></ul>
+        <!--div class="scroll-arrow scroll-arrow--right"></div-->
     </div>   
+    <div class="stepProperties">
+        <div id="descriptionContainer" class="stepProperties__description"></div>
+        <button id="completeBtn" class="stepProperties__select-button disabled" onclick="buttonClicked()"></button>
+    </div>
 </body>
