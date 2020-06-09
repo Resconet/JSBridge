@@ -115,14 +115,25 @@
         function setUpProcessArrows(jsonConfig){      
             loadColorSettings();
             processControlConfiguration = jsonConfig;
-            stepArray = jsonConfig.steps;
+            urlDecodeStepDescriptions();
+            stepArray = processControlConfiguration.steps;
             var stepContainer = document.getElementById("stepContainer");
-            for(var field of jsonConfig.steps){
+            for(var field of processControlConfiguration.steps){
                 let desc = field.description !== "undefined" ? field.description : "";
                 stepContainer.appendChild(htmlToElements(createArrow2(field.label, field.value, desc, stepArray.indexOf(field) + 1)))
             }
             loadCurrentStepFromEntity();
         }   
+
+        function urlDecodeStepDescriptions(){
+            for(var s of processControlConfiguration.steps){
+                if(s.description){
+                    s.description = decodeURIComponent(s.description);                 
+                    //decodeURIComponent(s.longDescription);
+                    //decodeURIComponent(s.descriptionUrl);
+                }
+            }      
+        }
 
         function createArrow2(name, value, description, index){
             var sanitizedVal = makeSafeForCSS(value);
