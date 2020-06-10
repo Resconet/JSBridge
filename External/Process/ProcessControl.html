@@ -126,8 +126,10 @@
         }   
 
         function urlDecodeStepDescriptions(){
-            for(var s of processControlConfiguration.steps){
-                if(s.description){
+            for(var s of processControlConfiguration.steps){                
+                s.value = decodeURIComponent(s.value);
+                s.label = decodeURIComponent(s.label);
+                if(s.description){            
                     s.description = decodeURIComponent(s.description);                 
                     //decodeURIComponent(s.longDescription);
                     //decodeURIComponent(s.descriptionUrl);
@@ -171,7 +173,7 @@
         }
 
         function setSelectedArrowState(element){
-            element.scrollIntoView(true);
+            element.scrollIntoView(true);    
             var oldSelectedElement = selectedStepElement;           
             if(selectedStepElement){
                 // Deselect
@@ -185,9 +187,11 @@
                 // Select
                 element.className += " selected";
                 selectedStepElement = element;
-                var btnElement = document.getElementById("completeBtn");
-                btnElement.classList.remove("disabled");
-                btnElement.className += " active";
+                if(!readOnly){ // Disable complete button in readonly mode
+                    var btnElement = document.getElementById("completeBtn");
+                    btnElement.classList.remove("disabled");
+                    btnElement.className += " active";
+                }
                 let val = classNameStepValueDict[element.id];
                 var step = stepArray.find(s => s.value === val);
                 var stepDesc = (step.description === "undefined" ? "": step.description);
@@ -204,7 +208,7 @@
                 if(step){
                     var stepIndex = stepArray.indexOf(step); 
                     setStepOnEntity(elementId);
-                    setArrowCssClass(element, activeState);
+                    setArrowCssClass(element, activeState, true);
                     setPreviousElementsToState(stepIndex, completedState);
                     setNextElementsToState(stepIndex, futureState);
                 }
@@ -304,8 +308,9 @@
             }
         }
 
-        function setArrowCssClass(element, state){
-            element.scrollIntoView(true);
+        function setArrowCssClass(element, state, scroll = false){
+            if(scroll)
+                element.scrollIntoView(true);
             element.className = state;                
         }
 
