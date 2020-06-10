@@ -31,163 +31,180 @@
 		var handleOnChange = true;
 		// Whether to update the entity property when the content of the html editor is changed.
 		var updateEntityOnChange = true;
-		class EntityFormFoRichText {
-			constructor(editorMode) {
+		var EntityFormFoRichText = /** @class */ (function () {
+			EntityFormFoRichText = function (editorMode) {
 				var url = this.getUrlParams();
 				this._field = url['field'];
 				this._editorMode = editorMode;
 			}
-			CheckMode(entityForm, continueWith) {
-				if (!entityForm.canEdit) {
-					continueWith(true);
-				}
-				else if (!this.isFieldEditable(entityForm)) {
-					continueWith(true);
-				}
-				else {
-					MobileCRM.Metadata.requestObject(metaData => {
-						var entity = metaData.getEntity(entityForm.entity.entityName);
-						if (entity) {
-							var prop = entity.getProperty(this._field);
-							if (!prop)
-								continueWith(true);
-							else if (prop.permission === 2) //can create
-								continueWith(false);
-							else if ((prop.permission & 2) == 0)
-								continueWith(true);
-							else
-								continueWith(false);
-						}
-					}, MobileCRM.bridge.alert, [this]);
-				}
+
+			return EntityFormFoRichText;
+		}());
+
+
+		/****************************************
+		 * EntityFormRichText Prototypes methods
+		 * **************************************/
+
+		EntityFormFoRichText.prototype.CheckMode = function (entityForm, continueWith, scope) {
+			if (!entityForm.canEdit) {
+				continueWith.call(scope, true);
 			}
-			initialize() {
-				if (!this._field) {
-					MobileCRM.bridge.alert("Parsed RichTextEditor field is undefined");
-					return;
-				}
-				MobileCRM.UI.EntityForm.requestObject(entityF => {
-					this.CheckMode(entityF, (isReadOnly) => {
-						if (isReadOnly)
-							loadEditor(editorMode.readOnly, (editor) => {
-								editor.setMode('readonly');
-								this.onEditorLoaded(entityF, editor);
-							});
-						else {
-							loadEditor(this._editorMode, (editor) => {
-								this.onEditorLoaded(entityF, editor);
-							});
-						}
-					});
-				}, MobileCRM.bridge.alert, null);
+			else if (!this.isFieldEditable(entityForm)) {
+				continueWith.call(scope, true);
 			}
-			onEditorLoaded(entityForm, editor) {
-				if (!editor)
-					MobileCRM.bridge.alert("Editor is undefined");
-				else {
-					this._editor = editor;
-					//this._editor.getBody().firstChild.scrollIntoView();
-					this._editor.off('Change'); // Disable change event
-					var text = entityForm.entity.properties[this._field];
-					this._editor.setContent(text || "");
-					this.registerOnSave();
-					if (handleOnChange) {
-						this._editor.on('Change', this.onEditorChanged.bind(this));
-						this.registerOnChangeHandlers();
+			else {
+				MobileCRM.Metadata.requestObject(function (metaData) {
+					var entity = metaData.getEntity(entityForm.entity.entityName);
+					if (entity) {
+						var prop = entity.getProperty(this._field);
+						if (!prop)
+							continueWith.call(scope, true);
+						else if (prop.permission === 2) //can create
+							continueWith.call(scope, false);
+						else if ((prop.permission & 2) == 0)
+							continueWith.call(scope, true);
+						else
+							continueWith.call(scope, false);
 					}
-				}
-			}
-			isFieldEditable(entityForm) {
-				var detailViews = entityForm.detailViews;
-				var item;
-				if (detailViews) {
-					var nItems = detailViews.length;
-					for (var i = 0; i < nItems; i++) {
-						var dv = detailViews[i];
-						for (var itm of dv.items) {
-							if (itm.name === this._field) {
-								item = itm;
-								break;
-							}
-						}
-					}
-				}
-				if (item) {
-					return item.isEnabled;
-				}
-				return false;
-			}
-			registerOnSave() {
-				MobileCRM.UI.EntityForm.onSave(this.saveEditorContent, true, this);
-			}
-			onEditorChanged(obj) {
-				MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [true]);
-				if (obj instanceof MobileCRM.UI.EntityForm) {
-					var eVal = obj.entity.properties[this._field];
-					if (this._editor.getContent() !== eVal)
-						this._editor.setContent(eVal);
-				}
-				else if (updateEntityOnChange)
-					MobileCRM.UI.EntityForm.requestObject(this.saveEditorContent, MobileCRM.bridge.alert, this);
-
-			}
-			registerOnChangeHandlers() {
-				// If available, use the 11.2 itemChange event.
-				if (MobileCRM.UI.EntityForm.onItemChange) {
-					MobileCRM.UI.EntityForm.onItemChange(this._field, function (entityForm) {
-						this.onChangeHandler(entityForm);
-					}, true, this);
-				}
-				else {
-					MobileCRM.UI.EntityForm.onChange(function (entityForm) {
-						var context = entityForm.context;
-						if (context.changedItem === this._field) {
-							this.onChangeHandler(entityForm);
-						}
-					}, true, this);
-				}
-			}
-			onChangeHandler(entityForm) {
-				var mode = null;
-				if (!this.isFieldEditable(entityForm) || !entityForm.canEdit)
-					mode = editorMode.readOnly;
-
-				if ((this._editorMode !== editorMode.readOnly) && mode === editorMode.readOnly) {
-					tinymce.remove();
-					loadEditor(editorMode.readOnly, function (editor) {
-						editor.setMode('readonly');
-						this._editor = editor;
-						this.onEditorChanged(entityForm);
-					}, this);
-				}
-				else if ((this._editorMode === editorMode.readOnly) && mode !== editorMode.readOnly) {
-					tinymce.remove();
-					loadEditor(editorMode.simpleMode, function (editor) {
-						this._editor = editor;
-						this.onEditorChanged(entityForm);
-					}, this);
-				}
-				else
-					this.onEditorChanged(entityForm);
-			}
-			saveEditorContent(entityForm) {
-				var eVal = this._editor.getContent();
-
-				var entity = entityForm.entity;
-				if (eVal !== entity.properties[this._field]) {
-					entity.properties[this._field] = this._editor.getContent();
-					return true;
-				}
-			}
-			getUrlParams() {
-				var match, pl = /\+/g, // Regex for replacing addition symbol with a space
-					search = /([^&=]+)=?([^&]*)/g, decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); }, query = window.location.search.substring(1);
-				var urlParams = {};
-				while (match = search.exec(query))
-					urlParams[decode(match[1])] = decode(match[2]);
-				return urlParams;
+				}, MobileCRM.bridge.alert, this);
 			}
 		}
+		EntityFormFoRichText.prototype.initialize = function () {
+			if (!this._field) {
+				MobileCRM.bridge.alert("Parsed RichTextEditor field is undefined");
+				return;
+			}
+			MobileCRM.UI.EntityForm.requestObject(function (entityF) {
+				this.CheckMode(entityF, function (isReadOnly) {
+					if (isReadOnly)
+						loadEditor(editorMode.readOnly, function (editor) {
+							editor.setMode('readonly');
+							this.onEditorLoaded(entityF, editor);
+						}, this);
+					else {
+						loadEditor(this._editorMode, function (editor) {
+							this.onEditorLoaded(entityF, editor);
+						}, this);
+					}
+				}, this);
+			}, MobileCRM.bridge.alert, this);
+		}
+		EntityFormFoRichText.prototype.onEditorLoaded = function (entityForm, editor) {
+			if (!editor)
+				MobileCRM.bridge.alert("Editor is undefined");
+			else {
+				this._editor = editor;
+				//this._editor.getBody().firstChild.scrollIntoView();
+				this._editor.off('Change'); // Disable change event
+				var text = entityForm.entity.properties[this._field];
+				this._editor.setContent(text || "");
+				this.registerOnSave();
+				if (handleOnChange) {
+					this._editor.on('Change', this.onEditorChanged.bind(this));
+					this.registerOnChangeHandlers();
+				}
+			}
+		}
+
+		EntityFormFoRichText.prototype.onEditorChanged = function (obj) {
+			MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [true]);
+			if (obj instanceof MobileCRM.UI.EntityForm) {
+				var eVal = obj.entity.properties[this._field];
+				if (this._editor.getContent() !== eVal)
+					this._editor.setContent(eVal);
+			}
+			else if (updateEntityOnChange)
+				MobileCRM.UI.EntityForm.requestObject(this.saveEditorContent, MobileCRM.bridge.alert, this);
+
+		}
+		EntityFormFoRichText.prototype.registerOnSave = function () {
+			MobileCRM.UI.EntityForm.onSave(this.saveEditorContent, true, this);
+		}
+		EntityFormFoRichText.prototype.isFieldEditable = function (entityForm) {
+			var detailViews = entityForm.detailViews;
+			var item;
+			if (detailViews) {
+				var nItems = detailViews.length;
+				for (var i = 0; i < nItems; i++) {
+					var dv = detailViews[i];
+					for (var itm in dv.items) {
+						var tmpItem = dv.items[itm];
+						if (tmpItem.name === this._field) {
+							item = tmpItem;
+							break;
+						}
+					}
+				}
+			}
+			if (item) {
+				return item.isEnabled;
+			}
+			return false;
+		}
+
+		EntityFormFoRichText.prototype.saveEditorContent = function (entityForm) {
+			var eVal = this._editor.getContent();
+
+			var entity = entityForm.entity;
+			if (eVal !== entity.properties[this._field]) {
+				entity.properties[this._field] = this._editor.getContent();
+				return true;
+			}
+		}
+
+		EntityFormFoRichText.prototype.registerOnChangeHandlers = function () {
+			// If available, use the 11.2 itemChange event.
+			if (MobileCRM.UI.EntityForm.onItemChange) {
+				MobileCRM.UI.EntityForm.onItemChange(this._field, function (entityForm) {
+					this.onChangeHandler(entityForm);
+				}, true, this);
+			}
+			else {
+				MobileCRM.UI.EntityForm.onChange(function (entityForm) {
+					var context = entityForm.context;
+					if (context.changedItem === this._field) {
+						this.onChangeHandler(entityForm);
+					}
+				}, true, this);
+			}
+		}
+
+		EntityFormFoRichText.prototype.onChangeHandler = function (entityForm) {
+			var mode = null;
+			if (!this.isFieldEditable(entityForm) || !entityForm.canEdit)
+				mode = editorMode.readOnly;
+
+			if ((this._editorMode !== editorMode.readOnly) && mode === editorMode.readOnly) {
+				tinymce.remove();
+				loadEditor(editorMode.readOnly, function (editor) {
+					editor.setMode('readonly');
+					this._editor = editor;
+					this.onEditorChanged(entityForm);
+				}, this);
+			}
+			else if ((this._editorMode === editorMode.readOnly) && mode !== editorMode.readOnly) {
+				tinymce.remove();
+				loadEditor(editorMode.simpleMode, function (editor) {
+					this._editor = editor;
+					this.onEditorChanged(entityForm);
+				}, this);
+			}
+			else
+				this.onEditorChanged(entityForm);
+		}
+
+		EntityFormFoRichText.prototype.getUrlParams = function () {
+			var match, pl = /\+/g, // Regex for replacing addition symbol with a space
+				search = /([^&=]+)=?([^&]*)/g, decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); }, query = window.location.search.substring(1);
+			var urlParams = {};
+			while (match = search.exec(query))
+				urlParams[decode(match[1])] = decode(match[2]);
+			return urlParams;
+		}
+
+
+
 		function loadEditor(editMode, continueWith, scope) {
 			if (editMode === editorMode.readOnly) {
 				tinymce.init({
