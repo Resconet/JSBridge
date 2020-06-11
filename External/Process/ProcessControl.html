@@ -171,7 +171,10 @@
         }
 
         function buttonClicked(){
-            if(selectedStepElement){
+            if(selectedStepElement && isActive(selectedStepElement)){
+                setArrowCompleted(selectedStepElement);
+            }
+            else if(selectedStepElement){
                 setArrowActive(selectedStepElement);
             }
         }
@@ -191,22 +194,30 @@
                 // Select
                 element.className += " selected";
                 selectedStepElement = element;
-                if(!readOnly){ // Disable complete button in readonly mode
-                    var btnElement = document.getElementById("completeBtn");
-                    btnElement.classList.remove("disabled");
-                    btnElement.className += " active";
-                    if(selectedStepElement.classList.contains(activeState)){
-                        btnElement.innerHTML = buttonCompleteLabel;                    
-                    }
-                    else{
-                        btnElement.innerHTML = buttonCurrentLabel;
-                    }
-                }
+                updateCompleteButton(selectedStepElement);
                 let val = classNameStepValueDict[element.id];
                 var step = stepArray.find(s => s.value === val);
                 var stepDesc = (step.description === "undefined" ? "": step.description);
                 descElement.innerHTML = stepDesc;              
             }                    
+        }
+
+        function updateCompleteButton(selectedStepElement){
+            if(!readOnly){ // Disable complete button in readonly mode
+                var btnElement = document.getElementById("completeBtn");
+                btnElement.classList.remove("disabled");
+                btnElement.className += " active";
+                if(isActive(selectedStepElement)){
+                    btnElement.innerHTML = buttonCompleteLabel;                    
+                }
+                else{
+                    btnElement.innerHTML = buttonCurrentLabel;
+                }
+            }
+        }
+
+        function isActive(element){
+            return element.classList.contains(activeState);
         }
 
         function setArrowActive(element){
@@ -225,6 +236,28 @@
             }
         }
 
+        function setArrowCompleted(element){
+            if(!readOnly){           
+                var elementId = element.id;   
+                var stateFromClass = element.className;
+                let val = classNameStepValueDict[elementId];
+                var step = stepArray.find(s => s.value === val);         
+                if(step){
+                    var stepIndex = stepArray.indexOf(step); 
+                    setArrowCssClass(element, completedState);               
+                    setPreviousElementsToState(stepIndex, completedState);
+                    setNextElementsToState(stepIndex, futureState);
+                    if(stepArray.length > stepIndex + 1){
+                        var nextElement = document.getElementById(stepValueClassNameDict[stepArray[stepIndex + 1].value]);
+                        setArrowActive(nextElement);
+                    }
+                    else{
+                        element.className += " selected";
+                        updateCompleteButton(element);
+                    }
+                }
+            }
+        }
 
         function setArrowState(element){
             if(!readOnly){           
