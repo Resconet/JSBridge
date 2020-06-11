@@ -21,13 +21,17 @@
         var readOnly = false;
         var selectedStepElement;
         var descElement;
+        var buttonCurrentLabel;
+        var buttonCompleteLabel;
 
         function init(){
             var urlParams = new URLSearchParams(window.location.search);
             var processControlName = urlParams.get("name");
             descElement = document.getElementById("descriptionContainer");
             var btn = document.getElementById('completeBtn');
-            btn.innerHTML = MobileCRM.Localization.getTextOrDefault("Process.Button", "Mark as Current Stage");
+            buttonCurrentLabel = MobileCRM.Localization.getTextOrDefault("Process.Button.Current", "Mark as Current Stage");
+            buttonCompleteLabel = MobileCRM.Localization.getTextOrDefault("Process.Button.Completed", "Mark as Completed");
+            btn.innerHTML = buttonCurrentLabel;
             MobileCRM.bridge.command("getProcessControlConfiguration", processControlName, setUpProcessArrows, reportError, null);       
             initOnChangeHandlers();
         }
@@ -44,7 +48,7 @@
                         var stepItem = null;
 			            stepItem = detailView.getItemByName(changedItem);
                         if(stepItem != null)
-                            loadStep(stepItem.value);
+                            loadStep(stepItem.value);                      
                     }
                 }
             },
@@ -191,6 +195,12 @@
                     var btnElement = document.getElementById("completeBtn");
                     btnElement.classList.remove("disabled");
                     btnElement.className += " active";
+                    if(selectedStepElement.classList.contains(activeState)){
+                        btnElement.innerHTML = buttonCompleteLabel;                    
+                    }
+                    else{
+                        btnElement.innerHTML = buttonCurrentLabel;
+                    }
                 }
                 let val = classNameStepValueDict[element.id];
                 var step = stepArray.find(s => s.value === val);
@@ -275,11 +285,12 @@
             else{
                 var step = stepArray.find(s => s.value === stepValue + "");
                 var element = document.getElementById(stepValueClassNameDict[stepValue]);            
-                if(element){
+                if(element){            
                     var stepIndex = stepArray.indexOf(step); 
                     setArrowCssClass(element, activeState);
                     setPreviousElementsToState(stepIndex, completedState);
                     setNextElementsToState(stepIndex, futureState);
+                    setSelectedArrowState(element);
                 }      
             }       
         }

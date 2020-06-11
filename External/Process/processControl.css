@@ -150,7 +150,7 @@ body {
 }
 
 .steps .completed {
-  background: #57B94F;
+  background: #57b94f;
   color: #FFF;
 }
 .steps .completed > .steps__index {
@@ -159,20 +159,29 @@ body {
   background-size: 12px;
   font-size: 0;
 }
+.steps .completed.selected {
+  background: #8bcf86;
+}
 
 .steps .future {
-  background: #FFF;
+  background: white;
 }
 .steps .future > .steps__index {
   background-color: #EBEBEB;
 }
+.steps .future.selected {
+  background: #d9d9d9;
+}
 
 .steps .active {
-  background: #0064CC;
+  background: #0064cc;
   color: #FFF;
 }
 .steps .active > .steps__index {
   background-color: #237DEA;
+}
+.steps .active.selected {
+  background: #1a8aff;
 }
 
 .steps li > span:after {
@@ -194,15 +203,27 @@ body {
 }
 
 .steps li.completed > span:after {
-  background: #57B94F;
+  background: #57b94f;
 }
 
 .steps li.future > span:after {
-  background: #FFF;
+  background: white;
 }
 
 .steps li.active > span:after {
-  background: #0064CC;
+  background: #0064cc;
+}
+
+.steps li.completed.selected > span:after {
+  background: #8bcf86;
+}
+
+.steps li.future.selected > span:after {
+  background: #d9d9d9;
+}
+
+.steps li.active.selected > span:after {
+  background: #1a8aff;
 }
 
 /*.steps li:first-child i,
@@ -234,7 +255,6 @@ body {
   height: 100%;
   background-color: #717171;
   cursor: pointer;
-  background-image: url("./src/icon-back.svg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 31%;
