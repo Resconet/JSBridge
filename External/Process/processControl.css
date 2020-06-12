@@ -17,6 +17,12 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
 }
+@media only screen and (max-width: 600px) {
+  .stepProperties {
+    flex-direction: column;
+    height: initial;
+  }
+}
 .stepProperties__select-button {
   min-width: 300px;
   height: 100%;

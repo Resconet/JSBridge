@@ -24,6 +24,11 @@ body{
   justify-content: space-between;
   flex-wrap: wrap;
 
+  @media only screen and (max-width: 600px) {
+    flex-direction: column;
+    height: initial;
+  }
+
   &__select-button {
     min-width: 300px;
     height: 100%;
@@ -289,9 +294,9 @@ body{
 }
 
 @media only screen and (min-width: 1010px) {
-.scroll-arrow {
-    display: none;
-}
+  .scroll-arrow {
+      display: none;
+  }
 }
 
 
