@@ -49,6 +49,7 @@ body{
 
     opacity: 1;
     transition: opacity .1s ease;
+    -webkit-transition: opacity .1s ease;
     
     &.disabled {
         pointer-events: none;
@@ -94,6 +95,7 @@ body{
   border: 2px solid dodgerblue;
   color: dodgerblue;
   transition: all 0.2s linear 0s;
+  -webkit-transition: all 0.2s linear 0s;
 }
 
 .steps {
@@ -124,7 +126,8 @@ body{
       background-repeat: no-repeat;
       background-position: center;
 
-      transition: font-size .2s ease, color .2s ease, background-size .2s ease;
+      //transition: font-size .2s ease, color .2s ease, background-size .2s ease;
+      //-webkit-transition: font-size .2s ease, color .2s ease, background-size .2s ease;
   }
   &__text {
       font-size: 12px;
@@ -169,6 +172,7 @@ body{
     margin-bottom: 5px; 
 
     &.selected {
+      //opacity: 0.7;
       & .steps__index {
           font-size: 0;
           color: #FFFFFF00;
@@ -294,9 +298,9 @@ body{
 }
 
 @media only screen and (min-width: 1010px) {
-  .scroll-arrow {
-      display: none;
-  }
+.scroll-arrow {
+    display: none;
+}
 }
 
 
