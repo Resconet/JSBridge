@@ -50,9 +50,8 @@
 			if (!entityForm.canEdit) {
 				continueWith.call(scope, true);
 			}
-			else if (!this.isFieldEditable(entityForm)) {
+			if (this.isFieldEditable(entityForm) === false)
 				continueWith.call(scope, true);
-			}
 			else {
 				MobileCRM.Metadata.requestObject(function (metaData) {
 					var entity = metaData.getEntity(entityForm.entity.entityName);
@@ -66,6 +65,9 @@
 							continueWith.call(scope, true);
 						else
 							continueWith.call(scope, false);
+					}
+					else if (!this.isFieldEditable(entityForm)) {
+						continueWith.call(scope, true);
 					}
 				}, MobileCRM.bridge.alert, this);
 			}
@@ -111,8 +113,9 @@
 			MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [true]);
 			if (obj instanceof MobileCRM.UI.EntityForm) {
 				var eVal = obj.entity.properties[this._field];
-				if (this._editor.getContent() !== eVal)
+				if (this._editor.getContent() !== eVal) {
 					this._editor.setContent(eVal);
+				}
 			}
 			else if (updateEntityOnChange)
 				MobileCRM.UI.EntityForm.requestObject(this.saveEditorContent, MobileCRM.bridge.alert, this);
@@ -140,7 +143,7 @@
 			if (item) {
 				return item.isEnabled;
 			}
-			return false;
+			return null; // item is not avaliable on the form.
 		}
 
 		EntityFormFoRichText.prototype.saveEditorContent = function (entityForm) {
@@ -171,27 +174,36 @@
 		}
 
 		EntityFormFoRichText.prototype.onChangeHandler = function (entityForm) {
-			var mode = null;
+			var mode = 1; // default is editable mode.
 			if (!this.isFieldEditable(entityForm) || !entityForm.canEdit)
 				mode = editorMode.readOnly;
 
 			if ((this._editorMode !== editorMode.readOnly) && mode === editorMode.readOnly) {
-				tinymce.remove();
+				this.removeTinymce();
 				loadEditor(editorMode.readOnly, function (editor) {
 					editor.setMode('readonly');
 					this._editor = editor;
+					this._editorMode = mode;
+					this._editor.on('Change', this.onEditorChanged.bind(this));
 					this.onEditorChanged(entityForm);
 				}, this);
 			}
 			else if ((this._editorMode === editorMode.readOnly) && mode !== editorMode.readOnly) {
-				tinymce.remove();
+				this.removeTinymce();
 				loadEditor(editorMode.simpleMode, function (editor) {
 					this._editor = editor;
+					this._editorMode = mode;
+					this._editor.on('Change', this.onEditorChanged.bind(this));
 					this.onEditorChanged(entityForm);
 				}, this);
 			}
 			else
 				this.onEditorChanged(entityForm);
+		}
+
+		EntityFormFoRichText.prototype.removeTinymce = function () {
+			this._editor.off('Change'); // Disable change event
+			tinymce.remove();
 		}
 
 		EntityFormFoRichText.prototype.getUrlParams = function () {
