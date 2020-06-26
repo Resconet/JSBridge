@@ -145,7 +145,7 @@
             var sanitizedVal = makeSafeForCSS(value);
             classNameStepValueDict[sanitizedVal] = value;
             stepValueClassNameDict[value] = sanitizedVal;
-            var arrowHtml = "<li id="+ value +" class=\"future\" onclick=\"arrowClicked(this.id)\">" +
+            var arrowHtml = "<li id="+ sanitizedVal +" class=\"future\" onclick=\"arrowClicked(this.id)\">" +
             "<i class=\"steps__index\">"+ index +"</i>"+
             "<span class=\"steps__text\">" +
             name
