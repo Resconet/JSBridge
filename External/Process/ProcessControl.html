@@ -190,16 +190,14 @@
                 btnElement.className += " disabled";   
                 descElement.innerHTML = "";   
             }
-            if(element !== oldSelectedElement){
-                // Select
-                element.className += " selected";
-                selectedStepElement = element;
-                updateCompleteButton(selectedStepElement);
-                let val = classNameStepValueDict[element.id];
-                var step = stepArray.find(s => s.value === val);
-                var stepDesc = (step.description === "undefined" ? "": step.description);
-                descElement.innerHTML = stepDesc;              
-            }                    
+            // Select
+            element.className += " selected";
+            selectedStepElement = element;
+            updateCompleteButton(selectedStepElement);
+            let val = classNameStepValueDict[element.id];
+            var step = stepArray.find(s => s.value === val);
+            var stepDesc = (step.description === "undefined" ? "": step.description);
+            descElement.innerHTML = stepDesc;                          
         }
 
         function updateCompleteButton(selectedStepElement){
