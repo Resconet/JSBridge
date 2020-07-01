@@ -1,6 +1,6 @@
 {
   "name": "@resconet/jsbridge",
-  "version": "13.0.0",
+  "version": "13.0.1",
   "description": "Install npm JSBridge module",
   "repository": {
     "type": "git",
