@@ -447,13 +447,13 @@ declare module MobileCRM {
 	}
 
 	class Metadata {
-		public getEntity: (name: string): MobileCRM.MetaEntity;
-		public static requestObject(sucess: (metadata: Metadata) => void, failed?: (err: string) => void, scope?: any);
-		public static getActivities: (): Array<string>;
-		public static getEntityParent: (childEntityName: string): string;
-		public static entityHasChildren: (entityName: string): boolean;
-		public static getOptionSetValues(entityName: string, optionSetName: string, sucess: (optioneSets: any) => void, failed?: (error: string) => void, scope?: any);
-		public static getStringListOptions: (entityName: string, propertyName: string): Array<string>;
+		getEntity(name: string): MobileCRM.MetaEntity;
+		static requestObject(sucess: (metadata: Metadata) => void, failed?: (err: string) => void, scope?: any);
+		static getActivities(): Array<string>;
+		static getEntityParent(childEntityName: string): string;
+		static entityHasChildren(entityName: string): boolean;
+		static getOptionSetValues(entityName: string, optionSetName: string, sucess: (optioneSets: any) => void, failed?: (error: string) => void, scope?: any);
+		static getStringListOptions(entityName: string, propertyName: string): Array<string>;
 	}
 
 	/**
