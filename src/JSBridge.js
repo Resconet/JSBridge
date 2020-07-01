@@ -1,6 +1,6 @@
-// v13.0
+// v13.1
 (function () {
-	var _scriptVersion = 13.0;
+	var _scriptVersion = 13.1;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -558,6 +558,11 @@
 					MobileCRM.UI.QuestionnaireForm.superproto.constructor.apply(this, arguments);
 				},
 
+				EntityChart: function (props) {
+					/// <summary>[13.0] Represents the Javascript equivalent of native entity chart object.</summary>
+					MobileCRM.UI.EntityChart.superproto.constructor.apply(this, arguments);
+				},
+
 				EntityList: function (props) {
 					/// <summary>[v9.2] Represents the Javascript equivalent of native entity list object.</summary>
 					/// <field name="allowAddExisting" type="Boolean">Gets or sets whether adding an existing entity is allowed.</field>
@@ -846,6 +851,40 @@
 						MultiStringList: 19,
 						MultiStringListInput: 20
 					},
+					GridItem: function (name, label, gridStyleDefintion) {
+						/// <summary>[13.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> grid item.</summary>
+						/// <param name="name" type="String">Defines the item name.</param>
+						/// <param name="label" type="String">Defines the item label.</param>
+						/// <param name="gridStyleDefintion" type="MobileCRM.UI.DetailViewItems.GridStyleDefintion">Gets or sets the style definition for grid item.</param>
+						this.items = [];
+						MobileCRM.UI.DetailViewItems.GridItem.superproto.constructor.apply(this, arguments);
+						if (gridStyleDefintion)
+							this._setGrid(gridStyleDefintion.columns, gridStyleDefintion.rows);
+						this._type = "Grid";
+					},
+					GridStyleDefintion: function (columns, rows) {
+						/// <summary>[13.0] Represents the columns and rows style definition for grid item.</summary>
+						/// <param name="columns" type="Array<MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the columns style.</param>
+						/// <param name="rows" type="Array<MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the rows style.</param>
+						this.columns = columns;
+						this.rows = rows;
+					},
+					DetailGridLength: function (value, gridUnitType) {
+						/// <summary>[13.0] Represents the grid length in grid unit type.</summary>
+						/// <param name="value" type="String">Grid length value.</param>
+						/// <param name="gridUnitType" type="MobileCRM.UI.DetailViewItems.DetailGridUnitType">Defines the grid <see cref="MobileCRM.UI.DetailViewItems.DetailGridUnitType"></see> unit type.</param>
+						this._value = value;
+						this._gridUnitType = gridUnitType;
+					},
+					DetailGridUnitType: {
+						/// <summary>[13.0] Gets the grid unit type.</summary>
+						/// <field name="auto" type="enum">Gets automatic unit type.</field>
+						/// <field name="pixel" type="enum">Gets absolute pixel unit type.</field>
+						/// <field name="star" type="enum">Gets relative unit type.</field>
+						auto: 0,
+						pixel: 1,
+						star: 2
+					}
 				},
 
 				MediaTab: function (index, name) {
@@ -889,6 +928,15 @@
 				},
 				AudioRecorder: function () {
 					/// <summary>[v10.0] Represents a service for recording an audio.</summary>
+				},
+				CompanyInformation: function (name, address) {
+					/// <summary>Represents CompanyInformation object.</summary>
+					/// <param name="address" type="String">Company address<param>
+					/// <param name="name" type="String">Company name<param>
+					/// <field name="address" type="String">Company address<field>
+					/// <field name="name" type="String">Company name<field>
+					this.name = name;
+					this.address = address;
 				},
 				AddressBookService: function () {
 					/// <summary>[v9.1] Represents a service for accessing the address book.</summary>
@@ -986,12 +1034,24 @@
 					this.url = "";
 					this.serviceType = "Azure"; // [v12.3] supports only azure service, used as default.
 				}
-	        }
+			}
 	    };
 
 		/************************/
 		// Prototypes & Statics //
 		/************************/
+		MobileCRM.Bridge.prototype._callAsyncMethod = function (cmdId, result) {
+			if (result instanceof Promise) {
+				result.then(function (asyncRes) {
+					MobileCRM.bridge.command(cmdId, typeof (result) == "string" ? asyncRes : JSON.stringify(asyncRes));
+				}).catch(function (err) {
+					MobileCRM.bridge.command(cmdId, "Err:" + err);
+				});
+				return cmdId;
+			}
+			else
+				return typeof (result) == "string" ? result : JSON.stringify(result);
+		}
 		// MobileCRM.UI._MediaTab
 		MobileCRM.UI.MediaTab.prototype._onCommand = function (commandIndex, errorCallback) {
 			/// <summary>Executes the MediaTab command by index.</summary>
@@ -3083,31 +3143,80 @@
 	                return i;
 	        }
 	        return -1;
-	    };
-	    MobileCRM.UI._DetailView.prototype.insertItem = function (item, index) {
-	        /// <summary>[v8.0] Inserts the <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.Item</see> into this detailed view.</summary>
-	        /// <param name="item" type="MobileCRM.UI.DetailViewItems.Item">An item to be added.</param>
-	        /// <param name="index" type="Number">An index on which the item should be placed. Set to -1 to append the item at the end.</param>
-	        var data = {};
-	        for (var prop in item) {
-	            data[prop] = item[prop];
-	        }
-	        data.action = "insert";
-	        data.viewName = this.name;
-	        data.index = (typeof (index) !== "undefined") ? index : -1;
-	        MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
-	    };
-	    MobileCRM.UI._DetailView.prototype.insertItems = function (items, index) {
-	        /// <summary>[v8.0] Inserts the <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.Item</see> into this detailed view.</summary>
-	        /// <param name="items" type="Array(MobileCRM.UI.DetailViewItems.Item)">An array of items to be added.</param>
-	        /// <param name="index" type="Number">An index on which the items should be placed. Set to -1 to append the items at the end.</param>
-	        var data = {};
-	        data.action = "insertMultiple";
-	        data.viewName = this.name;
-	        data.index = (typeof (index) !== "undefined") ? index : -1;
-	        data.items = items;
-	        MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
-	    };
+		};
+		MobileCRM.UI._DetailView.prototype.addItemToGrid = function (gridName, item, column, row, colSpan, rowSpan) {
+			/// <summary>[since 13.1] Add detail item to desired position in to grid.</summary>
+			/// <param name="gridName" type="String"> name of grid item.</param>
+			/// <param name="item" type="MobileCRM.UI.DetailViewItems.Item">Detail item <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.Item</see>object.</param>
+			/// <param name="column" type="Number">Optional Column x axis parameter, default is 0.</param>
+			/// <param name="row" type="Number">Optional Row y axis parameter, default is 0.</param>
+			/// <param name="colSpan" type="Number">Optional Column width x axis width , default is 1.</param>
+			/// <param name="rowSpan type="Number">Optional Row width y axis width, default is 1.</param>
+
+			var grid = this.getItemByName(gridName);
+			if (grid && grid.items) { // simple validation if item exists and is type of grid (only grid has items) | check for instance of is not working.
+				var data = {};
+				item.column = column || 0;
+				item.row = row || 0;
+				item.colSpan = colSpan || 1;
+				item.rowSpan = rowSpan || 1;
+
+				data.action = "addToGrid";
+				data.viewName = this.name;
+				data.index = this.getItemIndex(gridName);
+				data.name = gridName;
+
+				for (var prop in item) {
+					data[prop] = item[prop];
+				}
+
+				MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
+			}
+		};
+		MobileCRM.UI._DetailView.prototype.insertItem = function (item, index) {
+			/// <summary>[v8.0] Inserts the <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.Item</see> into this detailed view.</summary>
+			/// <param name="item" type="MobileCRM.UI.DetailViewItems.Item">An item to be added.</param>
+			/// <param name="index" type="Number">An index on which the item should be placed. Set to -1 to append the item at the end.</param>
+
+			var data = {};
+			data.GridItems = {};
+			for (var prop in item) {
+				if (prop === "items" && item._type === "Grid") {
+					data.GridItems[item.name] = item.items;
+					continue;
+				}
+				data[prop] = item[prop];
+			}
+
+			data.action = "insert";
+			data.viewName = this.name;
+			data.index = typeof (index) !== "undefined" ? index : -1;
+			MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
+		};
+		MobileCRM.UI._DetailView.prototype.insertItems = function (items, index) {
+			/// <summary>[v8.0] Inserts the <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.Item</see> into this detailed view.</summary>
+			/// <param name="items" type="Array(MobileCRM.UI.DetailViewItems.Item)">An array of items to be added.</param>
+			/// <param name="index" type="Number">An index on which the items should be placed. Set to -1 to append the items at the end.</param>
+			var data = {};
+			data.items = [];
+			data.GridItems = {};
+			for (var item in items) {
+				var tmpItem = {};
+				for (var prop in items[item]) {
+					if (prop === "items" && items[item]._type === "Grid") {
+						data.GridItems[items[item].name] = items[item].items;
+						continue;
+					}
+					tmpItem[prop] = items[item][prop];
+				}
+				data.items.push(tmpItem);
+			}
+
+			data.action = "insertMultiple";
+			data.viewName = this.name;
+			data.index = typeof (index) !== "undefined" ? index : -1;
+			MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
+		};
 	    MobileCRM.UI._DetailView.prototype.removeItem = function (index) {
 	        /// <summary>[v8.0] Removes the item from this detailed view.</summary>
 	        /// <param name="index" type="Number">An index of the item which has to be removed.</param>
@@ -3285,7 +3394,39 @@
 	    _inherit(MobileCRM.UI.DetailViewItems.ComboBoxItem, MobileCRM.UI.DetailViewItems.Item);
 		_inherit(MobileCRM.UI.DetailViewItems.LinkItem, MobileCRM.UI.DetailViewItems.Item);
 		_inherit(MobileCRM.UI.DetailViewItems.ButtonItem, MobileCRM.UI.DetailViewItems.Item);
+		_inherit(MobileCRM.UI.DetailViewItems.GridItem, MobileCRM.UI.DetailViewItems.Item);
 
+		// MobileCRM.UI.DetailViewItems.GridItem
+		MobileCRM.UI.DetailViewItems.GridItem.prototype.addItem = function (item, column, row, colSpan, rowSpan) {
+			/// <summary>[since 13.1] Add detail item to desired position in to grid.</summary>
+			/// <param name="item" type="MobileCRM.UI.DetailViewItems.Item">Detail item <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.Item</see>object.</param>
+			/// <param name="column" type="Number">Optional Column x axis parameter, default is 0.</param>
+			/// <param name="row" type="Number">Optional Row y axis parameter, default is 0.</param>
+			/// <param name="colSpan" type="Number">Optional Column width x axis width , default is 1.</param>
+			/// <param name="rowSpan type="Number">Optional Row width y axis width, default is 1.</param>
+
+			item.column = column || 0;
+			item.row = row || 0;
+			item.colSpan = colSpan || 1;
+			item.rowSpan = rowSpan || 1;
+			this.items.push(item);
+		};
+		MobileCRM.UI.DetailViewItems.GridItem.prototype._setGrid = function (columns, rows) {
+			this.columns = [];
+			this.rows = [];
+			for (var cl in columns) {
+				var col = columns[cl];
+				var objC = {};
+				objC[col._value] = col._gridUnitType;
+				this.columns.push(objC);
+			}
+			for (var rw in rows) {
+				var row = rows[rw];
+				var objR = {};
+				objR[row._value] = row._gridUnitType;
+				this.rows.push(objR);
+			}
+		};
 	    // MobileCRM.UI.ViewController
 	    MobileCRM.UI.ViewController.createCommand = function (primary, labels, callback, scope) {
 	        /// <summary>Overrides the form's primary/secondary command button.</summary>
@@ -3790,7 +3931,46 @@
 	            data._inCallback = false;
 	            return result;
 	        }
-	    };
+		};
+
+		// MobileCRM.UI.EntityChart
+		_inherit(MobileCRM.UI.EntityChart, MobileCRM.ObservableObject);
+		MobileCRM.UI.EntityChart.setDataSource = function (dataSource) {
+			/// <summary>Sets the chart data source replacement.</summary>
+			/// <remarks><p>Data source must be set during the document load stage and must not be delayed.</p><p>It is used only if the entity view iFrame is marked as data source provider in Woodford.</p></remarks>
+			/// <param name="dataSource" type="MobileCRM.UI.ChartDataSource">A data source object implementing the EntityChart loading routine.</param>
+			MobileCRM.UI.EntityChart._dataSource = dataSource;
+		};
+		MobileCRM.UI.EntityChart._initDataSource = function (fetch) {
+			var dataSource = MobileCRM.UI.EntityChart._dataSource;
+			if (dataSource) {
+				dataSource.fetch = fetch;
+				if (typeof dataSource.loadCustomFetch != "undefined") {
+					dataSource.loadCustomFetch();
+				}
+				if (dataSource.loadOfflineData != undefined) {
+
+					var oData = dataSource.loadOfflineData;
+					dataSource.type = oData.type;
+					dataSource.data = oData.data;
+					dataSource.isOfflineChart = true;
+				}
+			}
+			return JSON.stringify(dataSource);
+		};
+
+		// MobileCRM.UI.ChartDataSource
+		MobileCRM.UI.ChartDataSource = function () {
+			/// <summary>The data source loading routine implementation.</summary>
+			/// <remarks><p>An instance of this object can be used to supply the data source for <see cref="MobileCRM.UI.EntityChart.setDataSource">MobileCRM.UI.EntityChart.setDataSource</see> function.</p></remarks>
+			/// <field name="type" type="string">Chart type in string</field>
+			/// <field name="data" type="object">Object of chart dataset</field>
+			this.type = null;
+			this.data = null;
+			this.fetch = null;
+			this.isOfflineChart = false;
+			this.loadOfflineData = null;
+		};
 
 	    // MobileCRM.UI.EntityList
 	    _inherit(MobileCRM.UI.EntityList, MobileCRM.ObservableObject);
@@ -3912,7 +4092,7 @@
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callback.</param>
 	        MobileCRM.bridge.invokeMethodAsync("EntityList", "StartListEdit", [rowIndex, cellIndex, MobileCRM.UI.EntityListCellAction.Clickable, null], null, errorCallback, scope);
-	    };
+		};
 
 	    MobileCRM.UI.EntityList.setDataSource = function (dataSource) {
 	        /// <summary>Sets the entity list data source replacement.</summary>
@@ -4065,7 +4245,7 @@
         MobileCRM.UI.TourplanViewMode.Agenda = 0;
         MobileCRM.UI.TourplanViewMode.Day = 1;
         MobileCRM.UI.TourplanViewMode.Week = 2;
-        MobileCRM.UI.TourplanViewMode.Month = 3;
+		MobileCRM.UI.TourplanViewMode.Month = 3;
 
 	    // MobileCRM.UI.ListDataSource
 	    MobileCRM.UI.ListDataSource = function () {
@@ -5112,8 +5292,61 @@
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.command("chatService", JSON.stringify({ method: "subscribe", entityName: regardingEntity.entityName, entityId: regardingEntity.id, primaryName: regardingEntity.primaryName, subscribe: subscribe }), callback, errorCallback, scope);
-	    };
+		};
+		MobileCRM.Services.CompanyInformation.getCompanyInfoFromVat = function (vat, callback, errorCallback, scope) {
+			/// <summary>Return callback with CompanyInformation object with properties name and address</summary>
+			/// <param name="vat" type="string">VAT number of company. e.g. "SK2020232390"</param>
+			/// <param name="callback" type="function(CompanyInformation)">The callback function which is called asynchronously in case of success.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			if (!(typeof vat === "string")) {
+				if (errorCallback)
+					errorCallback('VAT is required and must be type of string.');
+                return;
+            }
+			var content = "<SOAP-ENV:Envelope xmlns:ns1='urn:ec.europa.eu:taxud:vies:services:checkVat:types' xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/'>" +
+				"<SOAP-ENV:Body><ns1:checkVat><ns1:countryCode>" +
+				vat.substring(0, 2) +
+				"</ns1:countryCode><ns1:vatNumber>" +
+				vat.substring(2) +
+				"</ns1:vatNumber></ns1:checkVat></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+			var endpoint = "http://ec.europa.eu/taxation_customs/vies/services/checkVatService";
+			var request = new MobileCRM.Services.HttpWebRequest();
+			request.setBody(content);
+			request.method = "POST";
 
+			request.send(endpoint, function (response) {
+				var textResponse = response.responseText;
+				var codeResponse = response.responseCode;
+				if (codeResponse == 200) {
+
+					var parser = new DOMParser();
+					var xmlDoc = parser.parseFromString(textResponse, "text/xml");
+
+					try {
+						var valid = xmlDoc.getElementsByTagName("valid")[0].childNodes[0].nodeValue;
+
+						if (valid == "true") {
+							var name = xmlDoc.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+							var address = xmlDoc.getElementsByTagName("address")[0].childNodes[0].nodeValue;
+							var companyInfo = new MobileCRM.Services.CompanyInformation(name, address);
+							if (typeof callback === 'function')
+                                callback.call(scope, companyInfo);
+						} else {
+                            if (typeof errorCallback === 'function')
+                                errorCallback("Invalid VAT number.");
+						}
+					}
+                    catch (e) {
+                        if (typeof errorCallback === 'function')
+                            errorCallback("Not valid format of response.");
+                    }
+                } else {
+                    if (typeof errorCallback === 'function')
+                        errorCallback("Connection error.");
+                }
+			});
+		};
 	    MobileCRM.Services.AudioRecorder.startRecording = function (callback, errorCallback, scope) {
 	        /// <summary>[v10.0] Starts recording audio from microphone</summary>
 	        /// <param name="callback" type="function">The callback function which is called asynchronously in case of success.</param>
@@ -5483,7 +5716,7 @@
 					};
 					MobileCRM.bridge = new MobileCRM.Bridge('iOS');
 				}
-				else if (navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad)/)) {
+				else if (navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad|applewebkit)/)) {
 					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
 						var self = MobileCRM.bridge;
 						var cmdId = self._createCmdObject(success, failed, scope);

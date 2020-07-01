@@ -1,5 +1,5 @@
 // JSBridge.js TypeScript definition file
-// v13.0
+// v13.1
 // (c) 2020 Resco
 
 declare module MobileCRM {
@@ -447,13 +447,13 @@ declare module MobileCRM {
 	}
 
 	class Metadata {
+		public getEntity: (name: string): MobileCRM.MetaEntity;
 		public static requestObject(sucess: (metadata: Metadata) => void, failed?: (err: string) => void, scope?: any);
-		public static getEntity: (name: string) => MobileCRM.MetaEntity;
-		public static getActivities: () => Array<string>;
-		public static getEntityParent: (childEntityName: string) => string;
-		public static entityHasChildren: (entityName: string) => boolean;
+		public static getActivities: (): Array<string>;
+		public static getEntityParent: (childEntityName: string): string;
+		public static entityHasChildren: (entityName: string): boolean;
 		public static getOptionSetValues(entityName: string, optionSetName: string, sucess: (optioneSets: any) => void, failed?: (error: string) => void, scope?: any);
-		public static getStringListOptions: (entityName: string, propertyName: string) => Array<string>;
+		public static getStringListOptions: (entityName: string, propertyName: string): Array<string>;
 	}
 
 	/**
@@ -1059,6 +1059,11 @@ declare module MobileCRM.FetchXml {
 	}
 }
 declare module MobileCRM.Services {
+	class CompanyInformation {
+		name: string;
+		address: string;
+		public static getCompanyInfoFromVat(vat: string | number, success: (result: MobileCRM.Services.CompanyInformation) => void, failed?: (err: string) => void, scope?: any);
+	}
     class FileInfo {
         filePath: string;
         url: string;
@@ -1084,7 +1089,17 @@ declare module MobileCRM.Services {
         recordAudio(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         recordVideo(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         pasteFile(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-        resizeImage(filePath: string, maxWidth:number, maxHeight: number, callback: (result: boolean) => void, scope?: any);
+		resizeImage(filePath: string, maxWidth: number, maxHeight: number, callback: (result: boolean) => void, scope?: any);
+		/**
+		 * @since 11.2
+		 * Ask to user to choose a location and saves the passed data as a file at that location.
+		 * @param fileName A file name.
+		 * @param fileData Base64 encoded file data.
+		 * @param success A callback function for asynchronous result. In case of success result argument will be true otherwise false.
+		 * @param failed A callback function for command failure. The error argument will carry the error message.
+		 * @param scope A scope for calling the callbacks. Set to call the callbacks in global scope.
+		 */
+		saveFileDialog(fileName: string, fileData: string, success: (result: boolean) => void, failed?: (err: string) => void, scope?: any)
     }
 	/** Represents the synchronization result.
 	* @property newCustomizationReady {boolean} Indicates whether the new customization is ready.
@@ -1360,6 +1375,17 @@ declare module MobileCRM.UI {
 		 * @param dialogOnly Indicates whether to allow the inline picker. Set "true" to disable the inline picker and always use the modal dialog. Set false to allow the inline picker.
 		 */
 		updateLinkItemViews(index: number, dialogSetup: DetailViewItems.LookupSetup, inlinePickSetup?: DetailViewItems.LookupSetup, dialogOnly?: boolean);
+		/**
+		 * @since 13.1
+		 * Add detail item to desired position in to grid.
+		 * @param gridName name of grid item.
+		 * @param item Detail item @see MobileCRM.UI.DetailViewItems.Item
+		 * @param column Optional Column x axis parameter, default is 0.
+		 * @param row Optional Row y axis parameter, default is 0.
+		 * @param colSpan Optional Column width x axis width , default is 0.
+		 * @param rowSpan Optional Row width y axis width, default is 0.
+		 */
+		addItemToGrid(gridName: string, item: MobileCRM.UI.DetailViewItems.Item, column?: number, row?: number, colSpan?: number, rowSpan?: number);
 	}
 	/**
 	* Represents the Javascript equivalent of native entity form object.
@@ -1615,6 +1641,13 @@ declare module MobileCRM.UI {
 	}
 
 	/**
+	 * Represents the iFrame Javascript datasource chart object.
+	 */
+	class EntityChart {
+		public static setDataSource(dataSource: ChartDataSource);
+	}
+
+	/**
 	 * @since 9.2
 	 * Represents the Javascript equivalent of native entity list object.
 	 */
@@ -1855,6 +1888,30 @@ declare module MobileCRM.UI {
 		public loadNextChunk(page: number, count: number): void;
 
 		public static chunkReady(entities: Array<MobileCRM.DynamicEntity>);
+	}
+
+	/**
+	 * Represents the Javascript dataset of chart object.
+	 */
+
+	class ChartDataSource {
+		public type: string;
+		public data: ChartDataSet;
+		public isOfflineChart: boolean;
+		public fetch: MobileCRM.FetchXml.Fetch;
+		public loadOfflineData(): void;
+		public loadCustomFetch(): void;
+	}
+
+	class ChartDataSet {
+		labels: string[];
+		datasets: Dataset;
+	}
+
+	class Dataset {
+		label: string;
+		data: Array<number>;
+		backgroundColor: string;
 	}
 
 	/**
@@ -2236,9 +2293,10 @@ declare module MobileCRM.UI {
 		allowedViews: string;
 		source: MobileCRM.Relationship;
 		prevSelection: MobileCRM.Reference;
+		preventClose: boolean;
 		allowNull: boolean;
 
-		addView(entityName: string, viewName: string, isDefault: boolean);
+		addView(entityName: string, viewName: string, isDefault?: boolean);
 		addEntityFilter(entityName: string, filterXML: string);
 		show(success: (obj?: MobileCRM.Reference) => void, failed?: (err: string) => void, scope?: any);
 		showAsync(): Promise<Reference>;
@@ -2462,7 +2520,7 @@ declare module MobileCRM.UI {
 
 		static showModal(caption: string, url: string, options?: any);
 		static show(caption: string, url: string, maximized: boolean, options?: any);
-		static requestObject(success: (form: IFrameForm) => boolean, failed?: (err: string) => void, scope?: any);
+		static requestObject(success: (form: IFrameForm) => void, failed?: (err: string) => void, scope?: any);
 		static setDirty(dirty: boolean);
 		static preventClose(message: string);
 		static onSave(handler: (form: IFrameForm) => boolean, bind: boolean, scope?: any);
@@ -2556,6 +2614,7 @@ declare module MobileCRM.UI.EntityForm {
 
 declare module MobileCRM.UI.DetailViewItems {
 	abstract class Item {
+		constructor(name?: string, label?: string);
 		name: string;
 		label: string;
 		dataMember: string;
@@ -2599,23 +2658,99 @@ declare module MobileCRM.UI.DetailViewItems {
 		listDataSource: any;
 	}
 	class LinkItem extends Item {
+		/**
+		 * Instance of link detail item.
+		 * @param name Gets or sets the name of item.
+		 * @param label Gets or sets the label of item.
+		 * @param listDropDownFormat Gets or sets the drop down format @see MobileCRM.UI.DetailViewItems.DropDownFormat
+		 */
+		constructor(name: string, label: string, listDropDownFormat?: DropDownFormat);
 		isMultiline: boolean;
 		value: MobileCRM.Reference | string;
 		listDropDownFormat: DropDownFormat;
 	}
 	class ButtonItem extends Item {
+		/**
+		 * Instance of button item.
+		 * @param name Gets or sets the name of item.
+		 * @param text Gets or sets the click text of item.
+		 */
 		constructor(name: string, text: string);
 		/**Gets or sets the click text.*/
 		clickText: string;
 	}
 	class LookupSetup {
+		/**
+		 * Appends an entity view to the list of allowed views.
+		 * @param entityName Entity logical name.
+		 * @param viewName A name of the view.
+		 * @param isDefault true, if the view should be set as default.
+		 */
 		addView(entityName: string, viewName: string, isDefault: boolean);
+		/**
+		 * Defines a fetch XML filter for entity records.
+		 * @param entityName Entity logical name.
+		 * @param filterXml A string defining the fetch XML which has to be applied as filter for entity records.
+		 */
 		addFilter(entityName: string, filterXml: string);
 	}
+	/**Drop down format for link item. */
 	enum DropDownFormat {
+		/**String list format. */
 		StringList = 17,
+		/**String list with input option format.*/
 		StringListInput = 18,
+		/**Multi string list format.*/
 		MultiStringList = 19,
+		/**Multi string list with input format */
 		MultiStringListInput = 20
+	}
+	class GridItem extends MobileCRM.UI.DetailViewItems.Item {
+		/**
+		 * @since 13.1 Represents the detail grid item.
+		 * @param name Defines the item name.
+		 * @param label Defines the item label.
+		 * @param gridStyleDefintion Gets or sets the style definition for grid item.
+		 */
+		constructor(name: string, label: string, gridStyleDefintion: GridStyleDefintion);
+		Items: Item[];
+		count: number;
+		/**
+		 * @since 13.1
+		 * Add detail item to desired position in to grid.
+		 * @param item Detail item @see MobileCRM.UI.DetailViewItems.Item
+		 * @param column Optional Column x axis parameter, default is 0.
+		 * @param row Optional Row y axis parameter, default is 0.
+		 * @param colSpan Optional Column width x axis width , default is 0.
+		 * @param rowSpan Optional Row width y axis width, default is 0.
+		 */
+		addItem(item: DetailViewItems.Item, column?: number, row?: number, colSpan?: number, rowSpan?: number);
+	}
+	class GridStyleDefintion {
+		/**
+		 * @since 13.1 Represents the columns and rows style definition for grid item.
+		 * @param columns Defines the columns style.
+		 * @param rows Defines the rows style.
+		 */
+		constructor(columns: Array<DetailGridLength>, rows: Array<DetailGridLength>);
+		columns: Array<DetailGridLength>
+		rows: Array<DetailGridLength>
+	}
+	class DetailGridLength {
+		/**
+		 * @since 13.1 Represents the grid length in grid unit type.
+		 * @param value Grid length value.
+		 * @param gridUnitType Defines the grid @see MobileCRM.UI.DetailViewItems.DetailGridUnitType" unit type.
+		 */
+		constructor(value: number, gridUnitType: DetailGridUnitType);
+	}
+	/**@since 13.1 Grid unit type. */
+	enum DetailGridUnitType {
+		/**Gets automatic unit type.*/
+		auto = 0,
+		/**Gets absolute pixel unit type.*/
+		pixel = 1,
+		/**Gets relative unit type.*/
+		star = 2
 	}
 }
