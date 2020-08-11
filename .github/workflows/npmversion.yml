@@ -1,9 +1,9 @@
 name: JSBridge Node.js Package Version
 
 on:
-  release:
-    types:
-    - prereleased
+  push:
+    paths:
+    - 'src/*'
 
 jobs:
   build:
@@ -15,5 +15,5 @@ jobs:
       run: |
         git config user.email "mobilecrm@resco.net"
         git config user.name "resconet"
-        npm version ${GITHUB_REF} -m "Set package version to %s"
+        npm version patch -m "Set package version to %s"
         git push
