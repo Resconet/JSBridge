@@ -9,10 +9,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with: 
-        ref:
-        - master
+    - name: Checkout repository
+      uses: actions/checkout@v2
     - name: Publish package
       run: |
         npm config set registry https://registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}
