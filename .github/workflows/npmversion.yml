@@ -1,0 +1,22 @@
+name: JSBridge Node.js Package Version
+
+on:
+  release:
+    types:
+    - created
+    - edited
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with: 
+        ref:
+        - master
+    - name: Set package version
+      run: |
+        git config user.email "mobilecrm@resco.net"
+        git config user.name "resconet"
+        npm version ${GITHUB_REF} -m "Set package version to %s"
+        git push
