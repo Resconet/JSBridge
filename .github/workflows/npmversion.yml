@@ -3,7 +3,8 @@ name: JSBridge Node.js Package Version
 on:
   push:
     paths:
-    - 'src/*'
+    - 'src/*.js'
+    - 'src/*.ts'
 
   workflow_dispatch:
     inputs:
