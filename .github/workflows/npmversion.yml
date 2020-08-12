@@ -5,15 +5,31 @@ on:
     paths:
     - 'src/*'
 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version'
+        required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Set package version
+
+    - name: Setup Git
       run: |
         git config user.email "mobilecrm@resco.net"
         git config user.name "resconet"
-        npm version patch -m "Set package version to %s"
-        git push
+
+    - if: github.event_name == 'push'
+      name: Update package version
+      run: npm version patch -m "Update package version to %s"
+
+    - if: github.event_name == 'workflow_dispatch'
+      name: Set package version
+      run: npm version ${{ github.event.inputs.version }} -m "Set package version to %s"
+
+    - name: Push changes
+      run: git push
