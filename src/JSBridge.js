@@ -511,7 +511,7 @@
 				/// <field name="clientSecret" type="String">Gets or sets the Authentication Client Secret.</field>
 				/// <field name="redirectUrl" type="String">Gets or sets the authorization redirect url for service.</field>
 				/// <field name="resourceUrl" type="String">Gets or sets the App ID URI of the target web API (secured resource).</field>
-				/// <field name="scopes" type="String">Gets or sets the scope to limit an application's access to a user's account.</field>
+				/// <field name="scopes" type="String">Gets or sets the scope to limit an application&apos;s access to a user&apos;s account.</field>
 
 				this.authorityEndPoint = "";
 				this.authorizationUrl = "";
@@ -864,8 +864,8 @@
 					},
 					GridStyleDefintion: function (columns, rows) {
 						/// <summary>[13.0] Represents the columns and rows style definition for grid item.</summary>
-						/// <param name="columns" type="Array<MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the columns style.</param>
-						/// <param name="rows" type="Array<MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the rows style.</param>
+						/// <param name="columns" type="Array">MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the columns style.</param>
+						/// <param name="rows" type="Array">MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the rows style.</param>
 						this.columns = columns;
 						this.rows = rows;
 					},
@@ -986,7 +986,7 @@
 					/// <field name="webError" type="Boolean">Indicates whether sync failed due to a communication error (HttpException, for example).</field>
 					/// <field name="connectFailed" type="Boolean">Indicates whether sync could not start because of a connection failure.</field>
 					/// <field name="wasBackgroundSync" type="Boolean">Indicates whether the last sync was background sync or foreground sync.</field>
-					/// <field name="OAuthError" type="Boolean">Sync failed because the OAuth access token can't be acquired or refreshed.</field>
+					/// <field name="OAuthError" type="Boolean">Sync failed because the OAuth access token can&apos;t be acquired or refreshed.</field>
 					/// <field name="syncDownloadRestartedOnBackground" type="Boolean">New customization was downloaded. Sync is still downloading data on background.</field>
 					/// <field name="warning" type="Boolean">Sync result contains some warnings that are not critical.</field>
 					if (typeof (syncResult) != "undefined") {
@@ -3151,7 +3151,7 @@
 			/// <param name="column" type="Number">Optional Column x axis parameter, default is 0.</param>
 			/// <param name="row" type="Number">Optional Row y axis parameter, default is 0.</param>
 			/// <param name="colSpan" type="Number">Optional Column width x axis width , default is 1.</param>
-			/// <param name="rowSpan type="Number">Optional Row width y axis width, default is 1.</param>
+			/// <param name="rowSpan" type="Number">Optional Row width y axis width, default is 1.</param>
 
 			var grid = this.getItemByName(gridName);
 			if (grid && grid.items) { // simple validation if item exists and is type of grid (only grid has items) | check for instance of is not working.
@@ -3403,7 +3403,7 @@
 			/// <param name="column" type="Number">Optional Column x axis parameter, default is 0.</param>
 			/// <param name="row" type="Number">Optional Row y axis parameter, default is 0.</param>
 			/// <param name="colSpan" type="Number">Optional Column width x axis width , default is 1.</param>
-			/// <param name="rowSpan type="Number">Optional Row width y axis width, default is 1.</param>
+			/// <param name="rowSpan" type="Number">Optional Row width y axis width, default is 1.</param>
 
 			item.column = column || 0;
 			item.row = row || 0;
