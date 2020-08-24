@@ -448,6 +448,12 @@ declare module MobileCRM {
 
 	class Metadata {
 		getEntity(name: string): MobileCRM.MetaEntity;
+		/**
+		 * Gets the MetaEntity object describing the entity attributes
+	     * @requires required to request the Metadata object prior to using this object. See @see MobileCRM.Metadata.requestObject .
+		 * @param name logical name of entity.
+		 */
+		static getEntity(name: string): MobileCRM.MetaEntity;
 		static requestObject(sucess: (metadata: Metadata) => void, failed?: (err: string) => void, scope?: any);
 		static getActivities(): Array<string>;
 		static getEntityParent(childEntityName: string): string;
