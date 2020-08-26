@@ -134,6 +134,8 @@
 					for (var itm in dv.items) {
 						var tmpItem = dv.items[itm];
 						if (tmpItem.name === this._field) {
+							if(!dv.isEnabled)
+								return false;
 							item = tmpItem;
 							break;
 						}
