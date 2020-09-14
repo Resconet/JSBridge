@@ -5619,7 +5619,7 @@
 				}
 	
 				function getWCBridgeInstanceId() {
-					args = document.location.search;
+					var args = document.location.search;
 					var index = args.indexOf("wc_mcrm_bid|");
 					var id = null;
 					if (index > 0) {
