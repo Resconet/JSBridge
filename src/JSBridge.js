@@ -2748,7 +2748,7 @@
 	    MobileCRM.Platform.getLocation = function (success, failed, scope, age, precision, timeout) {
 	        /// <summary>Gets current geo-location from platform-specific location service.</summary>
 	        /// <remarks>If the current platform does not support the location service, the <b>failed</b> handler is called with error "Unsupported".</remarks>
-	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> will carry an object with properties <b>latitude</b> and <b>longitude</b>.</param>
+	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> will carry an object with properties <b>latitude</b>, <b>longitude</b> and <b>timestamp</b>	.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        /// <param name="age" type="Number">Max age in seconds to accept GPS.</param>
@@ -4444,7 +4444,16 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        var val = typeof (answer) == "object" ? JSON.stringify(answer) : answer;
 	        MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "TrySetAnswer", [questionName, val], null, errorCallback, scope);
-	    };
+		};
+		MobileCRM.UI.QuestionnaireForm.trySetImageAnswer = function (imageQuestionName, base64Data, mimeType, errorCallback, scope) {
+			/// <summary>Asynchronously sets the answer value for given image question.</summary>
+			/// <param name="imageQuestionName" type="String">A name of the image question.</param>
+			/// <param name="base64Data" type="string">A value that us used to create image answer. If null or empty image will be deleted.</param>
+			/// <param name="mimeType" type="string">The valid mime type of corresponding base64Data.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "TrySetImageAnswer", [imageQuestionName, base64Data, mimeType], null, errorCallback, scope);
+		};
 	    MobileCRM.UI.QuestionnaireForm.focusQuestion = function (questionName, errorCallback, scope) {
 	        /// <summary>Asynchronously sets the focus on given question.</summary>
 	        /// <param name="questionName" type="String">A name of the question.</param>
@@ -5619,7 +5628,7 @@
 				}
 	
 				function getWCBridgeInstanceId() {
-					args = document.location.search;
+					var args = document.location.search;
 					var index = args.indexOf("wc_mcrm_bid|");
 					var id = null;
 					if (index > 0) {
