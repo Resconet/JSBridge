@@ -511,7 +511,7 @@
 				/// <field name="clientSecret" type="String">Gets or sets the Authentication Client Secret.</field>
 				/// <field name="redirectUrl" type="String">Gets or sets the authorization redirect url for service.</field>
 				/// <field name="resourceUrl" type="String">Gets or sets the App ID URI of the target web API (secured resource).</field>
-				/// <field name="scopes" type="String">Gets or sets the scope to limit an application's access to a user's account.</field>
+				/// <field name="scopes" type="String">Gets or sets the scope to limit an application&apos;s access to a user&apos;s account.</field>
 
 				this.authorityEndPoint = "";
 				this.authorizationUrl = "";
@@ -864,8 +864,8 @@
 					},
 					GridStyleDefintion: function (columns, rows) {
 						/// <summary>[13.0] Represents the columns and rows style definition for grid item.</summary>
-						/// <param name="columns" type="Array<MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the columns style.</param>
-						/// <param name="rows" type="Array<MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the rows style.</param>
+						/// <param name="columns" type="Array">MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the columns style.</param>
+						/// <param name="rows" type="Array">MobileCRM.UI.DetailViewItems.DetailGridLength>">Defines the rows style.</param>
 						this.columns = columns;
 						this.rows = rows;
 					},
@@ -986,7 +986,7 @@
 					/// <field name="webError" type="Boolean">Indicates whether sync failed due to a communication error (HttpException, for example).</field>
 					/// <field name="connectFailed" type="Boolean">Indicates whether sync could not start because of a connection failure.</field>
 					/// <field name="wasBackgroundSync" type="Boolean">Indicates whether the last sync was background sync or foreground sync.</field>
-					/// <field name="OAuthError" type="Boolean">Sync failed because the OAuth access token can't be acquired or refreshed.</field>
+					/// <field name="OAuthError" type="Boolean">Sync failed because the OAuth access token can&apos;t be acquired or refreshed.</field>
 					/// <field name="syncDownloadRestartedOnBackground" type="Boolean">New customization was downloaded. Sync is still downloading data on background.</field>
 					/// <field name="warning" type="Boolean">Sync result contains some warnings that are not critical.</field>
 					if (typeof (syncResult) != "undefined") {
@@ -2748,7 +2748,7 @@
 	    MobileCRM.Platform.getLocation = function (success, failed, scope, age, precision, timeout) {
 	        /// <summary>Gets current geo-location from platform-specific location service.</summary>
 	        /// <remarks>If the current platform does not support the location service, the <b>failed</b> handler is called with error "Unsupported".</remarks>
-	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> will carry an object with properties <b>latitude</b> and <b>longitude</b>.</param>
+	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> will carry an object with properties <b>latitude</b>, <b>longitude</b> and <b>timestamp</b>	.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        /// <param name="age" type="Number">Max age in seconds to accept GPS.</param>
@@ -3151,7 +3151,7 @@
 			/// <param name="column" type="Number">Optional Column x axis parameter, default is 0.</param>
 			/// <param name="row" type="Number">Optional Row y axis parameter, default is 0.</param>
 			/// <param name="colSpan" type="Number">Optional Column width x axis width , default is 1.</param>
-			/// <param name="rowSpan type="Number">Optional Row width y axis width, default is 1.</param>
+			/// <param name="rowSpan" type="Number">Optional Row width y axis width, default is 1.</param>
 
 			var grid = this.getItemByName(gridName);
 			if (grid && grid.items) { // simple validation if item exists and is type of grid (only grid has items) | check for instance of is not working.
@@ -3403,7 +3403,7 @@
 			/// <param name="column" type="Number">Optional Column x axis parameter, default is 0.</param>
 			/// <param name="row" type="Number">Optional Row y axis parameter, default is 0.</param>
 			/// <param name="colSpan" type="Number">Optional Column width x axis width , default is 1.</param>
-			/// <param name="rowSpan type="Number">Optional Row width y axis width, default is 1.</param>
+			/// <param name="rowSpan" type="Number">Optional Row width y axis width, default is 1.</param>
 
 			item.column = column || 0;
 			item.row = row || 0;
@@ -4444,7 +4444,16 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        var val = typeof (answer) == "object" ? JSON.stringify(answer) : answer;
 	        MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "TrySetAnswer", [questionName, val], null, errorCallback, scope);
-	    };
+		};
+		MobileCRM.UI.QuestionnaireForm.trySetImageAnswer = function (imageQuestionName, base64Data, mimeType, errorCallback, scope) {
+			/// <summary>Asynchronously sets the answer value for given image question.</summary>
+			/// <param name="imageQuestionName" type="String">A name of the image question.</param>
+			/// <param name="base64Data" type="string">A value that us used to create image answer. If null or empty image will be deleted.</param>
+			/// <param name="mimeType" type="string">The valid mime type of corresponding base64Data.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "TrySetImageAnswer", [imageQuestionName, base64Data, mimeType], null, errorCallback, scope);
+		};
 	    MobileCRM.UI.QuestionnaireForm.focusQuestion = function (questionName, errorCallback, scope) {
 	        /// <summary>Asynchronously sets the focus on given question.</summary>
 	        /// <param name="questionName" type="String">A name of the question.</param>
@@ -5619,7 +5628,7 @@
 				}
 	
 				function getWCBridgeInstanceId() {
-					args = document.location.search;
+					var args = document.location.search;
 					var index = args.indexOf("wc_mcrm_bid|");
 					var id = null;
 					if (index > 0) {

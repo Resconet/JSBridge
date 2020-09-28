@@ -1,37 +1,25 @@
-name: JSBridge Node.js Package
+name: JSBridge Node.js Package Publish
 
 on:
-  push:
-    paths:
-    - 'src/**.js'
+  release:
+    types:
+    - published
+
+  workflow_dispatch:
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with: 
-        branch: master
-    - name: git status and log
-      run: |
-        git status
-    - name: Tell me who you are
-      run: |
-        git config --global user.email "mobilecrm@resco.net"
-        git config --global user.name "resconet" 
-    - name: print directory
-      run: pwd
-    - name: increase the patch version by 1 e.g. (x.x.1 to x.x.2)
-      run: |
-        npm version patch -m "Commit package json to increment patch version"
-    - name: git push
-      run: |
-        git push
-    - name: npm publish --access public
-      run: |
-        echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
-        npm config set registry https://registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}
-        npm publish --access public
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        registry-url: https://registry.npmjs.org/
+
+    - name: Publish package
+      run: npm publish --access public
       env:
-        CI: true
-        NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

@@ -11,6 +11,7 @@ declare module MobileCRM {
 	class Location {
 		latitude: string;
 		longitude: string;
+		timestamp: Date;
 	}
 
 	class Bridge {
@@ -448,6 +449,12 @@ declare module MobileCRM {
 
 	class Metadata {
 		getEntity(name: string): MobileCRM.MetaEntity;
+		/**
+		 * Gets the MetaEntity object describing the entity attributes
+	     * @requires required to request the Metadata object prior to using this object. See @see MobileCRM.Metadata.requestObject .
+		 * @param name logical name of entity.
+		 */
+		static getEntity(name: string): MobileCRM.MetaEntity;
 		static requestObject(sucess: (metadata: Metadata) => void, failed?: (err: string) => void, scope?: any);
 		static getActivities(): Array<string>;
 		static getEntityParent(childEntityName: string): string;
@@ -1347,7 +1354,8 @@ declare module MobileCRM.UI {
 		insertItem(item: MobileCRM.UI._DetailItem, index: number);
         insertItems(items: Array<MobileCRM.UI._DetailItem>, index: number);
         removeItem(index: number);
-        removeItems(indexes: Array<number>);
+		removeItems(indexes: Array<number>);
+		isDirty: boolean;
 		/**
 		 * @since 8.0
 		 * Installs the handler which has to be called when user clicks on the link item.
@@ -1978,6 +1986,15 @@ declare module MobileCRM.UI {
 		* @param scope A scope for calling the callbacks.
 		*/
 		public static trySetAnswer(questionName: string, answer: any, errorCallback?: (err: string) => void, scope?: any);
+		/**
+		 * Asynchronously sets the image as answer value for this question
+		 * @param imageQuestionName 
+		 * @param base64Data A value that us used to create image answer.
+		 * @param mimeType The valid mime type of corresponding base64Data.
+		 * @param errorCallback A callback which is called in case of error.
+		* @param scope A scope for calling the callbacks.
+		 */
+		public static trySetImageAnswer(imageQuestionName: string, base64Data: string, mimeType: string, errorCallback?: (err: string) => void, scope?: any);
 		/**
 		 * Asynchronously sets the the focus on given question.
 		 * @param questionName A name of the question.

@@ -15,6 +15,9 @@ Watch webinars for intro to OfflineHTML in Resco MobileCRM.
 <br />[Webinar Offline HTML in Resco Mobile CRM - Part 1/2 (Intro)](https://www.youtube.com/watch?v=cplZLC_mAc0&list=PLPMCnAPD5b56XNEiGTcy5VBxdP8rcB86b&index=12)  
 [Webinar Offline HTML in Resco Mobile CRM - Part 2/2 (Data Access)](https://www.youtube.com/watch?v=R7GpdC_y17Y&t=1s)
 
+Release contains the debugging/development build(s) of the Resco Mobile CRM application.  
+Per platform application packages are available.
+
 ## IFrame
 
 You can put a web browser, known as IFrame, in various components in the app.
@@ -22,10 +25,6 @@ IFrames can be used within EntityForm, EntityList or within HomeForm.
 IFrame points to your custom html code file.
 
 ## In this Repository  
-
-**MobileCRM**  
-This folder contains the debugging/development build(s) of the Resco Mobile CRM application.  
-Per platform application packages are available.
 
 **docs**  
 Description of the methods and objects defined in Resco JavaScript Bridge.  

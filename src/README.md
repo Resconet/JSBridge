@@ -55,9 +55,9 @@ To check the api changes made in the source file, please go to https://www.resco
 
 ## Publishing
 
-The Package is published to npm registry page by the name **....** in every committed change.
+The Package is published to npm registry page on release publish event.
 
-The Bug fix release number is automatically updated.
+The Bug fix release number is automatically updated when new js or ts file is pushed.
 
 ## Contact
 For any questions or any specific circumstances, please contact us on the email mobilecrm@resco.net
