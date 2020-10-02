@@ -1,21 +1,30 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>TypeScript HTML App</title>
-	<link rel="stylesheet" href="app.css" type="text/css" />
-	<!--Please make sure you have all libs included properly using valid path-->
+	<title>Power Bi Integration</title>
+	<!-- Activate IE9 document mode, if available. -->
+	<!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<!-- Defined iOS viewport -->
+	<!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+	<!--Please make sure you have all libs included properly using valid path.
+		This is relative path to JSBridge.js file
+	-->
 	<script src="../JSBridge.js"></script>
 	<script src="PowerBiOAuthSettings.js"></script>
 	<script src="powerbi.js"></script>
 </head>
 <body>
-	<strong>Name:</strong><p id="detailReportName"></p>
-	<strong>Id:</strong><p id="detailReportId"></p>
-	<div id="dashboardContainer" style="width:1000px;height:1000px"></div>
+	
+    <strong>Name:</strong><p id="detailReportName"></p>
+    <strong>Id:</strong><p id="detailReportId"></p>
+	<!-- This is the container what display the dashboard in specific width and hight div element. -->
+    <div id="dashboardContainer" style="width:1000px;height:1000px"></div>
 
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 		//***** Inspired By *****
 		//***** https://community.powerbi.com/t5/Developer/How-To-Get-embed-token-using-Get-Post-only/td-p/294475
 		//***** Reference to Lib: https://github.com/Microsoft/powerbi-javascript/wiki
@@ -40,10 +49,10 @@
 				ouathSettings.redirectUrl = PowerBiOAuthSettings.redirectUrl;
 				ouathSettings.scopes = "openid";
 
-				MobileCRM.Integration.getOAuthAccessToken("powerBi", ouathSettings, false, (token) => {
+				MobileCRM.Integration.getOAuthAccessToken("powerBi", ouathSettings, false, function(token) {
 					// continue with access token.
 					continueWith.call(null, token);
-				}, err => { MobileCRM.bridge.alert("Failed to get access token.\n\n" + err); }, null);
+				}, function(err) { MobileCRM.bridge.alert("Failed to get access token.\n\n" + err); }, null);
 			},
 			getReportDetailsAndDisplay: function (textAccessToken, workspaceGroupId, componentId, configType, failureCallback) {
 				///<param name='textAccessToken' type='String'>Valid access token</param>
@@ -248,26 +257,34 @@
 		}
 
 		function showPowerBi() {
-			var componentId = null;
-			var confType = null;
-			if (PowerBiOAuthSettings.dashboardId) {
-				componentId = PowerBiOAuthSettings.dashboardId;
-				confType = PowerBi.ConfigType.Dashboard;
-			}
-			else if (PowerBiOAuthSettings.reportId) {
-				componentId = PowerBiOAuthSettings.reportId;
-				confType = PowerBi.ConfigType.Report;
-			}
+			try {
+				var componentId = null;
+				var confType = null;
 
-			if (!componentId)
-				MobileCRM.UI.MessageBox.sayText("Please define id of Dashboard or Report in 'PowerBiOAuthSettings.js'. ");
-			else {
-				PowerBi.authenticateAndGetToken(function (token) {
-					if (!PowerBiOAuthSettings.workspaceGroupId)
-						MobileCRM.UI.MessageBox.sayText("'workspaceGroupId' is not defined.\nPlease go to 'PowerBiOAuthSettings.js' and define it.");
-					else
-						PowerBi.getReportDetailsAndDisplay(token, PowerBiOAuthSettings.workspaceGroupId, componentId, confType, MobileCRM.bridge.alert)
-				});
+				PowerBiOAuthSettings = undefined;
+
+				if (PowerBiOAuthSettings.dashboardId) {
+					componentId = PowerBiOAuthSettings.dashboardId;
+					confType = PowerBi.ConfigType.Dashboard;
+				}
+				else if (PowerBiOAuthSettings.reportId) {
+					componentId = PowerBiOAuthSettings.reportId;
+					confType = PowerBi.ConfigType.Report;
+				}
+
+				if (!componentId)
+					MobileCRM.UI.MessageBox.sayText("Please define id of Dashboard or Report in 'PowerBiOAuthSettings.js'. ");
+				else {
+					PowerBi.authenticateAndGetToken(function (token) {
+						if (!PowerBiOAuthSettings.workspaceGroupId)
+							MobileCRM.UI.MessageBox.sayText("'workspaceGroupId' is not defined.\nPlease go to 'PowerBiOAuthSettings.js' and define it.");
+						else
+							PowerBi.getReportDetailsAndDisplay(token, PowerBiOAuthSettings.workspaceGroupId, componentId, confType, MobileCRM.bridge.alert)
+					});
+				}
+			}
+			catch (ex) {
+				MobileCRM.bridge.alert("Unexpected exception has been thrown.\n\n" + ex.message);
 			}
 		}
 
@@ -275,6 +292,6 @@
 			showPowerBi();
 		}
 
-	</script>
+    </script>
 </body>
 </html>
