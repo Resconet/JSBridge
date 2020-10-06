@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="height:100%">
 <head>
 	<title></title>
 	<meta charset="utf-8">
@@ -9,7 +9,10 @@
 	<script src="../JSBridge.js"></script>
 	<style>
 
-
+		html > *{
+			height:100%;
+		}
+		
 		.mce-widget * {
 			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,"Helvetica Neue",sans-serif;
 		}
@@ -228,7 +231,7 @@
 					statusbar: false,
 					removed_menuitems: "fullscreen",
 					//toolbar: "fullscreen",
-					//max_height: 500,
+					max_height: 500,
 					setup: function (editor) {
 						editor.on('init', function (e) {
 							editor.execCommand('mceFullScreen');
