@@ -101,12 +101,12 @@
 			else {
 				this._editor = editor;
 				//this._editor.getBody().firstChild.scrollIntoView();
-				this._editor.off('Change'); // Disable change event
+				this._editor.off('EditorChange'); // Disable change event
 				var text = entityForm.entity.properties[this._field];
 				this._editor.setContent(text || "");
 				this.registerOnSave();
 				if (handleOnChange) {
-					this._editor.on('Change', this.onEditorChanged.bind(this));
+					this._editor.on('EditorChange', this.onEditorChanged.bind(this));
 					this.registerOnChangeHandlers();
 				}
 			}
