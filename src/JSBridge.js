@@ -920,8 +920,8 @@
 				},
 				DocumentService: function () {
 					/// <summary>[v8.1] Represents a service for acquiring the documents.</summary>
-					/// <field name="maxImageSize" type="Number">Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size.</field>
-					/// <field name="recordQuality" type="Number">Gets or sets the record quality for audio/video recordings.</field>
+					/// <field name="maxImageSize" type="String">Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size [640x480,1024x768,1600x1200,2048x1536,2592x1936 ].</field>
+					/// <field name="recordQuality" type="String">Gets or sets the record quality for audio/video recordings [Low, Medium, High].</field>
 					/// <field name="allowChooseVideo" type="Boolean">Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.</field>
 					/// <field name="allowMultipleFiles" type="Boolean">Indicates whether to allow multiple files for DocumentActions SelectPhoto and SelectFile.[Not implemented on iOS.]</field>
 					/// <field name="allowCancelHandler" type="Boolean">Indicates whether to allow handling of cancel event. Callback will pass the null argument in this case.</field>
