@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="height:100%">
+<html>
 <head>
 	<title></title>
 	<meta charset="utf-8">
@@ -9,10 +9,6 @@
 	<script src="../JSBridge.js"></script>
 	<style>
 
-		html > *{
-			height:100%;
-		}
-		
 		.mce-widget * {
 			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,"Helvetica Neue",sans-serif;
 		}
@@ -39,6 +35,7 @@
 				var url = this.getUrlParams();
 				this._field = url['field'];
 				this._editorMode = editorMode;
+				//this._updateCnt = 0;//"onChange_editor" || "onChange_entityForm";
 			}
 
 			return EntityFormFoRichText;
@@ -100,13 +97,12 @@
 				MobileCRM.bridge.alert("Editor is undefined");
 			else {
 				this._editor = editor;
-				//this._editor.getBody().firstChild.scrollIntoView();
-				this._editor.off('EditorChange'); // Disable change event
+				this._editor.off('Change'); // Disable change event
 				var text = entityForm.entity.properties[this._field];
-				this._editor.setContent(text || "");
+				this._editor.setContent(text || "", {format: "html"});
 				this.registerOnSave();
 				if (handleOnChange) {
-					this._editor.on('EditorChange', this.onEditorChanged.bind(this));
+					this._editor.on('Change', this.onEditorChanged.bind(this));
 					this.registerOnChangeHandlers();
 				}
 			}
@@ -116,13 +112,16 @@
 			MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [true]);
 			if (obj instanceof MobileCRM.UI.EntityForm) {
 				var eVal = obj.entity.properties[this._field];
-				if (this._editor.getContent() !== eVal) {
-					this._editor.setContent(eVal);
+				var val = this._editor.getContent({ format: 'html' })
+				if (val !== eVal) {
+					this._editor.off('Change');
+					this._editor.setContent(eVal, { format: 'html' });
+					this._editor.on('Change', this.onEditorChanged.bind(this));
 				}
 			}
-			else if (updateEntityOnChange)
+			else if (updateEntityOnChange) {
 				MobileCRM.UI.EntityForm.requestObject(this.saveEditorContent, MobileCRM.bridge.alert, this);
-
+			}
 		}
 		EntityFormFoRichText.prototype.registerOnSave = function () {
 			MobileCRM.UI.EntityForm.onSave(this.saveEditorContent, true, this);
@@ -137,8 +136,6 @@
 					for (var itm in dv.items) {
 						var tmpItem = dv.items[itm];
 						if (tmpItem.name === this._field) {
-							if(!dv.isEnabled)
-								return false;
 							item = tmpItem;
 							break;
 						}
@@ -152,30 +149,22 @@
 		}
 
 		EntityFormFoRichText.prototype.saveEditorContent = function (entityForm) {
-			var eVal = this._editor.getContent();
+			var eVal = this._editor.getContent({ format: 'html' });
 
 			var entity = entityForm.entity;
 			if (eVal !== entity.properties[this._field]) {
-				entity.properties[this._field] = this._editor.getContent();
+				entity.properties[this._field] = eVal;
 				return true;
 			}
 		}
 
 		EntityFormFoRichText.prototype.registerOnChangeHandlers = function () {
-			// If available, use the 11.2 itemChange event.
-			if (MobileCRM.UI.EntityForm.onItemChange) {
-				MobileCRM.UI.EntityForm.onItemChange(this._field, function (entityForm) {
+			MobileCRM.UI.EntityForm.onChange(function (entityForm) {
+				var context = entityForm.context;
+				if (context.changedItem === this._field) {
 					this.onChangeHandler(entityForm);
-				}, true, this);
-			}
-			else {
-				MobileCRM.UI.EntityForm.onChange(function (entityForm) {
-					var context = entityForm.context;
-					if (context.changedItem === this._field) {
-						this.onChangeHandler(entityForm);
-					}
-				}, true, this);
-			}
+				}
+			}, true, this);
 		}
 
 		EntityFormFoRichText.prototype.onChangeHandler = function (entityForm) {
@@ -226,12 +215,11 @@
 			if (editMode === editorMode.readOnly) {
 				tinymce.init({
 					selector: 'textarea',
+					plugins: "fullscreen",
 					toolbar: false,
 					menubar: false,
 					statusbar: false,
-					removed_menuitems: "fullscreen",
-					//toolbar: "fullscreen",
-					max_height: 500,
+					readonly: 1,
 					setup: function (editor) {
 						editor.on('init', function (e) {
 							editor.execCommand('mceFullScreen');
@@ -244,19 +232,22 @@
 				tinymce.init({
 					selector: 'textarea',
 					plugins: [
-						'autoresize',
+						'fullscreen',
 						'advlist autolink lists link charmap hr anchor pagebreak',
 						'paste textcolor colorpicker'
 					],
 					toolbar: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor',
 					menubar: false,
 					statusbar: false,
+					force_br_newlines: true,	// Needed for two way binding, to display valid text on entity fotm field
+					force_p_newlines: false,	// Needed for two way binding, to display valid text on entity fotm field
+					forced_root_block: '',		// Needed for 3.x and if two previous settings are used.
 					setup: function (editor) {
 						editor.on('init', function (e) {
 							editor.execCommand('mceFullScreen');
 							continueWith.call(scope, editor);
 						});
-					}
+					},
 				});
 			}
 			else if (editMode === editorMode.fullMode) {
@@ -272,6 +263,9 @@
 					toolbar2: 'visualblocks preview media | forecolor backcolor emoticons | codesample help',
 					menubar: 'edit insert format table',
 					removed_menuitems: "fullscreen",
+					force_br_newlines: true,	// Needed for two way binding, to display valid text on entity fotm field
+					force_p_newlines: false,	// Needed for two way binding, to display valid text on entity fotm field
+					forced_root_block: '',		// Needed for 3.x and if two previous settings are used.
 					statusbar: false,
 					setup: function (editor) {
 						editor.on('init', function (e) {
@@ -284,6 +278,7 @@
 			else
 				continueWith.call(scope, null);
 		}
+
 		var editorMode;
 		(function (editorMode) {
 			editorMode[editorMode["readOnly"] = 0] = "readOnly";
