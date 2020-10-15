@@ -1,0 +1,26 @@
+{
+  "name": "@resconet/jsbridge",
+  "version": "13.2.1",
+  "main": "./src/JSBridge.js",
+  "types": "./src/JSBridge.d.ts",
+  "description": "Install npm JSBridge module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Resconet/JSBridge"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "homepage": "https://github.com/Resconet/JSBridge",
+  "keywords": [
+    "JSBridge",
+    "Resco.net",
+    "Resco"
+  ],
+  "author": "Resco.net",
+  "license": "MIT",
+  "files": [
+    "src/*"
+  ]
+}

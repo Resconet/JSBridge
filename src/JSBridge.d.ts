@@ -1,6 +1,6 @@
 // JSBridge.js TypeScript definition file
-// v12.2
-// (c) 2019 Resco
+// v13.1
+// (c) 2020 Resco
 
 declare module MobileCRM {
 
@@ -11,6 +11,7 @@ declare module MobileCRM {
 	class Location {
 		latitude: string;
 		longitude: string;
+		timestamp: Date;
 	}
 
 	class Bridge {
@@ -447,13 +448,19 @@ declare module MobileCRM {
 	}
 
 	class Metadata {
-		public static requestObject(sucess: (metadata: Metadata) => void, failed?: (err: string) => void, scope?: any);
-		public static getEntity: (name: string) => MobileCRM.MetaEntity;
-		public static getActivities: () => Array<string>;
-		public static getEntityParent: (childEntityName: string) => string;
-		public static entityHasChildren: (entityName: string) => boolean;
-		public static getOptionSetValues(entityName: string, optionSetName: string, sucess: (optioneSets: any) => void, failed?: (error: string) => void, scope?: any);
-		public static getStringListOptions: (entityName: string, propertyName: string) => Array<string>;
+		getEntity(name: string): MobileCRM.MetaEntity;
+		/**
+		 * Gets the MetaEntity object describing the entity attributes
+	     * @requires required to request the Metadata object prior to using this object. See @see MobileCRM.Metadata.requestObject .
+		 * @param name logical name of entity.
+		 */
+		static getEntity(name: string): MobileCRM.MetaEntity;
+		static requestObject(sucess: (metadata: Metadata) => void, failed?: (err: string) => void, scope?: any);
+		static getActivities(): Array<string>;
+		static getEntityParent(childEntityName: string): string;
+		static entityHasChildren(entityName: string): boolean;
+		static getOptionSetValues(entityName: string, optionSetName: string, sucess: (optioneSets: any) => void, failed?: (error: string) => void, scope?: any);
+		static getStringListOptions(entityName: string, propertyName: string): Array<string>;
 	}
 
 	/**
@@ -659,7 +666,7 @@ declare module MobileCRM {
 		 * @param append Determines whether to overwrite or append to an existing file.
 		 * @param success A callback function which is called in case of successful asynchronous result.
 		 * @param errorCallback The errorCallback which is called asynchronously in case of error.
-		 * @param scope The scope for errorCallback.
+		 * @param scope The scope for callback.
 		 */
 		public static writeFileWithEncoding(path: string, text: string, encoding: string, append: boolean, success: () => void, failed?: (err: string) => void, scope?: any);
 		/**
@@ -668,9 +675,17 @@ declare module MobileCRM {
 		 * @param resource The resource
 		 * @param success A callback function what is called asynchronously with serialized access token argument.
 		 * @param errorCallback The errorCallback which is called asynchronously in case of error.
-		 * @param scope The scope for errorCallback.
+		 * @param scope The scope for callback.
 		 */
-		public static getAccessToken(resource, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any)
+		public static getAccessToken(resource, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any);
+		/**
+		 * Checks whether the current user is member of the passed roles. Role can be either the Guid (aeb33d0f-89b4-e111-9c9a-00155d0b710a) or the role Name.
+		 * @param roles Defines the roles to check.
+		 * @param success A callback function for successful asynchronous result. The result will carry a number with the count of matching roles.
+		 * @param failed A callback function for command failure. The error argument will carry the error message.
+		 * @param scope A scope for calling the callback.
+		 */
+		public static checkUserRoles(roles: [string], success?: (roles: number) => void, failed?: (err: string) => void, scope?: any);
 	}
 
 	class AboutInfo {
@@ -684,6 +699,53 @@ declare module MobileCRM {
 		supportEmail: string;
 
 		static requestObject(callback: (aboutinfo: AboutInfo) => void, errorCallback: (err: any) => void, scope?: any);
+	}
+
+	/**
+	 * @since 13.0
+	 * Encapsulate methods and properties what can be used for integration. 
+	 */
+	class Integration {
+		/**
+		 * @since 13.0
+		 * Asynchronously gets the token using passed OAuth settings and parameters. Configuration name is used to find already settings.
+		 * @param configurationName Define the name of oauth configuration, what is key for saved setting if any. 
+		 * @param oauthSettings Defines the OAuth settings for authentication.
+		 * @param resourceUrl The App ID URI of the target web API (secured resource).
+		 * @param prompt Whether to force the user to enter credentials again.
+		 * @param success A callback function for successful asynchronous result. The <b>result</b> will carry a string with the access token.
+		 * @param failed A callback function for command failure. The <b>error</b> argument will carry the error message.
+		 * @param scope A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.
+		 */
+		public static getOAuthAccessToken(configurationName: string, oauthSettings: MobileCRM.OAuthSettings, resourceUrl: string, prompt: boolean, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any);
+	}
+
+	/**
+	 * @since 13.0 
+	 * Represents the settings what are used to authenticate using OAuth server account 
+	 */
+	class OAuthSettings {
+		/**
+		 * Create instance of OAuth settings with passed configuration name.
+		 * @param configName The Configuration name.
+		 */
+		constructor();
+		
+		/** Gets or sets the OAuth token url. */
+		public authorityEndPoint: string;
+		/** Gets or sets the authorization url to get authorization code. */
+		public authorizationUrl: string;
+		/** Gets or sets the authentication Client Id. */
+		public clientId: string;
+		/** Gets or sets the Authentication Client Secret. */
+		public clientSecret: string;
+		/** Gets or sets the authorization redirect url for service. */
+		public redirectUrl: string;
+		/** Gets or sets the App ID URI of the target web API (secured resource). */
+		public resourceUrl: string;
+		/** Gets or sets the scope to limit an application's access to a user's account. */
+		public scopes: string;
+		private _configName: string;
 	}
 
 	/**
@@ -1004,6 +1066,11 @@ declare module MobileCRM.FetchXml {
 	}
 }
 declare module MobileCRM.Services {
+	class CompanyInformation {
+		name: string;
+		address: string;
+		public static getCompanyInfoFromVat(vat: string | number, success: (result: MobileCRM.Services.CompanyInformation) => void, failed?: (err: string) => void, scope?: any);
+	}
     class FileInfo {
         filePath: string;
         url: string;
@@ -1029,20 +1096,46 @@ declare module MobileCRM.Services {
         recordAudio(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         recordVideo(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         pasteFile(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-        resizeImage(filePath: string, maxWidth:number, maxHeight: number, callback: (result: boolean) => void, scope?: any);
+		resizeImage(filePath: string, maxWidth: number, maxHeight: number, callback: (result: boolean) => void, scope?: any);
+		/**
+		 * @since 11.2
+		 * Ask to user to choose a location and saves the passed data as a file at that location.
+		 * @param fileName A file name.
+		 * @param fileData Base64 encoded file data.
+		 * @param success A callback function for asynchronous result. In case of success result argument will be true otherwise false.
+		 * @param failed A callback function for command failure. The error argument will carry the error message.
+		 * @param scope A scope for calling the callbacks. Set to call the callbacks in global scope.
+		 */
+		saveFileDialog(fileName: string, fileData: string, success: (result: boolean) => void, failed?: (err: string) => void, scope?: any)
     }
-
+	/** Represents the synchronization result.
+	* @property newCustomizationReady {boolean} Indicates whether the new customization is ready.
+    * @property customizationDownloaded {boolean} Indicates whether the new customization was applied.
+    * @property dataErrorsEncountered {boolean} Indicates whether some data errors were encountered during sync (cannot upload, delete, change status, owner, etc.).
+    * @property appWasLocked {boolean} Application was locked.
+    * @property syncAborted {boolean}  Sync was aborted.
+    * @property adminFullSync {boolean} Full sync was requested so background sync was aborted.
+    * @property wasBackgroundSync {boolean} Indicates whether the last sync was background sync or foreground sync.
+    * @property connectFailed {boolean} Indicates whether sync could not start because of a connection failure.
+    * @property webError {boolean} Indicates whether sync failed due to a communication error (HttpException, for example).
+    * @property OAuthError {boolean} Sync failed because the OAuth access token can't be acquired or refreshed.
+    * @property syncDownloadRestartedOnBackground {boolean} New customization was downloaded. Sync is still downloading data on background.
+    * @property warning {boolean} Sync result contains some warnings that are not critical.
+	*/
     class SynchronizationResult {
-        constructor(synchronizationResult?: number);
-        newCustomizationReady: boolean;
-        customizationDownloaded: boolean;
-        dataErrorsEncountered: boolean;
-        appWasLocked: boolean;
-        syncAborted: boolean;
-        adminFullSync: boolean;
+		constructor(synchronizationResult?: number);
+		newCustomizationReady: boolean;
+		customizationDownloaded: boolean;
+		dataErrorsEncountered: boolean;
+		appWasLocked: boolean;
+		syncAborted: boolean;
+		adminFullSync: boolean;
 		wasBackgroundSync: boolean;
 		connectFailed: boolean;
 		webError: boolean;
+		OAuthError: boolean;
+		syncDownloadRestartedOnBackground: boolean;
+		warning: boolean;
     }
     class AddressBookService {
         public static getService(errorCallback?: (error: string) => void, scope?: any): AddressBookService;
@@ -1261,7 +1354,8 @@ declare module MobileCRM.UI {
 		insertItem(item: MobileCRM.UI._DetailItem, index: number);
         insertItems(items: Array<MobileCRM.UI._DetailItem>, index: number);
         removeItem(index: number);
-        removeItems(indexes: Array<number>);
+		removeItems(indexes: Array<number>);
+		isDirty: boolean;
 		/**
 		 * @since 8.0
 		 * Installs the handler which has to be called when user clicks on the link item.
@@ -1289,6 +1383,17 @@ declare module MobileCRM.UI {
 		 * @param dialogOnly Indicates whether to allow the inline picker. Set "true" to disable the inline picker and always use the modal dialog. Set false to allow the inline picker.
 		 */
 		updateLinkItemViews(index: number, dialogSetup: DetailViewItems.LookupSetup, inlinePickSetup?: DetailViewItems.LookupSetup, dialogOnly?: boolean);
+		/**
+		 * @since 13.1
+		 * Add detail item to desired position in to grid.
+		 * @param gridName name of grid item.
+		 * @param item Detail item @see MobileCRM.UI.DetailViewItems.Item
+		 * @param column Optional Column x axis parameter, default is 0.
+		 * @param row Optional Row y axis parameter, default is 0.
+		 * @param colSpan Optional Column width x axis width , default is 0.
+		 * @param rowSpan Optional Row width y axis width, default is 0.
+		 */
+		addItemToGrid(gridName: string, item: MobileCRM.UI.DetailViewItems.Item, column?: number, row?: number, colSpan?: number, rowSpan?: number);
 	}
 	/**
 	* Represents the Javascript equivalent of native entity form object.
@@ -1320,7 +1425,8 @@ declare module MobileCRM.UI {
 		relationship: MobileCRM.Relationship;
 		/** Gets whether the underlying form is visible. */
 		visible: boolean;
-
+		/** NoteForm only. Gets the view containing the note attachment. */
+		documentView?: _DocumentView;
 		/**
 		* Returns the DetailView by its name.
 		* @param name A name of DetailView.
@@ -1482,7 +1588,7 @@ declare module MobileCRM.UI {
 		* @param enable Determines whether to enable or disable the command.
 		* @param iParam @since 9.1 Optional parameter defining the additional command parameter (like status code value for 'ChangeStatus'; command).
 		*/
-		public static enableCommand(command: string, enable: boolean, iParam: number);
+		public static enableCommand(command: string, enable: boolean, iParam?: number);
 		/**
 		* Shows a please wait message, disabling the form except for the close command.
 		* @param caption Wait message.
@@ -1540,6 +1646,13 @@ declare module MobileCRM.UI {
 		newIndex: number;
 		oldIndex: number;
 		type: number;
+	}
+
+	/**
+	 * Represents the iFrame Javascript datasource chart object.
+	 */
+	class EntityChart {
+		public static setDataSource(dataSource: ChartDataSource);
 	}
 
 	/**
@@ -1786,6 +1899,30 @@ declare module MobileCRM.UI {
 	}
 
 	/**
+	 * Represents the Javascript dataset of chart object.
+	 */
+
+	class ChartDataSource {
+		public type: string;
+		public data: ChartDataSet;
+		public isOfflineChart: boolean;
+		public fetch: MobileCRM.FetchXml.Fetch;
+		public loadOfflineData(): void;
+		public loadCustomFetch(): void;
+	}
+
+	class ChartDataSet {
+		labels: string[];
+		datasets: Dataset;
+	}
+
+	class Dataset {
+		label: string;
+		data: Array<number>;
+		backgroundColor: string;
+	}
+
+	/**
 	 * @since 10.3
 	 * Represents the Javascript equivalent of native questionnaire form object.
 	 */
@@ -1849,6 +1986,15 @@ declare module MobileCRM.UI {
 		* @param scope A scope for calling the callbacks.
 		*/
 		public static trySetAnswer(questionName: string, answer: any, errorCallback?: (err: string) => void, scope?: any);
+		/**
+		 * Asynchronously sets the image as answer value for this question
+		 * @param imageQuestionName 
+		 * @param base64Data A value that us used to create image answer.
+		 * @param mimeType The valid mime type of corresponding base64Data.
+		 * @param errorCallback A callback which is called in case of error.
+		* @param scope A scope for calling the callbacks.
+		 */
+		public static trySetImageAnswer(imageQuestionName: string, base64Data: string, mimeType: string, errorCallback?: (err: string) => void, scope?: any);
 		/**
 		 * Asynchronously sets the the focus on given question.
 		 * @param questionName A name of the question.
@@ -2117,7 +2263,7 @@ declare module MobileCRM.UI {
 	}
 
 	class ViewController {
-		public static createCommand(primary: boolean, labels: Array<string>, callback: () => void, scope?: any);
+		public static createCommand(primary: boolean, labels: Array<string>, callback: (command: string) => void, scope?: any);
 	}
 
 	class ProcessController {
@@ -2164,9 +2310,10 @@ declare module MobileCRM.UI {
 		allowedViews: string;
 		source: MobileCRM.Relationship;
 		prevSelection: MobileCRM.Reference;
+		preventClose: boolean;
 		allowNull: boolean;
 
-		addView(entityName: string, viewName: string, isDefault: boolean);
+		addView(entityName: string, viewName: string, isDefault?: boolean);
 		addEntityFilter(entityName: string, filterXML: string);
 		show(success: (obj?: MobileCRM.Reference) => void, failed?: (err: string) => void, scope?: any);
 		showAsync(): Promise<Reference>;
@@ -2195,7 +2342,7 @@ declare module MobileCRM.UI {
 		recordAudio(errorCallback?: (error: string) => void);
 		recordVideo(errorCallback?: (error: string) => void);
 		clear(errorCallback?: (error: string) => void);
-		getDocumentInfo(callback: (documentInfo: any) => void, errorCallback?: (error: string) => void, scope?: any);
+		getDocumentInfo(callback: (documentInfo: _DocumentInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		getData(callback: (data: string) => void, errorCallback?: (error: string) => void, scope?: any);
 		/**
 		 * Gets the media tab document in form of base64 string.
@@ -2297,22 +2444,90 @@ declare module MobileCRM.UI {
 		ReadOnlyMask = SendTo | View | OpenExternal | Print | Email | Copy | Export
 	}
 
-	class _Controller {
+	interface _Controller {
 		isDirty: boolean;
 		isLoaded: boolean;
 		view: _View;
 	}
-	class _View {
+	/** Represents Media tab controller containing specific kind of document. */
+	interface _DocumentController extends _Controller {
+		/** Indicated whether the Media tab is empty. */
+		isEmpty: boolean;
+		/** Gets Media tab note subject used for identifying right instance of related attachment. */
+		noteSubject: string;
+		/** _Document view presenting attached document. */
+		view: _DocumentView;
+	}
+	interface _View {
 		isVisible: boolean;
 		name: string;
 	}
-	class _ListView {
-		isVisible: boolean;
-		name: string;
+	interface _ListView extends _View {
 		selectedIndex: number;
 		templateIndex: number;
 		selectedTemplateIndex: number;
 		isScrollEnabled: boolean;
+	}
+	enum DocumentKind {
+		/** No file content. */
+		None,
+		/** SVG signature. */
+		Signature,
+		/** HTML file or web page URL. */
+		WebPage,
+		/** Image file or image data. */
+		Image,
+		/** Generic document or another file type. */
+		File,
+	}
+	/** Represents information about attached document. */
+	interface _DocumentInfo {
+		/** A kind of attachment included in _DocumentView. */
+		documentKind: DocumentKind;
+		/** Attachment file size. */
+		fileSize: number;
+		/** Image attachment height. */
+		imageHeight: number;
+		/** Image attachment width. */
+		imageWidth: number;
+	}
+	/**  Defines an action to take when image is included into ImageView (captured or selected from gallery). */
+	enum ImageViewMode {
+		/** Size/crop values are taken just like suggestion (e.g. for CaptureImage action). */
+		NoEnforcement = 0,
+		/** Image is automatically cropped to DesiredRatio as it arrives. */
+		AutoCrop = 1,
+		/** Image is automatically resized as it arrives. */
+		AutoResize = 2,
+		/** Image editor is opened to resolve crop/resize actions. */
+		OpenEditor = 0x8000,
+	}
+
+	interface _DocumentView extends _View {
+		/** Contains information about attached document. */
+		documentInfo: _DocumentInfo;
+		/** Attached document file name. */
+		fileName: string;
+		/** Indicates whether the view is empty or whether user has already provided a document. */
+		isEmpty: boolean;
+		/** Indicates whether the view is read-only. */
+		isReadOnly: boolean;
+		/** Attached document file MIME type.*/
+		mimeType: string;
+		/** Signature title. */
+		inkTitle: string;
+		/** Signature save mode: image or SVG. */
+		saveSignatureAsImage: boolean;
+		/** Signature stroke width. */
+		strokeWidth: number;
+		/** Maximum allowed image width. Zero or negative numbers stand for no preference. */
+		maxImageWidth: number;
+		/** Maximum allowed image height. Zero or negative numbers stand for no preference. */
+		maxImageHeight: number;
+		/** Desired width/height ratio. Zero values stand for no preference. Negative ratio means that reverse ratio is also allowed (accepts both 4:3 and 3:4). */
+		desiredRatio: number;
+		/** Defines an action to take when image is included into ImageView (captured or selected from gallery). */
+		enforcementMode: ImageViewMode;
 	}
 	class IFrameForm {
 		form: Form;
@@ -2322,7 +2537,7 @@ declare module MobileCRM.UI {
 
 		static showModal(caption: string, url: string, options?: any);
 		static show(caption: string, url: string, maximized: boolean, options?: any);
-		static requestObject(success: (form: IFrameForm) => boolean, failed?: (err: string) => void, scope?: any);
+		static requestObject(success: (form: IFrameForm) => void, failed?: (err: string) => void, scope?: any);
 		static setDirty(dirty: boolean);
 		static preventClose(message: string);
 		static onSave(handler: (form: IFrameForm) => boolean, bind: boolean, scope?: any);
@@ -2416,6 +2631,7 @@ declare module MobileCRM.UI.EntityForm {
 
 declare module MobileCRM.UI.DetailViewItems {
 	abstract class Item {
+		constructor(name?: string, label?: string);
 		name: string;
 		label: string;
 		dataMember: string;
@@ -2459,22 +2675,99 @@ declare module MobileCRM.UI.DetailViewItems {
 		listDataSource: any;
 	}
 	class LinkItem extends Item {
+		/**
+		 * Instance of link detail item.
+		 * @param name Gets or sets the name of item.
+		 * @param label Gets or sets the label of item.
+		 * @param listDropDownFormat Gets or sets the drop down format @see MobileCRM.UI.DetailViewItems.DropDownFormat
+		 */
+		constructor(name: string, label: string, listDropDownFormat?: DropDownFormat);
 		isMultiline: boolean;
 		value: MobileCRM.Reference | string;
 		listDropDownFormat: DropDownFormat;
 	}
 	class ButtonItem extends Item {
+		/**
+		 * Instance of button item.
+		 * @param name Gets or sets the name of item.
+		 * @param text Gets or sets the click text of item.
+		 */
+		constructor(name: string, text: string);
 		/**Gets or sets the click text.*/
 		clickText: string;
 	}
 	class LookupSetup {
+		/**
+		 * Appends an entity view to the list of allowed views.
+		 * @param entityName Entity logical name.
+		 * @param viewName A name of the view.
+		 * @param isDefault true, if the view should be set as default.
+		 */
 		addView(entityName: string, viewName: string, isDefault: boolean);
+		/**
+		 * Defines a fetch XML filter for entity records.
+		 * @param entityName Entity logical name.
+		 * @param filterXml A string defining the fetch XML which has to be applied as filter for entity records.
+		 */
 		addFilter(entityName: string, filterXml: string);
 	}
+	/**Drop down format for link item. */
 	enum DropDownFormat {
+		/**String list format. */
 		StringList = 17,
+		/**String list with input option format.*/
 		StringListInput = 18,
+		/**Multi string list format.*/
 		MultiStringList = 19,
+		/**Multi string list with input format */
 		MultiStringListInput = 20
+	}
+	class GridItem extends MobileCRM.UI.DetailViewItems.Item {
+		/**
+		 * @since 13.1 Represents the detail grid item.
+		 * @param name Defines the item name.
+		 * @param label Defines the item label.
+		 * @param gridStyleDefintion Gets or sets the style definition for grid item.
+		 */
+		constructor(name: string, label: string, gridStyleDefintion: GridStyleDefintion);
+		Items: Item[];
+		count: number;
+		/**
+		 * @since 13.1
+		 * Add detail item to desired position in to grid.
+		 * @param item Detail item @see MobileCRM.UI.DetailViewItems.Item
+		 * @param column Optional Column x axis parameter, default is 0.
+		 * @param row Optional Row y axis parameter, default is 0.
+		 * @param colSpan Optional Column width x axis width , default is 0.
+		 * @param rowSpan Optional Row width y axis width, default is 0.
+		 */
+		addItem(item: DetailViewItems.Item, column?: number, row?: number, colSpan?: number, rowSpan?: number);
+	}
+	class GridStyleDefintion {
+		/**
+		 * @since 13.1 Represents the columns and rows style definition for grid item.
+		 * @param columns Defines the columns style.
+		 * @param rows Defines the rows style.
+		 */
+		constructor(columns: Array<DetailGridLength>, rows: Array<DetailGridLength>);
+		columns: Array<DetailGridLength>
+		rows: Array<DetailGridLength>
+	}
+	class DetailGridLength {
+		/**
+		 * @since 13.1 Represents the grid length in grid unit type.
+		 * @param value Grid length value.
+		 * @param gridUnitType Defines the grid @see MobileCRM.UI.DetailViewItems.DetailGridUnitType" unit type.
+		 */
+		constructor(value: number, gridUnitType: DetailGridUnitType);
+	}
+	/**@since 13.1 Grid unit type. */
+	enum DetailGridUnitType {
+		/**Gets automatic unit type.*/
+		auto = 0,
+		/**Gets absolute pixel unit type.*/
+		pixel = 1,
+		/**Gets relative unit type.*/
+		star = 2
 	}
 }

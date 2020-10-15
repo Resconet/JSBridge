@@ -2,6 +2,10 @@
 Offline HTML development/debugging version of Resco Mobile CRM app.
 This version of app opens a port for Javascript debugger and allows the HTML root overriding.
 > Don't use in production!
+
+## Download
+The installation packages can be downloaded from [Releases](https://github.com/Resconet/JSBridge/releases).
+
 ## Android
 ### Installation
 
@@ -28,15 +32,28 @@ It's possible to open this URL also via ADB:
 ## Windows desktop
 Install the MSI and use Mobile CRM Integration tool to override the HTML root to your solution files.
 
-## iOS
-## iPhone Simulator
+## iOS/iPhone Simulator
 ### Installing the JSDev build
 
 * Open Xcode menu Xcode / Open Developer Tool / iOS Simulator
 * Unzip iPhone Simulator app
-* Open Terminal and type command:
+* Legacy installation via Xcode command line tools (doesn't work since Xcode 11):
+	
+	* Open Terminal and type command:
 
-	xcrun simctl install booted MobileCrm.app
+			xcrun simctl install booted MobileCrm.app
+
+* Xcode 11+ installation
+	
+	* Drag'n'drop MobileCRM.app into simulator window
+	
+	* WARNING: MacOS Catalina doesn't allow side-loaded simulator apps. App shows the splash screen and following message is shown:
+	
+			MobileCRM.app can’t be opened because Apple cannot check it for malicious software.
+	
+		To exclude the app from this security check, press "Show in Finder" button and drag the app path to Terminal as argument of following command:
+	
+			sudo xattr -rd com.apple.quarantine [path_to_MobileCRM.app]
 
 ### Locating the application data
 Applications installed on iOS Simulator have the app data mounted to the MacOS file system.

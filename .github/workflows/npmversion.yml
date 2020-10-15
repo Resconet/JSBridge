@@ -1,0 +1,26 @@
+name: JSBridge Node.js Package Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Git
+      run: |
+        git config user.email "mobilecrm@resco.net"
+        git config user.name "resconet"
+
+    - name: Set package version
+      run: npm version ${{ github.event.inputs.version }} -m "Set package version to %s"
+
+    - name: Push changes
+      run: git push

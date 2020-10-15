@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+	<script src="js/tinymce/tinymce.min.js"></script>
+	<script src="../JSBridge.js"></script>
+	<style>
+
+		.mce-widget * {
+			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,"Helvetica Neue",sans-serif;
+		}
+
+		.mce-container.mce-tinymce {
+			border: 0 !important;
+		}
+
+		.mce-branding-powered-by {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<textarea></textarea>
+	<script>
+		var tinymce;
+		// Whether to automatically update the html editor when the entity property changes.
+		var handleOnChange = true;
+		// Whether to update the entity property when the content of the html editor is changed.
+		var updateEntityOnChange = true;
+		var EntityFormFoRichText = /** @class */ (function () {
+			EntityFormFoRichText = function (editorMode) {
+				var url = this.getUrlParams();
+				this._field = url['field'];
+				this._editorMode = editorMode;
+				//this._updateCnt = 0;//"onChange_editor" || "onChange_entityForm";
+			}
+
+			return EntityFormFoRichText;
+		}());
+
+
+		/****************************************
+		 * EntityFormRichText Prototypes methods
+		 * **************************************/
+
+		EntityFormFoRichText.prototype.CheckMode = function (entityForm, continueWith, scope) {
+			if (!entityForm.canEdit) {
+				continueWith.call(scope, true);
+			}
+			if (this.isFieldEditable(entityForm) === false)
+				continueWith.call(scope, true);
+			else {
+				MobileCRM.Metadata.requestObject(function (metaData) {
+					var entity = metaData.getEntity(entityForm.entity.entityName);
+					if (entity) {
+						var prop = entity.getProperty(this._field);
+						if (!prop)
+							continueWith.call(scope, true);
+						else if (prop.permission === 2) //can create
+							continueWith.call(scope, false);
+						else if ((prop.permission & 2) == 0)
+							continueWith.call(scope, true);
+						else
+							continueWith.call(scope, false);
+					}
+					else if (!this.isFieldEditable(entityForm)) {
+						continueWith.call(scope, true);
+					}
+				}, MobileCRM.bridge.alert, this);
+			}
+		}
+		EntityFormFoRichText.prototype.initialize = function () {
+			if (!this._field) {
+				MobileCRM.bridge.alert("Parsed RichTextEditor field is undefined");
+				return;
+			}
+			MobileCRM.UI.EntityForm.requestObject(function (entityF) {
+				this.CheckMode(entityF, function (isReadOnly) {
+					if (isReadOnly)
+						loadEditor(editorMode.readOnly, function (editor) {
+							editor.setMode('readonly');
+							this.onEditorLoaded(entityF, editor);
+						}, this);
+					else {
+						loadEditor(this._editorMode, function (editor) {
+							this.onEditorLoaded(entityF, editor);
+						}, this);
+					}
+				}, this);
+			}, MobileCRM.bridge.alert, this);
+		}
+		EntityFormFoRichText.prototype.onEditorLoaded = function (entityForm, editor) {
+			if (!editor)
+				MobileCRM.bridge.alert("Editor is undefined");
+			else {
+				this._editor = editor;
+				this._editor.off('Change'); // Disable change event
+				var text = entityForm.entity.properties[this._field];
+				this._editor.setContent(text || "", {format: "html"});
+				this.registerOnSave();
+				if (handleOnChange) {
+					this._editor.on('Change', this.onEditorChanged.bind(this));
+					this.registerOnChangeHandlers();
+				}
+			}
+		}
+
+		EntityFormFoRichText.prototype.onEditorChanged = function (obj) {
+			MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [true]);
+			if (obj instanceof MobileCRM.UI.EntityForm) {
+				var eVal = obj.entity.properties[this._field];
+				var val = this._editor.getContent({ format: 'html' })
+				if (val !== eVal) {
+					this._editor.off('Change');
+					this._editor.setContent(eVal, { format: 'html' });
+					this._editor.on('Change', this.onEditorChanged.bind(this));
+				}
+			}
+			else if (updateEntityOnChange) {
+				MobileCRM.UI.EntityForm.requestObject(this.saveEditorContent, MobileCRM.bridge.alert, this);
+			}
+		}
+		EntityFormFoRichText.prototype.registerOnSave = function () {
+			MobileCRM.UI.EntityForm.onSave(this.saveEditorContent, true, this);
+		}
+		EntityFormFoRichText.prototype.isFieldEditable = function (entityForm) {
+			var detailViews = entityForm.detailViews;
+			var item;
+			if (detailViews) {
+				var nItems = detailViews.length;
+				for (var i = 0; i < nItems; i++) {
+					var dv = detailViews[i];
+					for (var itm in dv.items) {
+						var tmpItem = dv.items[itm];
+						if (tmpItem.name === this._field) {
+							item = tmpItem;
+							break;
+						}
+					}
+				}
+			}
+			if (item) {
+				return item.isEnabled;
+			}
+			return null; // item is not avaliable on the form.
+		}
+
+		EntityFormFoRichText.prototype.saveEditorContent = function (entityForm) {
+			var eVal = this._editor.getContent({ format: 'html' });
+
+			var entity = entityForm.entity;
+			if (eVal !== entity.properties[this._field]) {
+				entity.properties[this._field] = eVal;
+				return true;
+			}
+		}
+
+		EntityFormFoRichText.prototype.registerOnChangeHandlers = function () {
+			MobileCRM.UI.EntityForm.onChange(function (entityForm) {
+				var context = entityForm.context;
+				if (context.changedItem === this._field) {
+					this.onChangeHandler(entityForm);
+				}
+			}, true, this);
+		}
+
+		EntityFormFoRichText.prototype.onChangeHandler = function (entityForm) {
+			var mode = 1; // default is editable mode.
+			if (!this.isFieldEditable(entityForm) || !entityForm.canEdit)
+				mode = editorMode.readOnly;
+
+			if ((this._editorMode !== editorMode.readOnly) && mode === editorMode.readOnly) {
+				this.removeTinymce();
+				loadEditor(editorMode.readOnly, function (editor) {
+					editor.setMode('readonly');
+					this._editor = editor;
+					this._editorMode = mode;
+					this._editor.on('Change', this.onEditorChanged.bind(this));
+					this.onEditorChanged(entityForm);
+				}, this);
+			}
+			else if ((this._editorMode === editorMode.readOnly) && mode !== editorMode.readOnly) {
+				this.removeTinymce();
+				loadEditor(editorMode.simpleMode, function (editor) {
+					this._editor = editor;
+					this._editorMode = mode;
+					this._editor.on('Change', this.onEditorChanged.bind(this));
+					this.onEditorChanged(entityForm);
+				}, this);
+			}
+			else
+				this.onEditorChanged(entityForm);
+		}
+
+		EntityFormFoRichText.prototype.removeTinymce = function () {
+			this._editor.off('Change'); // Disable change event
+			tinymce.remove();
+		}
+
+		EntityFormFoRichText.prototype.getUrlParams = function () {
+			var match, pl = /\+/g, // Regex for replacing addition symbol with a space
+				search = /([^&=]+)=?([^&]*)/g, decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); }, query = window.location.search.substring(1);
+			var urlParams = {};
+			while (match = search.exec(query))
+				urlParams[decode(match[1])] = decode(match[2]);
+			return urlParams;
+		}
+
+
+
+		function loadEditor(editMode, continueWith, scope) {
+			if (editMode === editorMode.readOnly) {
+				tinymce.init({
+					selector: 'textarea',
+					plugins: "fullscreen",
+					toolbar: false,
+					menubar: false,
+					statusbar: false,
+					readonly: 1,
+					setup: function (editor) {
+						editor.on('init', function (e) {
+							editor.execCommand('mceFullScreen');
+							continueWith.call(scope, editor);
+						});
+					}
+				});
+			}
+			else if (editMode === editorMode.simpleMode) {
+				tinymce.init({
+					selector: 'textarea',
+					plugins: [
+						'fullscreen',
+						'advlist autolink lists link charmap hr anchor pagebreak',
+						'paste textcolor colorpicker'
+					],
+					toolbar: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor',
+					menubar: false,
+					statusbar: false,
+					force_br_newlines: true,	// Needed for two way binding, to display valid text on entity fotm field
+					force_p_newlines: false,	// Needed for two way binding, to display valid text on entity fotm field
+					forced_root_block: '',		// Needed for 3.x and if two previous settings are used.
+					setup: function (editor) {
+						editor.on('init', function (e) {
+							editor.execCommand('mceFullScreen');
+							continueWith.call(scope, editor);
+						});
+					},
+				});
+			}
+			else if (editMode === editorMode.fullMode) {
+				tinymce.init({
+					selector: 'textarea',
+					plugins: [
+						'advlist autolink lists link image charmap preview hr anchor pagebreak',
+						'searchreplace visualblocks visualchars code fullscreen',
+						'insertdatetime media nonbreaking save table contextmenu directionality',
+						'emoticons template paste textcolor colorpicker textpattern imagetools codesample toc help'
+					],
+					toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+					toolbar2: 'visualblocks preview media | forecolor backcolor emoticons | codesample help',
+					menubar: 'edit insert format table',
+					removed_menuitems: "fullscreen",
+					force_br_newlines: true,	// Needed for two way binding, to display valid text on entity fotm field
+					force_p_newlines: false,	// Needed for two way binding, to display valid text on entity fotm field
+					forced_root_block: '',		// Needed for 3.x and if two previous settings are used.
+					statusbar: false,
+					setup: function (editor) {
+						editor.on('init', function (e) {
+							editor.execCommand('mceFullScreen');
+							continueWith.call(scope, editor);
+						});
+					}
+				});
+			}
+			else
+				continueWith.call(scope, null);
+		}
+
+		var editorMode;
+		(function (editorMode) {
+			editorMode[editorMode["readOnly"] = 0] = "readOnly";
+			editorMode[editorMode["simpleMode"] = 1] = "simpleMode";
+			editorMode[editorMode["fullMode"] = 2] = "fullMode";
+		})(editorMode || (editorMode = {}));
+		window.onload = function () {
+			var er = new EntityFormFoRichText(editorMode.simpleMode);
+			er.initialize();
+		};
+	</script>
+</body>
+</html>

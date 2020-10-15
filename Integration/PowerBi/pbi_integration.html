@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Power Bi Integration</title>
+	<!-- Activate IE9 document mode, if available. -->
+	<!-- If missing, the WebBrowser control on Windows runs in default IE8 mode which is not supported by JSBridge. -->
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<!-- Defined iOS viewport -->
+	<!-- If missing, the UIWebView control on iOS zooms out the web page and allows the pinch zoom. -->
+	<meta name='viewport' content='initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+	<!--Please make sure you have all libs included properly using valid path.
+		This is relative path to JSBridge.js file
+	-->
+	<script src="../JSBridge.js"></script>
+	<script src="PowerBiOAuthSettings.js"></script>
+	<script src="powerbi.js"></script>
+</head>
+<body>
+	
+    <strong>Name:</strong><p id="detailReportName"></p>
+    <strong>Id:</strong><p id="detailReportId"></p>
+	<!-- This is the container what display the dashboard in specific width and hight div element. -->
+    <div id="dashboardContainer" style="width:1000px;height:1000px"></div>
+
+
+    <script type="text/javascript">
+		//***** Inspired By *****
+		//***** https://community.powerbi.com/t5/Developer/How-To-Get-embed-token-using-Get-Post-only/td-p/294475
+		//***** Reference to Lib: https://github.com/Microsoft/powerbi-javascript/wiki
+
+		PowerBi = {
+			_url: "https://login.microsoftonline.com/",
+			report: null,
+			reportDetail: {
+				id: "",
+				name: "",
+				embedUrl: "",
+				datasetId: ""
+			},
+
+			authenticateAndGetToken: function (continueWith) {
+				var ouathSettings = new MobileCRM.OAuthSettings();
+				ouathSettings.authorityEndPoint = "https://login.microsoftonline.com/common/oauth2/token";
+				ouathSettings.authorizationUrl = "https://login.microsoftonline.com/common/oauth2/authorize";
+				ouathSettings.resourceUrl = "https://analysis.windows.net/powerbi/api";
+				ouathSettings.clientId = PowerBiOAuthSettings.clientId;
+				ouathSettings.clientSecret = PowerBiOAuthSettings.client_secret;
+				ouathSettings.redirectUrl = PowerBiOAuthSettings.redirectUrl;
+				ouathSettings.scopes = "openid";
+
+				MobileCRM.Integration.getOAuthAccessToken("powerBi", ouathSettings, false, function(token) {
+					// continue with access token.
+					continueWith.call(null, token);
+				}, function(err) { MobileCRM.bridge.alert("Failed to get access token.\n\n" + err); }, null);
+			},
+			getReportDetailsAndDisplay: function (textAccessToken, workspaceGroupId, componentId, configType, failureCallback) {
+				///<param name='textAccessToken' type='String'>Valid access token</param>
+				///<param name='workspaceGroupId' type='String'>Workspace id.</param>
+				///<param name='componentId' type='String'>Report/Dashboard id to display, if not set first one as default if exists will be displayed.</param>
+				///<param name='configType' type='PowerBi.ConfigType' />
+				/// <param name="failureCallback" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+
+				var req = new MobileCRM.Services.HttpWebRequest();
+				req.method = "GET";
+				req.headers = {
+					Authorization: "Bearer " + textAccessToken
+				}
+
+				var type = configType == PowerBi.ConfigType.Report ? 'reports' : 'dashboards';
+
+
+				req.send("https://api.powerbi.com/v1.0/myorg/groups/" + workspaceGroupId + "/" + type, function (response) {
+
+					if (response.responseCode !== 200) {
+						failureCallback("Response not valid in 'getReportDetailsAndDisplay' method: " + JSON.stringify(response));
+						return;
+					}
+
+					var response = JSON.parse(response.responseText);
+
+					var err = { message: undefined };
+					var detail = PowerBi._getComponentDetailByIndex(response.value, componentId, err);
+
+					if (err.message) {
+						failureCallback("Error: " + err.message);
+						return;
+					}
+					// Set details of report for further operations
+					PowerBi._setReportDetail(detail);
+
+					// Display data for user
+					document.getElementById("detailReportName").innerText = PowerBi.reportDetail.name;
+					document.getElementById("detailReportId").innerText = PowerBi.reportDetail.id;
+
+					PowerBi.generateEmbedTokenAndDisplayReport(PowerBi.reportDetail.embedUrl, textAccessToken, workspaceGroupId, PowerBi.reportDetail.id, configType);
+				}, null);
+			},
+			generateEmbedTokenAndDisplayReport: function (embedUrl, textAccessToken, workspaceGroupId, componentId, configType, failureCallback) {
+				///<param name='embededUrl' type='String'>Embed url for report</param>
+				///<param name='textAccessToken' type='String'>Valid access token</param>
+				///<param name='workspaceGroupId' type='String'>Workspace id.</param>
+				///<param name='componentId' type='String'>Report/Dashboard id to display, if not set first one as default if exists will be displayed.</param>
+				///<param name='configType' type='PowerBi.ConfigType' />
+				/// <param name="failureCallback" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+
+				var req = new MobileCRM.Services.HttpWebRequest();
+				req.method = "POST";
+
+				req.headers = {
+					Authorization: "Bearer " + textAccessToken,
+					Accept: "application/json"
+				}
+
+				req.contentType = 'application/json';
+
+				data = {
+					"accessLevel": "View"
+					// here can be added many options, like save as etc...
+				}
+
+				var type = configType == PowerBi.ConfigType.Report ? 'reports' : 'dashboards';
+
+				var url = "https://api.powerbi.com/v1.0/myorg/groups/" + workspaceGroupId + "/" + type + "/" + componentId + "/GenerateToken";
+
+				req.setBody(JSON.stringify(data), "UTF-8");
+				req.send(url, function (response) {
+
+					if (response.responseCode !== 200) {
+						failureCallback("Response not valid in 'generateEmbedTokenAndDisplayReport' method: " + JSON.stringify(response));
+						return;
+					}
+
+					var response = JSON.parse(response.responseText);
+					var models = window['powerbi-client'].models;
+					var config = PowerBi.getConfiguration(response.token, PowerBi.TokenType.Embed, componentId, embedUrl, configType);
+					PowerBi.displayReport(response.token, models.TokenType.Embed, config);
+				}, null);
+			},
+			getConfiguration: function (textAccessToken, tokenType, componentId, embededUrl, configType) {
+				///<param name='textAccessToken' type='String'>Valid access token</param>
+				///<param name='componentId' type='String'>Report/Dashboard id to display, if not set first one as default if exists will be displayed.</param>
+				///<param name='embededUrl' type='String'>Embed url for report</param>
+				///<param name='tokenType' type='PowerBi.TokenType' />
+				///<param name='configType' type='PowerBi.ConfigType' />
+
+				config = {							// TODO: Here can be set many configuration parameters
+					type: 'dashboard',
+					tokenType: tokenType,
+					accessToken: textAccessToken,
+					embedUrl: embededUrl,
+					id: componentId,
+					pageView: 'fitToWidth'
+				}
+
+				if (configType == PowerBi.ConfigType.Report) {
+					config.type = 'report';
+					config['permissions'] = PowerBi.Permission.All,
+						config['settings'] = {
+							filterPaneEnabled: true,
+							navContentPaneEnabled: true
+						}
+				}
+
+				return config;
+			},
+			_setReportDetail: function (data) {
+				///<param name='data' type='PowerBi.reportDetail'>Details about report <see cref="PowerBi.reportDetail">PowerBi.reportDetail</see> object.</param>
+
+				PowerBi.reportDetail.datasetId = data['datasetId'];
+				PowerBi.reportDetail.embedUrl = data['embedUrl'];
+				PowerBi.reportDetail.id = data['id'];
+				PowerBi.reportDetail.name = data['displayName'] || data['name'];
+			},
+			_getComponentDetailByIndex: function (dataArray, componentId, outErr) {
+				///<param name='dataArray' type='Array'>Array with details about report <see cref="PowerBi.reportDetail">PowerBi.reportDetail</see> object.</param>
+				///<param name='componentId' type='String'>Report/Dashboard id to display, if not set first one as default if exists will be displayed.</param>
+				///<param name='outErr' type='{message:""}'>Out error with message property</param>
+				if (!dataArray || dataArray.length < 1) {
+					outErr.message = "Component details not defined or empty";
+					return;
+				}
+
+				var detail = null;
+
+				if (!componentId)
+					return dataArray[0];
+				else {
+					for (var d in dataArray) {
+						detail = dataArray[d];
+						if (detail.id === componentId)
+							return detail;
+					}
+				}
+
+				outErr.message = "\nComponent Id not found";
+
+				if (!detail['embedUrl'])
+					outErr.message += "\nComponent embedUrl not defined";
+			},
+			embed: function (configuration, dashboardContainerElement) {
+				///<param name='configuration' type='powerbi.config' />
+				///<param name='dashboardContainerElement' type='HTMLDOMElement' />
+
+				this.report = powerbi.embedNew(dashboardContainerElement, configuration);
+				this.registerReportHandlers();
+			},
+			displayReport: function (textAccessToken, configuration) {
+				///<param name='textAccessToken' type='String'>Valid access token</param>
+				///<param name='configuration' type='powerbi.config' />
+
+				try {
+					PowerBi.embed(config, dashboardContainer);
+				}
+				catch (ex) {
+					MobileCRM.bridge.alert(JSON.stringify(ex.message));
+				}
+			},
+			registerReportHandlers: function () {
+				// Report.off removes a given event handler if it exists.
+				PowerBi.report.off("loaded");
+
+				// Report.on will add an event handler which prints to Log window.
+				PowerBi.report.on("loaded", function () {
+					Log.logText("Loaded");
+				})
+				// Report.off removes a given event handler if it exists.
+				PowerBi.report.off("rendered");
+
+				// Report.on will add an event handler which prints to Log window.
+				PowerBi.report.on("rendered", function () {
+					Log.logText("Rendered");
+				});
+
+				PowerBi.report.on("error", function (event) {
+					MobileCRM.bridge.alert("Error report:" + JSON.stringify(event.detail));
+					Log.log(event.detail);
+
+					report.off("error");
+				});
+			},
+			ConfigType: {
+				Dashboard: 1,
+				Report: 2
+			},
+			TokenType: {
+				Aad: 0,
+				Embed: 1
+			},
+			Permission: {
+				Read: 0,
+				ReadWrite: 1,
+				Copy: 2,
+				Create: 4,
+				All: 7
+			}
+		}
+
+		function showPowerBi() {
+			try {
+				var componentId = null;
+				var confType = null;
+
+				PowerBiOAuthSettings = undefined;
+
+				if (PowerBiOAuthSettings.dashboardId) {
+					componentId = PowerBiOAuthSettings.dashboardId;
+					confType = PowerBi.ConfigType.Dashboard;
+				}
+				else if (PowerBiOAuthSettings.reportId) {
+					componentId = PowerBiOAuthSettings.reportId;
+					confType = PowerBi.ConfigType.Report;
+				}
+
+				if (!componentId)
+					MobileCRM.UI.MessageBox.sayText("Please define id of Dashboard or Report in 'PowerBiOAuthSettings.js'. ");
+				else {
+					PowerBi.authenticateAndGetToken(function (token) {
+						if (!PowerBiOAuthSettings.workspaceGroupId)
+							MobileCRM.UI.MessageBox.sayText("'workspaceGroupId' is not defined.\nPlease go to 'PowerBiOAuthSettings.js' and define it.");
+						else
+							PowerBi.getReportDetailsAndDisplay(token, PowerBiOAuthSettings.workspaceGroupId, componentId, confType, MobileCRM.bridge.alert)
+					});
+				}
+			}
+			catch (ex) {
+				MobileCRM.bridge.alert("Unexpected exception has been thrown.\n\n" + ex.message);
+			}
+		}
+
+		window.onload = function () {
+			showPowerBi();
+		}
+
+    </script>
+</body>
+</html>
