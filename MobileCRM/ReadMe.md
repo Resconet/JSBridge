@@ -2,6 +2,10 @@
 Offline HTML development/debugging version of Resco Mobile CRM app.
 This version of app opens a port for Javascript debugger and allows the HTML root overriding.
 > Don't use in production!
+
+## Download
+The installation packages can be downloaded from [Releases](https://github.com/Resconet/JSBridge/releases).
+
 ## Android
 ### Installation
 
@@ -28,8 +32,7 @@ It's possible to open this URL also via ADB:
 ## Windows desktop
 Install the MSI and use Mobile CRM Integration tool to override the HTML root to your solution files.
 
-## iOS
-## iPhone Simulator
+## iOS/iPhone Simulator
 ### Installing the JSDev build
 
 * Open Xcode menu Xcode / Open Developer Tool / iOS Simulator
