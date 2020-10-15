@@ -47,7 +47,7 @@
                     contact.filter = filter;
                     var fetch_1 = new MobileCRM.FetchXml.Fetch(account);
                     fetch_1.execute("DynamicEntities", function (res) {
-                        if (res.length === 1) {
+                        if (res.length >= 1) {
                             var parentEntity = res[0];
                             var emailAddress_1 = parentEntity.properties.emailaddress1;
                             if (emailAddress_1) {
