@@ -8,9 +8,7 @@ The package can be installed using following command **npm i @resconet/jsbridge*
 
 The directory contains:
 * javascript **.js** and typescript **.d.ts** source file
-* package definition file **package.json**
 * readme file **README.md**
-* .github/workflows directory with **npmpublish.yml** workflow definition file
 
 # Install package in project
 
