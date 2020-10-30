@@ -5527,20 +5527,34 @@
                 responseEncoding: this.responseEncoding
 		    };
 
-
 		    if (this._encoding === "Binary") {
 		        if (this._body && this._body.constructor == Blob) {
 		            var reader = new FileReader();
 		            reader.addEventListener("loadend", function (res) {
 		                data.body = this.result.split(',')[1];
 		                data.encoding = "Base64";
-		                MobileCRM.bridge.command("sendHttpRequest", JSON.stringify(data), callback, null, scope);
+						MobileCRM.bridge.command("sendHttpRequest", JSON.stringify(data), callback, null, scope);
 		            });
 		            reader.readAsDataURL(this._body);
 		        }
 		    }
 		    else
-		        MobileCRM.bridge.command("sendHttpRequest", JSON.stringify(data), callback, null, scope);
+				MobileCRM.bridge.command("sendHttpRequest", JSON.stringify(data), callback, null, scope);
+		};
+		MobileCRM.Services.HttpWebRequest.prototype.sendAsync = function (url) {
+			/// <summary>[v13.3] Allow to send http web request against an HTTP server.</summary>
+			/// <param name="url" type="String">The Url of server where HTTP request will be sent.</param>
+			/// <returns type="Promise&lt;IWebResponse&gt;">A Promise object which is asynchronously resolved with the web response object, or rejected with the web response object, where responseText contains error message.</returns>
+
+			var _this = this;
+			return new Promise(function (resolve, reject) {
+				_this.send(url, function (response) {
+					if (response["isFailure"])
+						reject(response);
+					else
+						resolve(response);
+				});
+			});
 		};
 		MobileCRM.Services.HttpWebRequest.prototype.setBody = function (body, encoding) {
 		    /// <summary>[v11.0] Set content body of http web request.</summary>

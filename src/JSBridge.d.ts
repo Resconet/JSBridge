@@ -1180,10 +1180,16 @@ declare module MobileCRM.Services {
         /**
          * Allow to send http web request against an HTTP server.
          * @param url Url of server where HTTP request will be sent.
-         * @param callback A callback function which will obtain the the web response. @see IWebResponse.
+         * @param callback A callback function which will obtain the web response. @see IWebResponse.
          * @param scope The scope for callbacks.
          */
-        public send(url: string, callback: (res: IWebResponse) => void, scope?: any);
+		public send(url: string, callback: (res: IWebResponse) => void, scope?: any);
+		/**
+         * Allow to send http web request against an HTTP server.
+         * @param url Url of server where HTTP request will be sent.
+		 * @returns A Promise object which is asynchronously resolved with the web response object, or rejected with the web response object, where responseText contains error message. @see IWebResponse.
+         */
+		public sendAsync(url: string): Promise<IWebResponse>;
         /**
          * Set content body of http web request.
          * @param body The body content.
