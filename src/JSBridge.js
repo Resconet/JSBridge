@@ -5616,11 +5616,11 @@
 				window.addEventListener("message", receiveMessageFromWebClient, false);
 	
 				function receiveMessageFromWebClient(event) {
-					var data = event.data;
+					var data = (typeof event.data === 'string' ? event.data : null);
 					//alert("JSB: " + data);
 					try {
 						// process invokescript method
-						if (data.indexOf("eval") === 0) {
+						if (data && data.indexOf("eval") === 0) {
 							var index = data.indexOf(":");
 							if (index >= 0) {
 								var evalCode = data.substr(index + 1);
@@ -5636,7 +5636,7 @@
 						}
 					}
 					catch (ex) {
-						alert("JSBridge on Webclient exception: " + ex);
+						MobileCRM.bridge.alert("JSBridge on Webclient exception: " + ex);
 						console.log(ex);
 					}
 				}
