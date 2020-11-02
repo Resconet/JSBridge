@@ -103,6 +103,7 @@
 				this.registerOnSave();
 				if (handleOnChange) {
 					this._editor.on('Change', this.onEditorChanged.bind(this));
+					this._editor.on('Focusout', this.onEditorChanged.bind(this));
 					this.registerOnChangeHandlers();
 				}
 			}
