@@ -107,13 +107,17 @@
 				}
 			}
 		}
+		
+		EntityFormFoRichText.prototype.setIsDirty = function (isDirty) {
+			MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [isDirty]);
+		}
 
 		EntityFormFoRichText.prototype.onEditorChanged = function (obj) {
-			MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [true]);
 			if (obj instanceof MobileCRM.UI.EntityForm) {
 				var eVal = obj.entity.properties[this._field];
 				var val = this._editor.getContent({ format: 'html' })
 				if (val !== eVal) {
+					this.setIsDirty(true);
 					this._editor.off('Change');
 					this._editor.setContent(eVal, { format: 'html' });
 					this._editor.on('Change', this.onEditorChanged.bind(this));
@@ -153,6 +157,7 @@
 
 			var entity = entityForm.entity;
 			if (eVal !== entity.properties[this._field]) {
+				this.setIsDirty(true);
 				entity.properties[this._field] = eVal;
 				return true;
 			}
