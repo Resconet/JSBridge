@@ -1,6 +1,6 @@
-// v13.1
+// v13.1.1
 (function () {
-	var _scriptVersion = 13.1;
+	var _scriptVersion = 13.1.1;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -4899,8 +4899,9 @@
 	            data._inCallback = true;
 	            var result = '';
 	            if (_callHandlers(handlers, data) != false) {
-	                var changed = data.getChanged();
-	                result = JSON.stringify(changed);
+	                var changed = data.getChanged() ?? {};
+			changed.context = context;
+			result = JSON.stringify(changed);
 	            }
 	            data._inCallback = false;
 	            return result;
