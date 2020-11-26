@@ -58,7 +58,7 @@
 					if (entity) {
 						var prop = entity.getProperty(this._field);
 						if (!prop)
-							continueWith.call(scope, true);
+							continueWith.call(scope, false);
 						else if (prop.permission === 2) //can create
 							continueWith.call(scope, false);
 						else if ((prop.permission & 2) == 0)
