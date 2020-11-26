@@ -1,6 +1,6 @@
-// v13.1.1
+// v13.1
 (function () {
-	var _scriptVersion = 13.1.1;
+	var _scriptVersion = 13.1;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
