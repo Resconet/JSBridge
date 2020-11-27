@@ -35,6 +35,8 @@
 				var url = this.getUrlParams();
 				this._field = url['field'];
 				this._editorMode = editorMode;
+				this._onLoadChangeCnt = 0;
+				this._checkPermissions = false; // This settings will be passed from the woodford
 				//this._updateCnt = 0;//"onChange_editor" || "onChange_entityForm";
 			}
 
@@ -50,26 +52,28 @@
 			if (!entityForm.canEdit) {
 				continueWith.call(scope, true);
 			}
-			if (this.isFieldEditable(entityForm) === false)
-				continueWith.call(scope, true);
+			var isReadOnly = !this.isFieldEditable(entityForm);
+			if (isReadOnly)
+				continueWith.call(scope, isReadOnly);
 			else {
-				MobileCRM.Metadata.requestObject(function (metaData) {
-					var entity = metaData.getEntity(entityForm.entity.entityName);
-					if (entity) {
-						var prop = entity.getProperty(this._field);
-						if (!prop)
-							continueWith.call(scope, false);
-						else if (prop.permission === 2) //can create
-							continueWith.call(scope, false);
-						else if ((prop.permission & 2) == 0)
-							continueWith.call(scope, true);
-						else
-							continueWith.call(scope, false);
-					}
-					else if (!this.isFieldEditable(entityForm)) {
-						continueWith.call(scope, true);
-					}
-				}, MobileCRM.bridge.alert, this);
+				if (this._checkPermissions) {
+					MobileCRM.Metadata.requestObject(function (metaData) {
+						var entity = metaData.getEntity(entityForm.entity.entityName);
+						if (entity) {
+							var prop = entity.getProperty(this._field);
+							if (!prop)
+								continueWith.call(scope, true);
+							else if (prop.permission === 2) //can create
+								continueWith.call(scope, false);
+							else if ((prop.permission & 2) == 0)
+								continueWith.call(scope, true);
+							else
+								continueWith.call(scope, false);
+							return;
+						}
+					}, MobileCRM.bridge.alert, this);
+				}
+				continueWith.call(scope, isReadOnly);
 			}
 		}
 		EntityFormFoRichText.prototype.initialize = function () {
@@ -82,33 +86,35 @@
 					if (isReadOnly)
 						loadEditor(editorMode.readOnly, function (editor) {
 							editor.setMode('readonly');
-							this.onEditorLoaded(entityF, editor);
+							this.onEditorLoaded(editor);
 						}, this);
 					else {
 						loadEditor(this._editorMode, function (editor) {
-							this.onEditorLoaded(entityF, editor);
+							this.onEditorLoaded(editor);
 						}, this);
 					}
 				}, this);
 			}, MobileCRM.bridge.alert, this);
 		}
-		EntityFormFoRichText.prototype.onEditorLoaded = function (entityForm, editor) {
+		EntityFormFoRichText.prototype.onEditorLoaded = function (editor) {
 			if (!editor)
 				MobileCRM.bridge.alert("Editor is undefined");
 			else {
-				this._editor = editor;
-				this._editor.off('Change'); // Disable change event
-				var text = entityForm.entity.properties[this._field];
-				this._editor.setContent(text || "", {format: "html"});
-				this.registerOnSave();
-				if (handleOnChange) {
-					this._editor.on('Change', this.onEditorChanged.bind(this));
-					this._editor.on('Focusout', this.onEditorChanged.bind(this));
-					this.registerOnChangeHandlers();
-				}
+				MobileCRM.UI.EntityForm.requestObject(function (entityForm) {
+					this._editor = editor;
+					this._editor.off('Change'); // Disable change event
+					var text = entityForm.entity.properties[this._field];
+					this._editor.setContent(text || "");
+					this.registerOnSave();
+					if (handleOnChange) {
+						this._editor.on('Change', this.onEditorChanged.bind(this));
+						this._editor.on('Focusout', this.onEditorChanged.bind(this));
+						this.registerOnChangeHandlers();
+					}
+				}, MobileCRM.bridge.alert, this);
 			}
 		}
-		
+
 		EntityFormFoRichText.prototype.setIsDirty = function (isDirty) {
 			MobileCRM.bridge.invokeMethodAsync("WebController", "set_IsDirty", [isDirty]);
 		}
@@ -116,11 +122,13 @@
 		EntityFormFoRichText.prototype.onEditorChanged = function (obj) {
 			if (obj instanceof MobileCRM.UI.EntityForm) {
 				var eVal = obj.entity.properties[this._field];
-				var val = this._editor.getContent({ format: 'html' })
-				if (val !== eVal) {
+
+				var val = this._editor.getContent()
+
+				if (!this._compareString(eVal, val)) {
 					this.setIsDirty(true);
 					this._editor.off('Change');
-					this._editor.setContent(eVal, { format: 'html' });
+					this._editor.setContent(eVal);
 					this._editor.on('Change', this.onEditorChanged.bind(this));
 				}
 			}
@@ -128,6 +136,22 @@
 				MobileCRM.UI.EntityForm.requestObject(this.saveEditorContent, MobileCRM.bridge.alert, this);
 			}
 		}
+
+		/**
+		 * Comapre two string after replacing all line breaks.
+		 * @param str1 first string
+		 * @param str2 second string
+		 * @returns True if equals, otherwise false.
+		 */
+		EntityFormFoRichText.prototype._compareString = function (str1, str2) {
+			str1 = str1 || ""
+			str2 = str2 || ""
+			str1 = str1.replace(/(\r\n|\n|\r)/gm, "");
+			str2 = str2.replace(/(\r\n|\n|\r)/gm, "");
+
+			return str1 === str2;
+		}
+
 		EntityFormFoRichText.prototype.registerOnSave = function () {
 			MobileCRM.UI.EntityForm.onSave(this.saveEditorContent, true, this);
 		}
@@ -153,11 +177,20 @@
 			return null; // item is not avaliable on the form.
 		}
 
-		EntityFormFoRichText.prototype.saveEditorContent = function (entityForm) {
-			var eVal = this._editor.getContent({ format: 'html' });
+		EntityFormFoRichText.prototype._getItem = function (detailItemContainer) {
+			var nItems = detailItemContainer.length;
+			for (var i = 0; i < nItems; i++) {
+				var item = detailItemContainer[i];
+				if (item.view && item.view.name == name)
+					return item;
+			}
+		}
 
+
+		EntityFormFoRichText.prototype.saveEditorContent = function (entityForm) {
+			var eVal = this._editor.getContent();
 			var entity = entityForm.entity;
-			if (eVal !== entity.properties[this._field]) {
+			if (!this._compareString(eVal, entity.properties[this._field])) {
 				this.setIsDirty(true);
 				entity.properties[this._field] = eVal;
 				return true;
