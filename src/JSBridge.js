@@ -4899,7 +4899,7 @@
 	            data._inCallback = true;
 	            var result = '';
 	            if (_callHandlers(handlers, data) != false) {
-	                var changed = data.getChanged() ?? {};
+	                var changed = data.getChanged() || {};
 			changed.context = context;
 			result = JSON.stringify(changed);
 	            }
