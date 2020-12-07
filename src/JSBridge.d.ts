@@ -629,6 +629,13 @@ declare module MobileCRM {
 		fastConnection?: boolean;
 	}
 
+	interface ITimeChange {
+		/** Gets the time when time change occured. */
+		lastChange: Date;
+		/** Gets the delta time in seconds. */
+		delta: number;
+	}
+
 	class Application {
 		public static synchronize(backgroundOnly: boolean, ifNotSyncedBefore: Date);
 		public static synchronizeOnForeground(forceLogin: boolean);
@@ -645,6 +652,14 @@ declare module MobileCRM {
 		 * @param scope  The scope for callbacks.
 		 */
 		public static setAppColors(colors: { [colorName: string]: number | string }, success?: () => void, failed?: (err: string) => void, scope?: any);
+		/**
+		 * Gets the last detected time change.
+		 * @since 13.3.1
+		 * @param success A callback function which is called in case of success.
+		 * @param failed The error callback which is called asynchronously in case of error.
+		 * @param scope Optional scope for callbacks.
+		 */
+		public static getLastSignificantTimeChange(success: (timeChange: ITimeChange) => void, failed?: (err: string) => void, scope?: any);
 		public static fileExists(path: string, success: (exist: boolean) => void, failed?: (err: string) => void, scope?: any);
 		public static directoryExists(path: string, success: (exist: boolean) => void, failed?: (err: string) => void, scope?: any);
 		public static createDirectory(path: string, success?: () => void, failed?: (err: string) => void, scope?: any);

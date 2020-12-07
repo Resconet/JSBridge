@@ -3002,7 +3002,15 @@
 	    	/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 
 	    	MobileCRM.bridge.command("GetAccessToken", JSON.stringify({ resource: resourceUrl }), successCallback, failureCallback, scope);
-	    };
+		};
+
+		MobileCRM.Application.getLastSignificantTimeChange = function (success, failed, scope) {
+			/// <summary>[v13.3.1] Gets the last detected time change.</summary>
+	        /// <param name="success" type="function()">A callback function which is called in case of success. Callback will receive an object with &quot;lastChange&quot date and &quot;delta&quot; time in sceonds.</summary> </param>
+	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
+	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+			MobileCRM.bridge.command("getLastSignificantTimeChange", null, success, failed);
+		};
 
 		MobileCRM.Integration.getOAuthAccessToken = function (configurationName, oauthSettings, prompt, successCallback, failureCallback, scope) {
 			/// <summary>[12.3]Asynchronously gets the token using passed OAuth settings and parameters. Configuration name is used to find already settings.</summary>
@@ -4899,9 +4907,9 @@
 	            data._inCallback = true;
 	            var result = '';
 	            if (_callHandlers(handlers, data) != false) {
-	                var changed = data.getChanged() || {};
-			changed.context = context;
-			result = JSON.stringify(changed);
+					var changed = data.getChanged() || {};
+					changed.context = context;
+					result = JSON.stringify(changed);
 	            }
 	            data._inCallback = false;
 	            return result;
