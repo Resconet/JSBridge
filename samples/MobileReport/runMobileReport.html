@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Empty Offline HTML page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="initial-scale=1, user-scalable=no" />
+    <script src="JSBridge.js"></script>
+</head>
+<body>
+    <script>
+
+        /** PREREQUISITS:
+         *
+         * Need to create report for account entity with name {'Account Report'}
+         * Need to create custom command {'custom_run_report'} in the woodford on the entity form what has bound this html file.
+         * Fetch mobile report to get the XML style definition
+         * Create report in application configuration folder
+         * Generate annotation from newly created report
+         * NOTE: script contains method to Display created report (displayReport), but it is never called.
+         *
+         * */
+
+        /** Global variables*/
+        var waitDialog = null;
+        const REPORT_NAME = "Account Report";
+        const CUSTOM_COMMAND_NAME = "custom_run_report";
+        /** register on command script*/
+        function onCommand() {
+            MobileCRM.UI.EntityForm.onCommand(CUSTOM_COMMAND_NAME,
+                function (entityForm) {
+                    waitDialog = MobileCRM.UI.Form.showPleaseWait("Loading...");
+                    fetchReportXml(entityForm.entity, REPORT_NAME, runMobileReport, null);
+                },
+                true,
+                null
+            )
+        }
+        /**
+         * Fetch report xml defintion and call sucessCallback function with report xml defintion.
+         * @param entity base form entity MobileCRM.DynamicEntity Object
+         * @param reportName Name of report.
+         * @param sucessCallback A callback function for successful asynchronous result. The <b>result</b> will carry an report xml defintion.
+         */
+        function fetchReportXml(entity, reportName, sucessCallback) {
+            var report = new MobileCRM.FetchXml.Entity("resco_mobilereport");
+            report.addAttributes();
+            if (reportName) {
+                report.filter = new MobileCRM.FetchXml.Filter();
+                report.filter.where("resco_name", "eq", reportName);
+            }
+            var fetch = new MobileCRM.FetchXml.Fetch(report);
+            fetch.execute("DynamicEntities", function (res) {
+                if (res.length > 0) {
+                    var reportXML = res[0].properties.resco_data; // XML defintion for visual content.
+                    sucessCallback.call(null, entity, reportXML);
+                }
+            }, function (err) { onError("MobileReport", err); }, null);
+        }
+        /**
+         * Request configuration object to get storage directory and call runReport method with fetchXml, report xml and output path parameteres.
+         * @param entity base form entity MobileCRM.DynamicEntity Object
+         * @param reportXml Report xml defintion
+         */
+        function runMobileReport(entity, reportXml) {
+            // NOTE: The fetch xml defintion is taken from specific report and its Resource, what can be found in Mobile Report tool.
+            var fetchXML = `<fetch version="1.0">
+<entity name="account">
+<filter type="and">
+<condition value="
+`+ entity.id + `
+" operator="like" attribute="accountid"/>
+</filter>
+</entity>
+</fetch>`;
+            var generateFormat = "Pdf";
+            MobileCRM.Configuration.requestObject(function (config) {
+                var path = config.storageDirectory + "/WWW";
+                path += "/" + "MyReport_" + entity.id + ".pdf";
+                MobileCRM.MobileReport.runReport(fetchXML, reportXml, generateFormat, null, null, path, function (reportPath) {
+                    createAnnotation(reportPath, entity);
+                }, function (err) { onError("MobileReport", err); }, null);
+            }, function (err) { onError("Request Configuration", err); }, null);
+        }
+        /**
+         * Create annotation from passed file path.
+         * @param reportPath file path to the created mobile report
+         * @param entity base form entity MobileCRM.DynamicEntity Object
+         */
+        function createAnnotation(reportPath, entity) {
+            var reference = new MobileCRM.Reference(entity.entityName, entity.id, entity.primaryName);
+            var relationship = new MobileCRM.Relationship("objectid", reference, null, null);
+            MobileCRM.DynamicEntity.saveDocumentBody(null, null, relationship, reportPath, "application/pdf", function (annotation) {
+                MobileCRM.bridge.alert(annotation.entityName + " '" + annotation.primaryName + "' successfully saved.");
+                closeWaitDialog();
+            }, function (err) { onError("Saving note", err); }, null);
+        }
+        /**
+         * Call IFrameForm show method to display report by passed report url / path in modal window
+         * @param caption Caption
+         * @param reportUrl Url or file path to report.
+         */
+        function displayReport(caption, reportUrl) {
+            MobileCRM.UI.IFrameForm.showModal(caption, reportUrl, false);
+        }
+        /** Close wait dialog if is defined. */
+        function closeWaitDialog() {
+            if (waitDialog !== null) {
+                waitDialog.close();
+                waitDialog = null;
+            }
+        }
+        /**
+         * Display error message and close wait dialog.
+         * @param text e.g. function name
+         * @param err error text
+         */
+        function onError(text, err) {
+            closeWaitDialog();
+            MobileCRM.bridge.alert(text + " throws error \n\n" + err || "Error occured")
+        }
+        /** Trigger onCommand method after page is loaded. */
+        window.onload = function () {
+            onCommand();
+        }
+    </script>
+</body>
+</html>
