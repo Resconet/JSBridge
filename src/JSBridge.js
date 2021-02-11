@@ -5230,6 +5230,20 @@
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			this._executeAction(0x1000000, callback, errorCallback, scope);
 		};
+		MobileCRM.Services.DocumentService.prototype.loadFrom = function (callback, errorCallback, scope) {
+			/// <summary>[13.3.4] Asks the user to choose a file and calls the async callback with file info.</summary>
+			/// <param name="callback" type="function(MobileCRM.Services.FileInfo)">The callback function which is called asynchronously with <see cref="MobileCRM.Services.FileInfo">MobileCRM.Services.FileInfo</see> object as an argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			this._executeAction(0x0080, callback, errorCallback, scope);
+		};
+		MobileCRM.Services.DocumentService.prototype.loadFromMultiple = function (callback, errorCallback, scope) {
+			/// <summary>[13.3.4] Asks the user to choose a multiple files and calls the async callback with file info.</summary>
+			/// <param name="callback" type="function(MobileCRM.Services.FileInfo)">The callback function which is called asynchronously with <see cref="MobileCRM.Services.FileInfo">MobileCRM.Services.FileInfo</see> object as an argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			this._executeAction(0x2000000, callback, errorCallback, scope);
+		};
 	    MobileCRM.Services.DocumentService.prototype.print = function (filePath, landscape, errorCallback, scope) {
 	        /// <summary>[v9.1] Prints the document defined by file path.</summary>
 	        /// <param name="filePath" type="String">A file path.</param>
