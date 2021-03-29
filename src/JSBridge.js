@@ -4074,6 +4074,8 @@
 	        /// <param name="saveImmediately" type="Boolean">Indicates whether to save entity immediately or whether to just make it dirty.</param>
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callback.</param>
+			editValue = (typeof editValue) === "object" ? JSON.stringify(editValue) : editValue;
+
 	        MobileCRM.bridge.invokeMethodAsync("EntityList", "FinishListEditByName", [rowIndex, propertyName, editValue, saveImmediately ? MobileCRM.UI.EntityListCellAction.DirectEdit : 0], null, errorCallback, scope);
 	    };
 	    MobileCRM.UI.EntityList.startEditCell = function (rowIndex, cellIndex, saveImmediately, binding, errorCallback, scope) {
@@ -5231,14 +5233,14 @@
 			this._executeAction(0x1000000, callback, errorCallback, scope);
 		};
 		MobileCRM.Services.DocumentService.prototype.loadFrom = function (callback, errorCallback, scope) {
-			/// <summary>[13.3.4] Asks the user to choose a file and calls the async callback with file info.</summary>
+			/// <summary>[13.3.4]Asks the user to choose a file and calls the async callback with file info.</summary>
 			/// <param name="callback" type="function(MobileCRM.Services.FileInfo)">The callback function which is called asynchronously with <see cref="MobileCRM.Services.FileInfo">MobileCRM.Services.FileInfo</see> object as an argument.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			this._executeAction(0x0080, callback, errorCallback, scope);
 		};
 		MobileCRM.Services.DocumentService.prototype.loadFromMultiple = function (callback, errorCallback, scope) {
-			/// <summary>[13.3.4] Asks the user to choose a multiple files and calls the async callback with file info.</summary>
+			/// <summary>[13.3.4]Asks the user to choose a multiple files and calls the async callback with file info.</summary>
 			/// <param name="callback" type="function(MobileCRM.Services.FileInfo)">The callback function which is called asynchronously with <see cref="MobileCRM.Services.FileInfo">MobileCRM.Services.FileInfo</see> object as an argument.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
