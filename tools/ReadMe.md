@@ -1,4 +1,4 @@
-# Offline HTML development & debugging dools
+# Offline HTML development & debugging tools
 A set of tools that makes the Offline HTML development much easier.
 
 ## iOS Tools
