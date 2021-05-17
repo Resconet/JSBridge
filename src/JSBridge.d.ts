@@ -144,6 +144,8 @@ declare module MobileCRM {
         isDarkTheme: boolean;
         /**Gets or sets whether the current database contains demo data and should not be synced.*/
         isDemoDatabase: boolean;
+		/**Gets or sets whether the current user is demo user. */
+		isDemoUser: boolean;
         /**Gets whether the login is for a CRM Online instance.*/
         isCrmOnline: boolean
         /**Gets whether the login information is valid and complete. 
