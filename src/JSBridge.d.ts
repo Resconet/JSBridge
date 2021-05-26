@@ -1108,9 +1108,9 @@ declare module MobileCRM.Services {
 
         capturePhoto(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         selectPhoto(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-        selectMultiplePhotos(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-	loadFrom(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-	loadFromMultiple(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		selectMultiplePhotos(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		loadFrom(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		loadFromMultiple(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         selectFile(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         recordAudio(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
         recordVideo(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
