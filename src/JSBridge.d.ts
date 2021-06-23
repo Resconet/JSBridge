@@ -728,13 +728,12 @@ declare module MobileCRM {
 		 * Asynchronously gets the token using passed OAuth settings and parameters. Configuration name is used to find already settings.
 		 * @param configurationName Define the name of oauth configuration, what is key for saved setting if any. 
 		 * @param oauthSettings Defines the OAuth settings for authentication.
-		 * @param resourceUrl The App ID URI of the target web API (secured resource).
 		 * @param prompt Whether to force the user to enter credentials again.
 		 * @param success A callback function for successful asynchronous result. The <b>result</b> will carry a string with the access token.
 		 * @param failed A callback function for command failure. The <b>error</b> argument will carry the error message.
 		 * @param scope A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.
 		 */
-		public static getOAuthAccessToken(configurationName: string, oauthSettings: MobileCRM.OAuthSettings, resourceUrl: string, prompt: boolean, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any);
+		public static getOAuthAccessToken(configurationName: string, oauthSettings: MobileCRM.OAuthSettings, prompt: boolean, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any);
 	}
 
 	/**
@@ -2277,7 +2276,7 @@ declare module MobileCRM.UI {
 		viewCount: number;
 		visible: boolean;
 
-		requestObject(callback: (form: Form) => void, errorCallback?: (err: string) => void, scope?: any);
+		public static requestObject(callback: (form: Form) => void, errorCallback?: (err: string) => void, scope?: any);
 		public static showPleaseWait(caption: string): any;
 		/**
 		 * Shows a toast window over the app window which is dismissed after a few seconds.
