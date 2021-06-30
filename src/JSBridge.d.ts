@@ -2124,6 +2124,14 @@ declare module MobileCRM.UI {
 		* Closes the form ignoring all changes that have been made on it.
 		*/
 		public static closeWithoutSaving();
+		/**
+		* Binds or unbinds the handler for QuestionnaireForm command.
+		* @param command The name of the QuestionnaireForm command.
+		* @param handler The handler function that has to be bound or unbound.
+		* @param bind Determines whether to bind or unbind the handler.
+		* @param scope The scope for callbacks.
+		*/
+		public static onCommand(command: string, handler: (entityForm: QuestionnaireForm) => void, bind: boolean, scope?: any);
 	}
 
 	namespace QuestionnaireForm {
