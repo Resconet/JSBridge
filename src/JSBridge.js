@@ -4589,6 +4589,19 @@
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "get_Questionnaire", [], callback, errorCallback, scope);
 		};
+		MobileCRM.UI.QuestionnaireForm.onCommand = function (command, handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for QuestionnaireForm command.</summary>
+			/// <param name="command" type="String">The name of the QuestionnaireForm command.</param>
+			/// <param name="handler" type="function(questionnaireForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.QuestionnaireForm._handlers[command];
+			if (!handlers)
+				handlers = MobileCRM.UI.QuestionnaireForm._handlers[command] = [];
+			_bindHandler(handler, handlers, bind, scope);
+			var action = ((bind == false && handlers.length == 0) ? "cmdDel" : "cmd");
+			MobileCRM.bridge.command("registerEvents", action + ":" + command);
+		}
 
 	    // MobileCRM.UI.EntityForm
 	    _inherit(MobileCRM.UI.EntityForm, MobileCRM.ObservableObject);
