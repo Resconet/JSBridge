@@ -1043,7 +1043,7 @@
 		MobileCRM.Bridge.prototype._callAsyncMethod = function (cmdId, result) {
 			if (result instanceof Promise) {
 				result.then(function (asyncRes) {
-					MobileCRM.bridge.command(cmdId, typeof (result) == "string" ? asyncRes : JSON.stringify(asyncRes));
+					MobileCRM.bridge.command(cmdId, typeof (asyncRes) == "string" ? asyncRes : JSON.stringify(asyncRes));
 				}).catch(function (err) {
 					MobileCRM.bridge.command(cmdId, "Err:" + err);
 				});
@@ -1101,7 +1101,7 @@
 	    MobileCRM.UI.MediaTab.prototype.selectFile = function (errorCallback) {
 	        /// <summary>Executes the select file command on this media tab.</summary>
 	        this._onCommand(8, errorCallback);
-	    };
+		};
 	    MobileCRM.UI.MediaTab.prototype.recordAudio = function (errorCallback) {
 	        /// <summary>Executes the record audio command on this media tab.</summary>
 	        this._onCommand(16, errorCallback);
@@ -5244,6 +5244,14 @@
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			this._executeAction(0x1000000, callback, errorCallback, scope);
+		};
+		MobileCRM.Services.DocumentService.prototype.selectMultipleFiles = function (callback, errorCallback, scope) {
+			/// <summary>[v14.2.0] Asks the user to choose multiple files and calls the async callback with linked list of file infos (see <see cref="MobileCRM.Services.FileInfo">FileInfo.nextInfo</see>).</summary>
+			/// <param name="callback" type="function(MobileCRM.Services.FileInfo)">The callback function which is called asynchronously with <see cref="MobileCRM.Services.FileInfo">MobileCRM.Services.FileInfo</see> object as an argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			this.allowMultipleFiles = true;
+			this._executeAction(0x10000000, callback, errorCallback, scope);
 		};
 		MobileCRM.Services.DocumentService.prototype.loadFrom = function (callback, errorCallback, scope) {
 			/// <summary>[13.3.4]Asks the user to choose a file and calls the async callback with file info.</summary>
