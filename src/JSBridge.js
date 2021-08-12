@@ -921,6 +921,7 @@
 				DocumentService: function () {
 					/// <summary>[v8.1] Represents a service for acquiring the documents.</summary>
 					/// <field name="maxImageSize" type="String">Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size [640x480,1024x768,1600x1200,2048x1536,2592x1936 ].</field>
+					/// <field name="maxUploadImageSize" type="String">Gets or sets the maximum uploaded image size. If uploaded image size is greater then image is resized to specified maximum size [640x480,1024x768,1600x1200,2048x1536,2592x1936 ].</field>
 					/// <field name="recordQuality" type="String">Gets or sets the record quality for audio/video recordings [Low, Medium, High].</field>
 					/// <field name="allowChooseVideo" type="Boolean">Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.</field>
 					/// <field name="allowMultipleFiles" type="Boolean">Indicates whether to allow multiple files for DocumentActions SelectPhoto and SelectFile.[Not implemented on iOS.]</field>
@@ -5188,7 +5189,8 @@
 	    MobileCRM.Services.DocumentService.prototype._executeAction = function (action, callback, errorCallback, scope) {
 	        var params = {
 	            action: action,
-	            maxImageSize: this.maxImageSize,
+				maxImageSize: this.maxImageSize,
+				maxUploadImageSize: this.maxUploadImageSize,
 	            recordQuality: this.recordQuality,
 	            allowChooseVideo: this.allowChooseVideo,
 				allowMultipleFiles: this.allowMultipleFiles,

@@ -1094,8 +1094,10 @@ declare module MobileCRM.Services {
 		nextInfo: FileInfo;
     }
 	class DocumentService {
-		/**Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size.*/
-		maxImageSize: number;
+		/**Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size. [640x480,1024x768,1600x1200,2048x1536,2592x1936].*/
+		maxImageSize: string;
+		/**Gets or sets the maximum uploaded image size. If uploaded image size is greater then image is resized to specified maximum size [640x480,1024x768,1600x1200,2048x1536,2592x1936].*/
+		maxUploadImageSize: string;
 		/**Gets or sets the record quality for audio/video recordings.*/
 		recordQuality: number;
 		/**Indicates whether the video files should be included into the image picker when selecting the photos. The default is true.*/
