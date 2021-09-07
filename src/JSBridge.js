@@ -1,6 +1,6 @@
-// v14.0
+// v14.2
 (function () {
-	var _scriptVersion = 14.10
+	var _scriptVersion = 14.2
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -59,6 +59,12 @@
 				}
 			}
 		}
+	};
+	var _registerEventHandler = function (event, handler, handlers, bind, scope) {
+		var register = handlers.length == 0;
+		_bindHandler(handler, handlers, bind, scope);
+		if (register)
+			MobileCRM.bridge.command("registerEvents", event);
 	};
 	var _callHandlers = function (handlers) {
 		var params = [];
@@ -613,7 +619,17 @@
 					this.allowedLanguages = [];
 					this.defaultReport = null;
 				},
-
+				
+				RoutePlan: function () {
+					/// <summary>[v14.2] Represents the Javascript equivalent view of RoutePlan form object.</summary>
+					/// <field name="myRoute" type="DynamicEntity[]">A list of route entities.</field>
+					/// <field name="completedEntities" type="DynamicEntity[]"> A list of completed entities that are about to be removed from route plan.</field>
+					/// <field name="routeEntityName" type="String">Logical name of the route visit entity.</field>
+					/// <field name="routeDay" type="Date">Currently selected route day.</field>
+					/// <field name="isDirty" type="Boolean">Controls whether the form is dirty and requires save, or whether it can be closed.</field>
+					MobileCRM.UI.RoutePlan.superproto.constructor.apply(this, arguments);
+				},
+				
 				IFrameForm: function () {
 					/// <summary>[v9.0] Represents the iFrame form object.</summary>
 					/// <field name="form" type="MobileCRM.UI.Form">Gets the form hosting the iFrame.</field>
@@ -3067,10 +3083,136 @@
 	        MobileCRM.UI.FormManager.showEditDialog(entityName, null, relationship, options);
 	    }
 
-	    _inherit(MobileCRM.UI.TourplanForm, MobileCRM.ObservableObject);       
+		_inherit(MobileCRM.UI.RoutePlan, MobileCRM.ObservableObject);       
+		MobileCRM.UI.RoutePlan.requestObject = function (callback, errorCallback, scope) {
+			/// <summary>Requests the managed RoutePlan object.</summary>
+			/// <remarks>Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of RoutePlan object. See <see cref="MobileCRM.Bridge.requestObject">MobileCRM.Bridge.requestObject</see> for further details.</remarks>
+			/// <param name="callback" type="function(platform)">The callback function that is called asynchronously with serialized RoutePlan object as argument.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.requestObject("RoutePlan", callback, errorCallback, scope);
+		};
+		MobileCRM.UI.RoutePlan.onSave = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for route save validation.</summary>
+			/// <remarks><p>Bound handler is called with the RoutePlan object as an argument.</p><p>The RoutePlan context object contains property &quot;errorMessage&quot; that can be used to cancel save with an error.</p><p>Use <see cref="MobileCRM.UI.RoutePlan.suspendSave">suspendSave</see> method to suspend the save process if an asynchronous operation is required.</p></remarks>
+			/// <param name="handler" type="function(RoutePlan)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			_registerEventHandler("onSave", handler, MobileCRM.UI.RoutePlan._handlers.onSave, bind, scope);
+		};
+		MobileCRM.UI.RoutePlan.onPostSave = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for further actions on saved route.</summary>
+			/// <remarks><p>Bound handler is called with the RoutePlan object as an argument.</p><p>Use <see cref="MobileCRM.UI.RoutePlan.suspendPostSave">suspendPostSave</see> method to suspend the post-save process if an asynchronous operation is required.</p></remarks>
+			/// <param name="handler" type="function(RoutePlan)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			_registerEventHandler("onPostSave", handler, MobileCRM.UI.RoutePlan._handlers.onPostSave, bind, scope);
+		};
+		MobileCRM.UI.RoutePlan.onRouteReloaded = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler called after route is reloaded.</summary>
+			/// <remarks>Bound handler is called with the RoutePlan object as an argument on start or when day or filter field is changed.</remarks>
+			/// <param name="handler" type="function(RoutePlan)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			_registerEventHandler("onRouteReloaded", handler, MobileCRM.UI.RoutePlan._handlers.onRouteReloaded, bind, scope);
+		};
+		MobileCRM.UI.RoutePlan.onItemAdded = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for &quot;Item Added&quot; event.</summary>
+			/// <remarks><p>Bound handler is called with the RoutePlan object as an argument.</p><p>The RoutePlan context object contains property &quot;entity&quot; carrying DynamicEntity object of the new visit record.</p></remarks>
+			/// <param name="handler" type="function(RoutePlan)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			_registerEventHandler("onItemAdded", handler, MobileCRM.UI.RoutePlan._handlers.onItemAdded, bind, scope);
+		};
+		MobileCRM.UI.RoutePlan.onItemRemoved = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for &quot;Item Removed&quot; event.</summary>
+			/// <remarks><p>Bound handler is called with the RoutePlan object as an argument.</p><p>The RoutePlan context object contains property &quot;entity&quot; carrying DynamicEntity object of unsaved visit record being removed from route plan.</p></remarks>
+			/// <param name="handler" type="function(RoutePlan)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			_registerEventHandler("onItemRemoved", handler, MobileCRM.UI.RoutePlan._handlers.onItemRemoved, bind, scope);
+		};
+		MobileCRM.UI.RoutePlan.onItemCompleted = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for &quot;Item Completed&quot; event.</summary>
+			/// <remarks><p>Bound handler is called with the RoutePlan object as an argument.</p><p>The RoutePlan context object contains property &quot;entity&quot; carrying DynamicEntity object af completed visit record being removed from route plan.</p></remarks>
+			/// <param name="handler" type="function(RoutePlan)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			_registerEventHandler("onItemCompleted", handler, MobileCRM.UI.RoutePlan._handlers.onItemCompleted, bind, scope);
+		};
+		MobileCRM.UI.RoutePlan.onItemSave = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for validating single visit entity save.</summary>
+			/// <remarks><p>Bound handler is called with the RoutePlan object as an argument.</p><p>The RoutePlan context object contains property &quot;errorMessage&quot; that can be used to cancel save with an error and property &quot;entityToSave&quot; carrying visit DynamicEntity record.</p><p>Use <see cref="MobileCRM.UI.RoutePlan.suspendSave">suspendSave</see> method to suspend the save process if an asynchronous operation is required.</p></remarks>
+			/// <param name="handler" type="function(RoutePlan)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			_registerEventHandler("onItemSave", handler, MobileCRM.UI.RoutePlan._handlers.onItemSave, bind, scope);
+		};
+		MobileCRM.UI.RoutePlan.onItemPostSave = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for further actions on saved visit entity.</summary>
+			/// <remarks><p>Bound handler is called with the RoutePlan object as an argument.</p><p>The RoutePlan context object contains property &quot;errorMessage&quot; that can be used to cancel save with an error.</p><p>Use <see cref="MobileCRM.UI.RoutePlan.suspendSave">suspendSave</see> method to suspend the save process if an asynchronous operation is required and property &quot;savedEntity&quot; carrying saved DynamicEntity object.</p></remarks>
+			/// <param name="handler" type="function(RoutePlan)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			_registerEventHandler("onItemPostSave", handler, MobileCRM.UI.RoutePlan._handlers.onItemPostSave, bind, scope);
+		};
+		var _pendingRoutePlanSaveId = 0;
+		MobileCRM.UI.RoutePlan.prototype.suspendSave = function () {
+			/// <summary>Suspends current &quot;onSave&quot; process and allows performing asynchronous tasks to save the data.</summary>
+			/// <returns type="Object">A request object with single method &quot;resumeSave&quot; which has to be called with the result (either error message string or &quot;null&quot; in case of success). To cancel the validation without any message, pass "#NoMessage#" text to this method.</returns>
+			var cmdId = "RoutePlanPendingValidation" + (++_pendingRoutePlanSaveId);
+			var self = this;
+			self.context.pendingSaveCommand = cmdId;
+			return {
+				resumeSave: function (result) {
+					if (self._inCallback) {
+						// still in "onSave" callback - do not send a command (handler not installed yet)
+						self.context.errorMessage = result;
+						self.context.pendingSaveCommand = null;
+					}
+					else
+						MobileCRM.bridge.command(cmdId, result);
+				}
+			};
+		}
+		var _pendingRPPostSaveId = 0;
+		MobileCRM.UI.RoutePlan.prototype.suspendPostSave = function () {
+			/// <summary>Suspends current &quot;onPostSave&quot; operations and allows performing another asynchronous tasks before the form is closed.</summary>
+			/// <returns type="Object">A request object with single method &quot;resumePostSave&quot; which has to be called to resume the post-save operations.</returns>
+			var cmdId = "RoutePlanPendingPostSave" + (++_pendingRPPostSaveId);
+			var _this = this;
+			_this.context.pendingPostSaveCommand = cmdId;
+			return {
+				resumePostSave: function () {
+					if (_this._inCallback) {
+						// still in "onPostSave" callback - do not send a command (handler not installed yet)
+						_this.context.pendingPostSaveCommand = null;
+					}
+					else
+						MobileCRM.bridge.command(cmdId);
+				}
+			};
+		};
+		MobileCRM.UI.RoutePlan._callHandlers = function (event, data, context) {
+			var handlers = MobileCRM.UI.RoutePlan._handlers[event];
+			if (handlers && handlers.length > 0) {
+				data.context = context;
+				data._inCallback = true;
+				var result = '';
+				if (_callHandlers(handlers, data) != false) {
+					var changed = data.getChanged();
+					result = JSON.stringify(changed);
+				}
+				data._inCallback = false;
+				return result;
+			}
+		};
+		MobileCRM.UI.RoutePlan._handlers = { onSave: [], onPostSave: [], onRouteReloaded: [], onItemAdded: [], onItemRemoved: [], onItemCompleted: [], onItemSave: [], onItemPostSave: [] };
+
+		_inherit(MobileCRM.UI.TourplanForm, MobileCRM.ObservableObject);       
 		MobileCRM.UI.TourplanForm.requestObject = function (callback, errorCallback, scope) {
 			/// <summary>Requests the managed TourplanForm object.</summary>
-			/// <remarks>Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of Platform object. See <see cref="MobileCRM.Bridge.requestObject">MobileCRM.Bridge.requestObject</see> for further details.</remarks>
+			/// <remarks>Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of TourplanForm object. See <see cref="MobileCRM.Bridge.requestObject">MobileCRM.Bridge.requestObject</see> for further details.</remarks>
 			/// <param name="callback" type="function(platform)">The callback function that is called asynchronously with serialized TourplanForm object as argument.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>

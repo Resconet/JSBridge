@@ -2582,10 +2582,123 @@ declare module MobileCRM.UI {
 		 */
 		suspendSave(): IFormSaveHandler;
 	}
-     /** Represents the Javascript equivalent view of tourplan form object. */
+	interface IRoutePlanItemSaveContext {
+		errorMessage: string;
+		entityToSave: DynamicEntity;
+	}
+	interface IRoutePlanItemPostSaveContext {
+		savedEntity: DynamicEntity;
+	}
+	interface IRoutePlanItemContext {
+		entity: DynamicEntity;
+	}
+	/** Represents the Javascript equivalent view of RoutePlan form object. */
+	class RoutePlan {
+		/** A list of route entities. */
+		myRoute: DynamicEntity[];
+		/** A list of completed entities that are about to be removed from route plan. */
+		completedEntities: DynamicEntity[];
+		/** Logical name of the route visit entity. */
+		routeEntityName: string;
+		/** Currently selected route day. */
+		routeDay: Date;
+		/** Controls whether the form is dirty and requires save, or whether it can be closed.*/
+		isDirty: boolean;
+		/** Event-specific context. */
+		public context?: IFormSaveContext | IRoutePlanItemSaveContext | IRoutePlanItemPostSaveContext | IRoutePlanItemContext;
+		/**
+		 * @since 11.2
+		 * Requests the managed RoutePlan object.
+		 * Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of RoutePlan object.
+		 * @param callback The callback function that is called asynchronously with serialized RoutePlan object as argument.
+		 * @param errorCallback The errorCallback which is called in case of error.
+		 * @param scope The scope for callbacks.
+		 */
+		static requestObject(callback: (routePlan: RoutePlan) => boolean, errorCallback?: (err: string) => void, scope?: any);
+		/**
+		 * Binds or unbinds the handler for route save validation.
+		 * The RoutePlan context object contains IFormSaveContext object.
+		 * Use suspendSave method to suspend the save process if an asynchronous operation is required.
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		static onSave(handler: (routePlan: RoutePlan) => boolean, bind: boolean, scope?: any);
+		/**
+		 * Binds or unbinds the handler for validating single visit entity save.
+		 * The RoutePlan context object contains IRoutePlanItemSaveContext object.
+		 * Use suspendSave method to suspend the save process if an asynchronous operation is required.
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		static onItemSave(handler: (routePlan: RoutePlan) => boolean, bind: boolean, scope?: any);
+		/**
+		 * Suspends current 'onSave' validation and allows performing another asynchronous tasks to determine the validation result.
+		 * A request object with single function 'resumeSave'; which has to be called with the validation result (either error message string or 'null' in case of success).
+		 */
+		suspendSave(): IFormSaveHandler;
+
+		/**
+		 * Binds or unbinds the handler for further actions on saved route.
+		 * Use suspendPostSave method to suspend the save process if an asynchronous operation is required.
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		static onPostSave(handler: (routePlan: RoutePlan) => boolean, bind: boolean, scope?: any);
+		/**
+		 * Binds or unbinds the handler for further actions on saved visit entity.
+		 * The RoutePlan context object contains IRoutePlanItemPostSaveContext object.
+		 * Use suspendPostSave method to suspend the save process if an asynchronous operation is required.
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		static onItemPostSave(handler: (routePlan: RoutePlan) => boolean, bind: boolean, scope?: any);
+		/**
+		 * Suspends current 'onPostSave' action and allows performing another asynchronous tasks.
+		 * A request object with single function 'resumePostSave';
+		 */
+		suspendPostSave(): IFormPostSaveHandler;
+
+		/**
+		 * Binds or unbinds the handler called after route is reloaded.
+		 * Bound handler is called with the RoutePlan object as an argument on start or when day or filter field is changed.
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		static onRouteReloaded(handler: (routePlan: RoutePlan) => boolean, bind: boolean, scope?: any);
+		/**
+		 * Binds or unbinds the handler for for &quot;Item Added&quot; event.
+		 * The RoutePlan context object contains IRoutePlanItemContext object.
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		static onItemAdded(handler: (routePlan: RoutePlan) => boolean, bind: boolean, scope?: any);
+		/**
+		 * Binds or unbinds the handler for for &quot;Item Completed&quot; event triggered when user completes already-saved visit record.
+		 * The RoutePlan context object contains IRoutePlanItemContext object.
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		static onItemCompleted(handler: (routePlan: RoutePlan) => boolean, bind: boolean, scope?: any);
+		/**
+		 * Binds or unbinds the handler for for &quot;Item Removed&quot; event triggered when user removes a visit which hasn't been saved yet.
+		 * The RoutePlan context object contains IRoutePlanItemContext object.
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		static onItemRemoved(handler: (routePlan: RoutePlan) => boolean, bind: boolean, scope?: any);
+	}
+	/** Represents the Javascript equivalent view of tourplan form object. */
 	class TourplanForm {
-        public isDirty: boolean;
-        public isLoaded: boolean;
+		public isDirty: boolean;
+		public isLoaded: boolean;
 		public view: AppointmentView;
 		public context?: ITourplanCreateNewContext;
 		/**
