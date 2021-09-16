@@ -1484,7 +1484,19 @@
 	        /// <param name="writable" type="Boolean">Indicates whether the property should have setter.</param>
 	        /// <param name="value" type="">An initial value.</param>
 	        _addProperty(this, name, writable, value);
-	    };
+		};
+		MobileCRM.ObservableObject.prototype.runCallback = function (callback, scope) {
+			/// <summary>Invokes callback passing this instance of ObservableObject as argument.</summary>
+	        /// <param name="callback" type="function">The callback function.</param>
+	        /// <param name="scope" type="Object">The scope for callback.</param>
+	        /// <returns type="Object">An object clone containing all properties changed during the callback call.</returns>
+			var obj = this;
+			if (callback.call(scope, obj) != false) {
+				var changed = obj.getChanged();
+				return changed;
+			}
+			return '';
+		}
 	    MobileCRM.ObservableObject.prototype.getChanged = function () {
 	        /// <summary>Creates a clone of this object containing all properties that were changed since object construction.</summary>
 	        /// <remarks>This method enumerates object recursively and creates the object clone containing only the changed properties.</remarks>
@@ -1539,12 +1551,8 @@
 	        /// <param name="callback" type="function(config)">The callback function that is called asynchronously with <see cref="MobileCRM.Configuration">MobileCRM.Configuration</see> object instance as argument. Callback should return true to apply changed properties.</param>
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
-	        MobileCRM.bridge.requestObject("Configuration", function (obj) {
-	            if (callback.call(scope, obj) != false) {
-	                var changed = obj.getChanged();
-	                return changed;
-	            }
-	            return '';
+			MobileCRM.bridge.requestObject("Configuration", function (obj) {
+				return obj.runCallback(callback, scope);
 	        }, errorCallback, scope);
 	    };
 	    // MobileCRM._Settings
@@ -3090,7 +3098,9 @@
 			/// <param name="callback" type="function(platform)">The callback function that is called asynchronously with serialized RoutePlan object as argument.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
-			MobileCRM.bridge.requestObject("RoutePlan", callback, errorCallback, scope);
+			MobileCRM.bridge.requestObject("RoutePlan", function (obj) {
+				return obj.runCallback(callback, scope);
+			}, errorCallback, scope);
 		};
 		MobileCRM.UI.RoutePlan.onSave = function (handler, bind, scope) {
 			/// <summary>Binds or unbinds the handler for route save validation.</summary>
@@ -3761,11 +3771,7 @@
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.requestObject("Form", function (obj) {
-	            if (callback.call(scope, obj) != false) {
-	                var changed = obj.getChanged();
-	                return changed;
-	            }
-	            return '';
+				return obj.runCallback(callback, scope);
 	        }, errorCallback, scope);
 	    };
 
@@ -3800,11 +3806,7 @@
 	        MobileCRM.bridge.requestObject("HomeForm", function (obj) {
 	            obj.lastSyncResult = new MobileCRM.Services.SynchronizationResult(obj.lastSyncResult);
 	            delete obj._privChanged.lastSyncResult;
-	            if (callback.call(scope, obj) != false) {
-	                var changed = obj.getChanged();
-	                return changed;
-	            }
-	            return '';
+				return obj.runCallback(callback, scope);
 	        }, errorCallback, scope);
 	    };
 
@@ -4017,11 +4019,7 @@
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.requestObject("IFrameForm", function (obj) {
-	            if (callback.call(scope, obj) != false) {
-	                var changed = obj.getChanged();
-	                return changed;
-	            }
-	            return '';
+				return obj.runCallback(callback, scope);
 	        }, errorCallback, scope);
 	    };
 
@@ -4147,11 +4145,7 @@
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.requestObject("EntityList", function (obj) {
-	            if (callback.call(scope, obj) != false) {
-	                var changed = obj.getChanged();
-	                return changed;
-	            }
-	            return '';
+				return obj.runCallback(callback, scope);
 	        }, errorCallback, scope);
 	    };
 	    MobileCRM.UI.EntityList.selectView = function (viewName) {
@@ -4542,11 +4536,7 @@
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.requestObject("QuestionnaireForm", function (obj) {
-	            if (callback.call(scope, obj) != false) {
-	                var changed = obj.getChanged();
-	                return changed;
-	            }
-	            return '';
+				return obj.runCallback(callback, scope);
 	        }, errorCallback, scope);
 	    }
 	    MobileCRM.UI.QuestionnaireForm._callHandlers = function (event, data, context) {
@@ -5051,11 +5041,7 @@
 	        /// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        MobileCRM.bridge.requestObject("EntityForm", function (obj) {
-	            if (callback.call(scope, obj) != false) {
-	                var changed = obj.getChanged();
-	                return changed;
-	            }
-	            return '';
+				return obj.runCallback(callback, scope);
 	        }, errorCallback, scope);
 	    }
 	    MobileCRM.UI.EntityForm._callHandlers = function (event, data, context) {
