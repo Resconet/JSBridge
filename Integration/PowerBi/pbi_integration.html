@@ -115,8 +115,14 @@
 				req.contentType = 'application/json';
 
 				data = {
-					"accessLevel": "View"
-					// here can be added many options, like save as etc...
+					"accessLevel": "View",
+					/* Uncomment in case of including this configs.
+					"identities:[
+						"username": "Whatever key one has implemented for row level security, e.g. email",
+						"roles": ["The Role(s) defined in th power bi workspace (PBI required)"],
+						"datasetes": ["GUID to dataset form power bi app"]
+					]
+					*/
 				}
 
 				var type = configType == PowerBi.ConfigType.Report ? 'reports' : 'dashboards';
