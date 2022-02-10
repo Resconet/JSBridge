@@ -1,6 +1,6 @@
-// v14.2
+// v15.0
 (function () {
-	var _scriptVersion = 14.2
+	var _scriptVersion = 15.0
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -3612,7 +3612,25 @@
 	        var controller = MobileCRM.bridge.exposeObjectAsync("EntityForm.GetController", [this.view.name]);
 	        controller.invokeMethodAsync("ChangeProcessTo", [processRef], function () { }, errorCallback, scope);
 	        controller.release();
-	    };
+		};
+
+		MobileCRM.UI.ProcessController.prototype.moveToPreviousStage = function (errorCallback, scope) {
+			/// <summary>[15.0] Moves to the previous stage of the active process.</summary>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callback.</param>
+			var controller = MobileCRM.bridge.exposeObjectAsync("EntityForm.GetController", [this.view.name]);
+			controller.invokeMethodAsync("MoveToPreviousStage", [], function () { }, errorCallback, scope);
+			controller.release();
+		};
+
+		MobileCRM.UI.ProcessController.prototype.moveToNextStage = function ( errorCallback, scope) {
+			/// <summary>[15.0] Progresses to the next stage of the active process.</summary>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callback.</param>
+			var controller = MobileCRM.bridge.exposeObjectAsync("EntityForm.GetController", [this.view.name]);
+			controller.invokeMethodAsync("MoveToNextStage", [], function () { }, errorCallback, scope);
+			controller.release();
+		};
 		
 	    // MobileCRM.UI.ViewDefinition
 	    MobileCRM.UI.ViewDefinition.loadEntityViews = function (entityName, callback, errorCallback, scope) {

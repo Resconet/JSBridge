@@ -2311,6 +2311,20 @@ declare module MobileCRM.UI {
 		 * @param scope The scope for callback.
 		 */
 		changeProccess(callback: (processReference: MobileCRM.Reference) => void, errorCallback?: (err: string) => void, scope?: any);
+		/**
+		* @since 15.0
+		* Progresses to the next stage of the active process.
+		* @param errorCallback The errorCallback which is called asynchronously in case of error
+		* @param scope The scope for callback.
+		*/
+		MoveToPreviousStage(errorCallback?: (err: string) => void, scope?: any);
+		/**
+		* @since 15.0
+		* Moves to the previous stage of the active process.
+		* @param errorCallback The errorCallback which is called asynchronously in case of error
+		* @param scope The scope for callback.
+		*/
+		MoveToNextStage(errorCallback?: (err: string) => void, scope?: any);
 	}
 
 	class ViewDefinition {
