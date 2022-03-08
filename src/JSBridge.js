@@ -2684,6 +2684,18 @@
 	        var emailContent = { Address: address, Subject: subject, Body: body };
 	        _executePlatformAction(1, emailContent, null, errorCallback, scope);
 	    };
+		MobileCRM.Platform.sendEmail = function (address, subject, body, mimeType, errorCallback, scope) {
+			/// <summary>[v15.0] Opens the platform-specific e-mail message form with pre-filled data.</summary>
+			/// <param name="address" type="String">Recipient&#39;s email address.</param>
+			/// <param name="subject" type="String">An e-mail subject.</param>
+			/// <param name="body" type="String">A string with email body.</param>
+			/// <param name="mimeType" type="String">Body content MIME type.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+			/// <param name="scope" type="Object">The scope for errorCallback.</param>
+
+			var emailContent = { Address: address, Subject: subject, Body: body, MimeType: mimeType };
+			_executePlatformAction(1, emailContent, null, errorCallback, scope);
+		};
 	    MobileCRM.Platform.openDocument = function (path, mimeType, args, errorCallback, scope) {
 	        /// <summary>[v8.1] Opens specified document in associated program.</summary>
 	        /// <remarks>Apple security policy doesn&amp;t allow this functionality on iOS.</remarks>

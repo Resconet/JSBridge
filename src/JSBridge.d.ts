@@ -603,6 +603,17 @@ declare module MobileCRM {
 		*/
 		public static email(address: string, subject: string, body: string, errorCallback?: () => void, scope?: any);
 		/**
+		* @since 15.0
+		* Opens the platform-specific e-mail message form with pre-filled data.
+		* @param address Recipients email address.
+		* @param subject An e-mail subject.
+		* @param body A string with email body.
+	    * @param mimeType Body content MIME type.
+		* @param errorCallback The errorCallback which is called asynchronously in case of error.
+		* @param scope The scope for errorCallback.
+		*/
+		public static sendEmail(address: string, subject: string, body: string, mimeType: string, errorCallback?: () => void, scope?: any);
+		/**
 		* @since 9.1
 		* Sends a list of files (full paths or IReferences to blobs) as email attachments.
 		* This method either open the CRM Email form or the native mail client (depending on application settings).
