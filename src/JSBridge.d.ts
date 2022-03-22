@@ -1,6 +1,6 @@
 // JSBridge.js TypeScript definition file
-// v13.1
-// (c) 2020 Resco
+// v15.0
+// (c) 2022 Resco
 
 declare module MobileCRM {
 
@@ -1477,6 +1477,13 @@ declare module MobileCRM.UI {
 		* @returns MobileCRM.UI._Controller
 		*/
 		getController(name: string): _Controller;
+		/**
+		* Returns the entity list by its view name.
+		* This method looks for plain associated views but also for controllers that can be flipped into a list (in addition to map or chart).
+		* @param name A name of associated view.
+		* @returns IEntityList
+		*/
+		getEntityList(name: string): IEntityList;
 		/**
 		* Sets the address fields according to the current geo-location from platform-specific location service.
 		* @param latitude The latitude from geo-location from platform-specific location service
