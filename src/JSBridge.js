@@ -1,6 +1,6 @@
-// v15.0
+// v15.1
 (function () {
-	var _scriptVersion = 15.0
+	var _scriptVersion = 15.1
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -4768,7 +4768,7 @@
 
 	    // MobileCRM.UI.EntityForm
 	    _inherit(MobileCRM.UI.EntityForm, MobileCRM.ObservableObject);
-	    MobileCRM.UI.EntityForm._handlers = { onChange: [], onSave: [], onPostSave: [], onDetailCollectionChange: [], onSelectedViewChanged: [] };
+		MobileCRM.UI.EntityForm._handlers = { onChange: [], onSave: [], onPostSave: [], onDetailCollectionChange: [], onSelectedViewChanged: [], onProcessLoaded: [] };
 
 	    MobileCRM.UI.EntityForm.prototype.getDetailView = function (name) {
 	        /// <summary>Returns the DetailView by its name.</summary>
@@ -5000,6 +5000,17 @@
 	        if (register)
 	            MobileCRM.bridge.command("registerEvents", "onChange");
 	    }
+		MobileCRM.UI.EntityForm.onProcessLoaded = function (handler, bind, scope) {
+			/// <summary>Binds or unbinds the handler for onProcessLoaded event on EntityForm.</summary>
+			/// <param name="handler" type="function(entityForm)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlers = MobileCRM.UI.EntityForm._handlers.onProcessLoaded;
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register)
+				MobileCRM.bridge.command("registerEvents", "onProcessLoaded");
+		}
 		MobileCRM.UI.EntityForm.onItemChange = function (itemName, handler, bind, scope) {
 			/// <summary>[v11.2] Binds or unbinds the handler for specific item change event on EntityForm.</summary>
 			/// <param name="itemName" type="String">The name of desired detail item (mostly logical name of the field).</param>

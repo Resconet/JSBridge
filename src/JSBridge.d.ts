@@ -1,5 +1,5 @@
 // JSBridge.js TypeScript definition file
-// v15.0
+// v15.1
 // (c) 2022 Resco
 
 declare module MobileCRM {
@@ -1573,6 +1573,14 @@ declare module MobileCRM.UI {
 		* @param scope The scope for callbacks.
 		*/
 		public static onChange(handler: (entityForm: EntityForm) => void, bind: boolean, scope?: any);
+		/**
+		* @since 15.1
+		* Binds or unbinds the handler for onProcessLoaded event on EntityForm.
+		* @param handler The handler function that has to be bound or unbound.
+		* @param bind Determines whether to bind or unbind the handler.
+		* @param scope The scope for callbacks.
+		*/
+		public static onProcessLoaded(handler: (entityForm: EntityForm) => void, bind: boolean, scope?: any);
 		/**
 		* @since 11.2 
 		* Binds or unbinds the handler for specific item change event on EntityForm.
