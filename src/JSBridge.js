@@ -540,11 +540,13 @@
 					/// <summary>Represents the Javascript equivalent of native entity form object.</summary>
 					/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">MobileCRM.UI.EntityForm.requestObject</see> function.</remarks>
 					/// <field name="associatedViews" type="Array">Gets the associated views as an array of <see cref="MobileCRM.UI._EntityList">MobileCRM.UI._EntityList</see> objects.</field>
+					/// <field name="bulkUpdateItems" type="Array">A list of entity records editted on this bulk update form.</field>
 					/// <field name="canEdit" type="Boolean">Gets whether the form can be edited.</field>
 					/// <field name="canClose" type="Boolean">Determines if form can be closed, i.e. there are no unsaved data being edited.</field>
 					/// <field name="context" type="Object">Gets the specific context object for onChange and onSave handlers. The onChange context contains single property &quot;changedItem&quot; with the name of the changed detail item and the onSave context contains property &quot;errorMessage&quot; which can be used to break the save process with certain error message.</field>
 					/// <field name="controllers" type="Array">Gets the form controllers (map, web) as an array of <see cref="MobileCRM.UI._Controller">MobileCRM.UI._Controller</see> objects.</field>
 					/// <field name="detailViews" type="Array">Gets the detailView controls  as an array of <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> objects.</field>
+					/// <field name="isBulkUpdateForm" type="Boolean">Indicates whether the form is bulk update form.</field>
 					/// <field name="entity" type="MobileCRM.DynamicEntity">Gets or sets the entity instance the form is showing.</field>
 					/// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
 					/// <field name="iFrameOptions" type="Object">Carries the custom parameters that can be specified when opening the form using <see cref="MobileCRM.UI.FormManager">MobileCRM.UI.FormManager</see>.</field>
@@ -721,9 +723,7 @@
 					/// <field name="entities" type="Array">An array of allowed entity kinds (schema names).</field>
 					/// <field name="source" type="MobileCRM.Relationship">The entity whose property will be set to the chosen value.</field>
 					/// <field name="dataSource" type="MobileCRM.Reference[]">The list of entities that should be displayed as selected.</field>
-					/// <field name="prevSelection" type="MobileCRM.Reference">The entity whose property will be set to the chosen value.</field>
 					/// <field name="allowNull" type="Boolean">Whether to allow selecting no entity.</field>
-					/// <field name="preventClose" type="Boolean">Whether to prevent closing form without choosing a value.</field>
 					MobileCRM.UI.MultiLookupForm.superproto.constructor.apply(this, arguments);
 					this.dataSource = [];
 				},

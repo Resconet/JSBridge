@@ -1433,12 +1433,39 @@ declare module MobileCRM.UI {
 		 */
 		addItemToGrid(gridName: string, item: MobileCRM.UI.DetailViewItems.Item, column?: number, row?: number, colSpan?: number, rowSpan?: number);
 	}
+	/** Represents bulk update item status. */
+	enum BulkUpdateItemStatus {
+		Registered = 0,
+		LoadFailed = 1,
+		Loaded = 2,
+		ValidateFailed = 3,
+		Validated = 4,
+		SaveFailed = 5,
+		Saved = 6,
+	}
+	/** Represents bulk update item.*/
+	interface BulkUpdateItem {
+		/** Record id.*/
+		id: string;
+		/** Holds record. Can be null for records that aren't loaded yet (status Registered or LoadFailed).*/
+		record: DynamicEntity;
+		/** Gets bulk update item status.*/
+		status: BulkUpdateItemStatus;
+		/** Gets human-readable error or warning description.*/
+		statusMessage: string;
+		/** Indicates whether there was an error loading or saving item. */
+		hasError: boolean;
+		/** Indicates whether there item was saved with a warning. */
+		hasWarning: boolean;
+	}
 	/**
 	* Represents the Javascript equivalent of native entity form object.
 	*/
 	class EntityForm {
 		/** Gets the associated views as an array of MobileCRM.UI.IEntityList objects.*/
 		associatedViews: Array<IEntityList>;
+		/** A list of entity records editted on this bulk update form.*/
+		bulkUpdateItems: Array<BulkUpdateItem>;
 		/** Gets whether the form can be edited.*/
 		canEdit: boolean;
 		/** Determines if form can be closed, i.e. there are no unsaved data being edited.*/
@@ -1457,6 +1484,8 @@ declare module MobileCRM.UI {
 		form: Form;
 		/** Carries the custom parameters that can be specified when opening the form using { MobileCRM.UI.FormManager } */
 		iFrameOptions: any;
+		/** Indicates whether the form is bulk update form.*/
+		isBulkUpdateForm: boolean;
 		/** Indicates whether the form  has unsaved data. */
 		isDirty: boolean;
 		/** Defines relationship with parent entity. */
@@ -2399,7 +2428,6 @@ declare module MobileCRM.UI {
 		entities: Array<string>;
 		source: MobileCRM.Relationship;
 		dataSource: Array<MobileCRM.Reference>;
-		prevSelection: MobileCRM.Reference;
 		allowNull: boolean;
 
 		show(success: (obj?: MobileCRM.Reference) => void, failed?: (err: string) => void, scope?: any);
