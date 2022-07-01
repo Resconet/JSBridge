@@ -53,7 +53,9 @@ declare module MobileCRM {
     
     class Settings {
         /**Gets the absolute URL (including the CrmOrganization).*/
-        absoluteUrl: string;
+		absoluteUrl: string;
+		/**Gets or sets the currently selected Application ID.*/
+		activeAppID: string;
         /**Gets or sets the last active entity in the ActivityList.*/
         activityListInitialEntity: number;
         /**Gets or sets the application lock state (0=None, 1=Soft, 2=Permanent).*/
