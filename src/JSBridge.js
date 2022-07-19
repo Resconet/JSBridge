@@ -1,6 +1,6 @@
-// v15.1
+// v15.2
 (function () {
-	var _scriptVersion = 15.1
+	var _scriptVersion = 15.2
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -208,6 +208,7 @@
 				/// <field name="name" type="String">Gets the culture name in the format languageCode/region (e.g. &quot;en-US&quot;). languageCode is a lowercase two-letter code derived from ISO 639-1. regioncode is derived from ISO 3166 and usually consists of two uppercase letters.</field>
 				/// <field name="displayName" type="String">Gets the full localized culture name.</field>
 				/// <field name="nativeName" type="String">Gets the culture name, consisting of the language, the country/region, and the optional script, that the culture is set to display.</field>
+				/// <field name="localization" type="String">Gets selected localization language.</field>
 				/// <field name="ISOName" type="String">Gets the ISO 639-1 two-letter code for the language of the current CultureInfo.</field>
 				/// <field name="isRightToLeft" type="Boolean">Gets a value indicating whether the current CultureInfo object represents a writing system where text flows from right to left.</field>
 				/// <field name="dateTimeFormat" type="MobileCRM.DateTimeFormat">Gets a DateTimeFormat that defines the culturally appropriate format of displaying dates and times.</field>
@@ -5898,10 +5899,18 @@
 				}
 			}
 			else {
-				if ("external" in window && external) {
+				if ("chrome" in window && "webview" in window["chrome"]) {
+					// Windows UWP with WebView2 (Edge)
+					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
+						var cmdId = this._createCmdObject(success, failed, scope);
+						chrome.webview.postMessage(cmdId + ';' + command + ':' + params);
+					};
+					MobileCRM.bridge = new MobileCRM.Bridge('Windows');
+				}
+				else if ("external" in window && external) {
 					var win10 = "win10version" in window;
 					if ("notify" in external || win10) {
-						// WindowsPhone || WindowsRT || Windows10
+						// WindowsPhone || WindowsRT || Windows10 with legacy WebView
 						MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
 							var cmdId = this._createCmdObject(success, failed, scope);
 							window.external.notify(cmdId + ';' + command + ':' + params);

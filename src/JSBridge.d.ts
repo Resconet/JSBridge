@@ -1,5 +1,5 @@
 // JSBridge.js TypeScript definition file
-// v15.1
+// v15.2
 // (c) 2022 Resco
 
 declare module MobileCRM {
@@ -252,12 +252,21 @@ declare module MobileCRM {
 	}
 
 	class CultureInfo {
+		/** Gets the culture name in the format languageCode/region (e.g. 'en-US'). languageCode is a lowercase two-letter code derived from ISO 639-1. regioncode is derived from ISO 3166 and usually consists of two uppercase letters.*/
 		name: string;
+		/** Gets the full localized culture name.*/
 		displayName: string;
+		/** Gets the culture name, consisting of the language, the country/region, and the optional script, that the culture is set to display.*/
 		nativeName: string;
+		/** Gets the ISO 639-1 two-letter code for the language of the current CultureInfo.*/
 		ISOName: string;
+		/** Gets selected localization language.*/
+		localization: string;
+		/** Gets a value indicating whether the current CultureInfo object represents a writing system where text flows from right to left.*/
 		isRightToLeft: boolean;
+		/** Gets a DateTimeFormat that defines the culturally appropriate format of displaying dates and times.*/
 		dateTimeFormat: DateTimeFormat;
+		/** Gets a NumberFormat that defines the culturally appropriate format of displaying numbers, currency, and percentage.*/
 		numberFormat: NumberFormat;
 
 		static initialize(callback: (cultureInfo: CultureInfo) => void, errorCallback?: (error: string) => void, scope?: any);
