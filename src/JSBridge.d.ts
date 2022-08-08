@@ -834,14 +834,16 @@ declare module MobileCRM.FetchXml {
 	* @property  count {number} The maximum number of records to retrieve.
 	* @property  page {number} 1-based index of the data page to retrieve.
 	* @property  aggregate {boolean} Indicates whether the fetch is aggregated.
+	* @property  distinct {boolean} Indicates whether to return only distinct (different) values.
 	*/
 	class Fetch {
-		constructor(entity?: MobileCRM.FetchXml.Entity, count?: number, page?: number);
+		constructor(entity?: MobileCRM.FetchXml.Entity, count?: number, page?: number, distinct?: boolean);
 
 		public entity: MobileCRM.FetchXml.Entity;
 		count: number;
 		page: number;
 		aggregate: boolean;
+		distinct: boolean;
 
 		/**
 		 * Performs the asynchronous CRM Fetch command.

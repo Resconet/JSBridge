@@ -377,19 +377,22 @@
 			},
 
 			FetchXml: {
-				Fetch: function (entity, count, page) {
+				Fetch: function (entity, count, page, distinct) {
 					/// <summary>Represents a FetchXml query object.</summary>
 					/// <param name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</param>
 					/// <param name="count" type="int">the maximum number of records to retrieve.</param>
 					/// <param name="page" type="int">1-based index of the data page to retrieve.</param>
+					/// <param name="distinct" type="bool">Whether to return only distinct (different) values.</param>
 					/// <field name="aggregate" type="Boolean">Indicates whether the fetch is aggregated.</field>
 					/// <field name="count" type="int">the maximum number of records to retrieve.</field>
 					/// <field name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</field>
 					/// <field name="page" type="int">1-based index of the data page to retrieve.</field>
+					/// <field name="distinct" type="Boolean">Whether to return only distinct (different) values.</field>
 					this.entity = entity;
 					this.count = count;
 					this.page = page;
 					this.aggregate = false;
+					this.distinct = distinct;
 				},
 				Entity: function (name) {
 					/// <summary>Represents a FetchXml query root entity.</summary>
@@ -2434,8 +2437,8 @@
 	        /// <param name="output" type="String">A string defining the output format: Array, JSON, XML or DynamicEntities.</param>
 	        /// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the objects array of type specified by <b>output</b> argument.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
-	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        var reqParams = JSON.stringifyNotNull({ entity: this.entity, resultformat: output, page: this.page, count: this.count, aggregate: this.aggregate });
+			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
+			var reqParams = JSON.stringifyNotNull({ entity: this.entity, resultformat: output, page: this.page, count: this.count, aggregate: this.aggregate, distinct: this.distinct });
 	        MobileCRM.bridge.command('fetch', reqParams, success, failed, scope);
 	    };
 	    MobileCRM.FetchXml.Fetch.prototype.executeOnline = function (output, success, failed, scope) {
@@ -2497,13 +2500,13 @@
 	        /// <param name="success" type="function(String)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the XML representation of the Fetch object.</param>
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-	        var reqParams = JSON.stringifyNotNull({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate });
+			var reqParams = JSON.stringifyNotNull({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate, distinct: this.distinct });
 	        MobileCRM.bridge.command('fetchToXml', reqParams, success, failed, scope);
 	    };
 		MobileCRM.FetchXml.Fetch.prototype.serializeToXmlAsync = function () {
 			/// <summary>[v10.0] Serializes the Fetch object to XML.</summary>
 			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with the XML representation of this Fetch object.</returns>
-			var reqParams = JSON.stringifyNotNull({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate });
+			var reqParams = JSON.stringifyNotNull({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate, distinct: this.distinct });
 			return MobileCRM.bridge.invokeCommandPromise('fetchToXml', reqParams);
 		};
 
