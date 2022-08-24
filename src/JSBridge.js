@@ -3981,10 +3981,11 @@
 			});
 		};
 	    MobileCRM.MobileReport.showForm = function (entity, source, fetchXml, failed, scope) {
-	        /// <summary>[v10.1] Shows new MobileReport form.</summary>
-	        /// <param name="entity" type="MobileCRM.Reference">Report Entity reference what the report is related to.</param>
-	        /// <param name="source" type="MobileCRM.Reference[]">The list of entities that should be source of report.">Array of entity references .</param>
-	        /// <param name="reportXML" type="String">The report source query.</param>
+	        /// <summary>[v10.1] Shows new MobileReport form. Source for the report can be defined either as list of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> objects or as FetchXML query.</summary>
+			/// <remarks>If both types of source are passed, user can select which one to use.</remarks>
+	        /// <param name="entity" type="MobileCRM.Reference">The reference to the entity that the report is related to.</param>
+	        /// <param name="source" type="MobileCRM.Reference[]">The list of entity references used as report input.</param>
+	        /// <param name="fetchXML" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
 	        /// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 
