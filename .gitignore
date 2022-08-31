@@ -6,7 +6,6 @@
 /samples/UI/EntityForm/EntityForm_onChange1/obj/Debug/EntityForm_onChange1.csproj.CoreCompileInputs.cache
 /samples/UI/EntityForm/EntityForm_onChange1/obj/Release/EntityForm_onChange1.csproj.CoreCompileInputs.cache
 /samples/Empty/obj/Release/OfflineHtml.csproj.CoreCompileInputs.cache
-/.vs
 /samples/Empty
 /samples/UI/EntityForm/EntityForm_onChange2/EntityForm_onChange2.js.map
 /samples/UI/EntityForm/onLoad/Debug/.vs
@@ -73,5 +72,6 @@
 /samples/UI/EntityForm/DetailCollection/AddProduct/Debug/obj/Release/Debug.csproj.CoreCompileInputs.cache
 /samples/UI/EntityForm/onSave/Debug/obj/Debug/onSave.csprojAssemblyReference.cache
 /samples/UI/EntityForm/DetailCollection/GetAndDeleteProduct/Debug/obj/Debug/Debug.csproj.CoreCompileInputs.cache
+/.vs
 *.cache
-/samples/.vs
+.npmrc
