@@ -2883,6 +2883,11 @@
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.FileExists", [path], success, failed, scope);
 	    };
+	    MobileCRM.Application.fileExistsAsync = function (path) {
+	        /// <summary>Checks whether the file with given path exists in application local data.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the file located in the application local data.</param>
+	        return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Configuration", "Instance.FileExists", [path]);
+	    };
 
 	    MobileCRM.Application.directoryExists = function (path, success, failed, scope) {
 	        /// <summary>Checks whether the directory with given path exists in the application local data.</summary>
@@ -2891,6 +2896,11 @@
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.DirectoryExists", [path], success, failed, scope);
+	    };
+	    MobileCRM.Application.directoryExistsAsync = function (path) {
+	        /// <summary>Checks whether the directory with given path exists in the application local data.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the directory located in the application local data.</param>
+	        return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Configuration", "Instance.DirectoryExists", [path]);
 	    };
 
 	    MobileCRM.Application.createDirectory = function (path, success, failed, scope) {
@@ -2901,6 +2911,11 @@
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.CreateDirectory", [path], success, failed, scope);
 	    };
+	    MobileCRM.Application.createDirectoryAsync = function (path) {
+	        /// <summary>Asynchronously creates the directory in the application local data.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the directory in the application local data.</param>
+	        return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Configuration", "Instance.CreateDirectory", [path]);
+	    };
 
 	    MobileCRM.Application.deleteDirectory = function (path, success, failed, scope) {
 	        /// <summary>Asynchronously deletes the empty directory from the application local data.</summary>
@@ -2910,7 +2925,13 @@
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.DeleteDirectory", [path], success, failed, scope);
 	    };
-	    MobileCRM.Application.getDirectories = function (path, success, failed, scope) {
+	    MobileCRM.Application.deleteDirectoryAsync = function (path) {
+	        /// <summary>Asynchronously deletes the empty directory from the application local data.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the directory in the application local data.</param>
+	        return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Configuration", "Instance.DeleteDirectory", [path]);
+	    };
+
+		MobileCRM.Application.getDirectories = function (path, success, failed, scope) {
 	        /// <summary>Asynchronously gets the list of directories from the application local data.</summary>
 	        /// <param name="path" type="String">Defines the relative path of the Directory in the application local data.</param>
 	        /// <param name="success" type="function(result)">A callback function which carry the array of directories names.</param>
@@ -2918,6 +2939,11 @@
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.GetDirectories", [path], success, failed, scope);
+	    };
+		MobileCRM.Application.getDirectoriesAsync = function (path) {
+	        /// <summary>Asynchronously gets the list of directories from the application local data.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the Directory in the application local data.</param>
+	        return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Configuration", "Instance.GetDirectories", [path]);
 	    };
 
 	    MobileCRM.Application.deleteFile = function (path, success, failed, scope) {
@@ -2929,6 +2955,11 @@
 
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.DeleteFile", [path], success, failed, scope);
 	    };
+	    MobileCRM.Application.deleteFileAsync = function (path) {
+	        /// <summary>Asynchronously deletes the file from the application local data.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the file in the application local data.</param>
+	        return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Configuration", "Instance.DeleteFile", [path]);
+	    };
 
 	    MobileCRM.Application.getFiles = function (path, success, failed, scope) {
 	        /// <summary>Asynchronously gets the list of files from the application local data.</summary>
@@ -2939,6 +2970,11 @@
 
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.GetFiles", [path], success, failed, scope);
 	    };
+	    MobileCRM.Application.getFilesAsync = function (path) {
+	        /// <summary>Asynchronously gets the list of files from the application local data.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the Directory in the application local data.</param>
+	        return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Configuration", "Instance.GetFiles", [path]);
+	    };
 
 	    MobileCRM.Application.moveFile = function (src, dst, success, failed, scope) {
 	        /// <summary>Asynchronously moves the application local file to another location.</summary>
@@ -2948,6 +2984,12 @@
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm.Data", "MobileCrm.Configuration", "Instance.MoveFile", [src, dst], success, failed, scope);
+	    };
+	    MobileCRM.Application.moveFileAsync = function (src, dst) {
+	        /// <summary>Asynchronously moves the application local file to another location.</summary>
+	        /// <param name="src" type="String">Defines the relative path of the source file in the application local data.</param>
+	        /// <param name="dst" type="String">Defines the relative path of the destination file in the application local data.</param>
+	        return MobileCRM.bridge.invokeStaticMethodPromise("MobileCrm.Data", "MobileCrm.Configuration", "Instance.MoveFile", [src, dst]);
 	    };
 
 	    MobileCRM.Application.readFile = function (path, success, failed, scope) {
@@ -2971,6 +3013,12 @@
 	            reader.release();
 	        }
 	    };
+		MobileCRM.Application.readFileAsync = function(path, encoding) {
+	        /// <summary>[v15.3] Reads the file from the application local data and asynchronously gets its content.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the file in the application local data.</param>
+	        /// <param name="encoding" type="String">Defines the text encoding for file content (default is UTF8). Use base64 for binary files. Supported values: UTF8, UTF16 ASCII, BASE64.</param>
+			return MobileCRM.bridge.invokeCommandPromise("readFromLocalStorage", JSON.stringify({path: path, encoding: encoding}));
+		};
 
 	    MobileCRM.Application.writeFile = function (path, text, append, success, failed, scope) {
 	        /// <summary>Asynchronously writes the text into the file from the application local data.</summary>
@@ -2993,6 +3041,13 @@
 	            reader.release();
 	        }
 	    };
+		MobileCRM.Application.writeFileAsync = function(path, text, encoding) {
+	        /// <summary>[v15.3] Asynchronously writes data into the file from the application local data.</summary>
+	        /// <param name="path" type="String">Defines the relative path of the file in the application local data.</param>
+	        /// <param name="text" type="String">Defines the file content (in corresponding text encoding) to be written.</param>
+	        /// <param name="encoding" type="String">Defines the text encoding for file content data. Use base64 for binary files. Supported values: UTF8, ASCII, BASE64.</param>
+			return MobileCRM.bridge.invokeCommandPromise("writeToLocalStorage", JSON.stringify({path: path, text: text, encoding: encoding}));
+		};
 
 	    MobileCRM.Application.writeFileWithEncoding = function (path, text, encoding, append, success, failed, scope) {
 	        /// <summary>[v9.0.2] Asynchronously writes the text into the file from the application local data.</summary>

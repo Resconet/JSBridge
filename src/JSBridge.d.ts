@@ -661,12 +661,12 @@ declare module MobileCRM {
 	}
 
 	class Application {
-		public static synchronize(backgroundOnly: boolean, ifNotSyncedBefore: Date);
-		public static synchronizeOnForeground(forceLogin: boolean);
-		public static getAppColor(colName: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
-		public static getAppImage(imageName: string, colorize: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
+		static synchronize(backgroundOnly: boolean, ifNotSyncedBefore: Date);
+		static synchronizeOnForeground(forceLogin: boolean);
+		static getAppColor(colName: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
+		static getAppImage(imageName: string, colorize: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
 		/** Display application login form. */
-		public static showAppLogin();
+		static showAppLogin();
 		/**
 		 * Sets the application colors.
 		 * @since 11.2.2
@@ -675,7 +675,7 @@ declare module MobileCRM {
 		 * @param failed The error callback which is called asynchronously in case of error.
 		 * @param scope  The scope for callbacks.
 		 */
-		public static setAppColors(colors: { [colorName: string]: number | string }, success?: () => void, failed?: (err: string) => void, scope?: any);
+		static setAppColors(colors: { [colorName: string]: number | string }, success?: () => void, failed?: (err: string) => void, scope?: any);
 		/**
 		 * Gets the last detected time change.
 		 * @since 13.3.1
@@ -683,19 +683,42 @@ declare module MobileCRM {
 		 * @param failed The error callback which is called asynchronously in case of error.
 		 * @param scope Optional scope for callbacks.
 		 */
-		public static getLastSignificantTimeChange(success: (timeChange: ITimeChange) => void, failed?: (err: string) => void, scope?: any);
-		public static fileExists(path: string, success: (exist: boolean) => void, failed?: (err: string) => void, scope?: any);
-		public static directoryExists(path: string, success: (exist: boolean) => void, failed?: (err: string) => void, scope?: any);
-		public static createDirectory(path: string, success?: () => void, failed?: (err: string) => void, scope?: any);
-		public static deleteDirectory(path: string, success?: () => void, failed?: (err: string) => void, scope?: any);
-		public static getDirectories(path: string, success: (directoriesList: Array<string>) => void, failed?: (err: string) => void, scope?: any);
-		public static deleteFile(path: string, success?: () => void, failed?: (error: string) => void, scope?: any);
-		public static getFiles(path: string, success: (filesList: Array<string>) => void, failed?: (err: string) => void, scope?: any);
-		public static moveFile(src: string, dst: string, success?: () => void, failed?: (err: string) => void, scope?: any);
-		public static readFile(path: string, success: (fileContent: string) => void, failed?: (err: string) => void, scope?: any);
-		public static writeFile(path: string, text: string, append: boolean, success?: () => void, failed?: (err: string) => void, scope?: any);
-		public static readFileAsBase64(path: string, success: (base64: string) => void, failed?: (err: string) => void, scope?: any);
-		public static writeFileFromBase64(path: string, base64: string, success?: () => void, failed?: (err: string) => void, scope?: any);
+		static getLastSignificantTimeChange(success: (timeChange: ITimeChange) => void, failed?: (err: string) => void, scope?: any);
+		static fileExists(path: string, success: (exist: boolean) => void, failed?: (err: string) => void, scope?: any);
+		static fileExistsAsync(path: string): Promise<boolean>;
+		static directoryExists(path: string, success: (exist: boolean) => void, failed?: (err: string) => void, scope?: any);
+		static directoryExistsAsync(path: string): Promise<boolean>;
+		static createDirectory(path: string, success?: () => void, failed?: (err: string) => void, scope?: any);
+		static createDirectoryAsync(path: string): Promise<void>;
+		static deleteDirectory(path: string, success?: () => void, failed?: (err: string) => void, scope?: any);
+		static deleteDirectoryAsync(path: string): Promise<void>;
+		static getDirectories(path: string, success: (directoriesList: Array<string>) => void, failed?: (err: string) => void, scope?: any);
+		static getDirectoriesAsync(path: string): Promise<string[]>;
+		static deleteFile(path: string, success?: () => void, failed?: (error: string) => void, scope?: any);
+		static deleteFileAsync(path: string): Promise<void>;
+		static getFiles(path: string, success: (filesList: Array<string>) => void, failed?: (err: string) => void, scope?: any);
+		static getFilesAsync(path: string): Promise<string[]>;
+		static moveFile(src: string, dst: string, success?: () => void, failed?: (err: string) => void, scope?: any);
+		static moveFileAsync(src: string, dst: string): Promise<void>;
+		static readFile(path: string, success: (fileContent: string) => void, failed?: (err: string) => void, scope?: any);
+		/**
+		 * @since 15.3
+		 * Reads the file from the application local data and asynchronously gets its content.
+		 * @param path Defines the relative path of the file in the application local data.
+		 * @param encoding Defines the text encoding for file content (default is UTF8). Use base64 for binary files. Supported values: UTF8, UTF16 ASCII, BASE64.
+		 */
+		static readFileAsync(path: string, encoding?: "UTF8" | "UTF16" | "ASCII" | "base64"): Promise<string>;
+		static writeFile(path: string, text: string, append: boolean, success?: () => void, failed?: (err: string) => void, scope?: any);
+		/**
+		 * @since 15.3
+		 * Asynchronously writes data into the file from the application local data.
+		 * @param path Defines the relative path of the file in the application local data.
+		 * @param text Defines the file content (in corresponding text encoding) to be written.
+		 * @param encoding Defines the text encoding for file content (default is UTF8). Use base64 for binary files. Supported values: UTF8, UTF16 ASCII, BASE64.
+		 */
+		static writeFileAsync(path: string, text: string, encoding?: "UTF8" | "UTF16" | "ASCII" | "base64"): Promise<void>;
+		static readFileAsBase64(path: string, success: (base64: string) => void, failed?: (err: string) => void, scope?: any);
+		static writeFileFromBase64(path: string, base64: string, success?: () => void, failed?: (err: string) => void, scope?: any);
 		/**
 		 * @since 9.0.2
 		 * Asynchronously writes the text into the file from the application local data.
@@ -707,7 +730,7 @@ declare module MobileCRM {
 		 * @param errorCallback The errorCallback which is called asynchronously in case of error.
 		 * @param scope The scope for callback.
 		 */
-		public static writeFileWithEncoding(path: string, text: string, encoding: string, append: boolean, success: () => void, failed?: (err: string) => void, scope?: any);
+		static writeFileWithEncoding(path: string, text: string, encoding: string, append: boolean, success: () => void, failed?: (err: string) => void, scope?: any);
 		/**
 		 * @since 12.1
 		 * Asynchronously refresh access token using saved token in protected settings and send serialized token to success callback
@@ -716,7 +739,7 @@ declare module MobileCRM {
 		 * @param errorCallback The errorCallback which is called asynchronously in case of error.
 		 * @param scope The scope for callback.
 		 */
-		public static getAccessToken(resource, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any);
+		static getAccessToken(resource, success: (textAccessToken: string) => void, failed?: (err: string) => void, scope?: any);
 		/**
 		 * Checks whether the current user is member of the passed roles. Role can be either the Guid (aeb33d0f-89b4-e111-9c9a-00155d0b710a) or the role Name.
 		 * @param roles Defines the roles to check.
@@ -724,7 +747,7 @@ declare module MobileCRM {
 		 * @param failed A callback function for command failure. The error argument will carry the error message.
 		 * @param scope A scope for calling the callback.
 		 */
-		public static checkUserRoles(roles: [string], success?: (roles: number) => void, failed?: (err: string) => void, scope?: any);
+		static checkUserRoles(roles: [string], success?: (roles: number) => void, failed?: (err: string) => void, scope?: any);
 	}
 
 	class AboutInfo {
