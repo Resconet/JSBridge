@@ -1,10 +1,10 @@
-name: JSBridge Node.js Package Version
+name: Package Version
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Package version'
+        description: Package version
         required: true
 
 jobs:

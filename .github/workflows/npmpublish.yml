@@ -1,7 +1,12 @@
-name: JSBridge Node.js Package Publish
+name: Package Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      beta:
+        description: Beta release
+        required: false
+        type: boolean
 
 jobs:
   publish:
@@ -10,12 +15,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Setup Node.js
+    - name: Setup registry
       uses: actions/setup-node@v1
       with:
         registry-url: https://registry.npmjs.org/
 
     - name: Publish package
-      run: npm publish --access public
+      run: |
+        [[ ${{ github.event.inputs.beta }} != false ]] && tag=beta || tag=latest
+        npm publish --access public --tag $tag
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
