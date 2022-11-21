@@ -1,5 +1,4 @@
 // JSBridge.js TypeScript definition file
-// v15.2
 // (c) 2022 Resco
 
 declare module MobileCRM {
@@ -50,7 +49,7 @@ declare module MobileCRM {
 
 		public static requestObject(callback: (config: Configuration) => void, erroCallback?: (error: string) => void, scope?: any);
 	}
-    
+
     class Settings {
         /**Gets the absolute URL (including the CrmOrganization).*/
 		absoluteUrl: string;
@@ -127,7 +126,7 @@ declare module MobileCRM {
         forcedFullSyncDate: Date;
         /**Prevents remembered password to be used for next login.*/
         forgetPassword: boolean;
-        /**Gets or sets the option for generating the entity full name (contact, lead) 
+        /**Gets or sets the option for generating the entity full name (contact, lead)
         e.g. how to combine the first, middle and last name (0="L,F", 1="F L", 2="L,F m", 3="F m L", 4="L,F M", 5="F M L", 6="L F", 7="LF").*/
         fullNameConventionCode: number;
         /**Gets whether there were any synchronization errors encountered.*/
@@ -150,7 +149,7 @@ declare module MobileCRM {
 		isDemoUser: boolean;
         /**Gets whether the login is for a CRM Online instance.*/
         isCrmOnline: boolean
-        /**Gets whether the login information is valid and complete. 
+        /**Gets whether the login information is valid and complete.
         Indicates whether the user name and password are non-empty.
         Whether they are correct is up to the we service. Also checks whether the web service url is non-empty.*/
         isValid: boolean;
@@ -765,13 +764,13 @@ declare module MobileCRM {
 
 	/**
 	 * @since 13.0
-	 * Encapsulate methods and properties what can be used for integration. 
+	 * Encapsulate methods and properties what can be used for integration.
 	 */
 	class Integration {
 		/**
 		 * @since 13.0
 		 * Asynchronously gets the token using passed OAuth settings and parameters. Configuration name is used to find already settings.
-		 * @param configurationName Define the name of oauth configuration, what is key for saved setting if any. 
+		 * @param configurationName Define the name of oauth configuration, what is key for saved setting if any.
 		 * @param oauthSettings Defines the OAuth settings for authentication.
 		 * @param prompt Whether to force the user to enter credentials again.
 		 * @param success A callback function for successful asynchronous result. The <b>result</b> will carry a string with the access token.
@@ -782,8 +781,8 @@ declare module MobileCRM {
 	}
 
 	/**
-	 * @since 13.0 
-	 * Represents the settings what are used to authenticate using OAuth server account 
+	 * @since 13.0
+	 * Represents the settings what are used to authenticate using OAuth server account
 	 */
 	class OAuthSettings {
 		/**
@@ -791,7 +790,6 @@ declare module MobileCRM {
 		 * @param configName The Configuration name.
 		 */
 		constructor();
-		
 		/** Gets or sets the OAuth token url. */
 		public authorityEndPoint: string;
 		/** Gets or sets the authorization url to get authorization code. */
@@ -1561,7 +1559,7 @@ declare module MobileCRM.UI {
 		*/
 		cancelValidation(errorMsg: string);
 		/**
-		* @since 8.0 
+		* @since 8.0
 		* Selects the form tab by its name.
 		* @param tabName The name of the tab.
 		* @param errorCallback The errorCallback which is called asynchronously in case of error.
@@ -1569,7 +1567,7 @@ declare module MobileCRM.UI {
 		*/
         selectTab(tabName: string, errorCallback?: (err: string) => void, scope?: any);
         /**
-        * @since 8.0 
+        * @since 8.0
         * Selects the form tab by its name using static method.
         * @param tabName The name of the tab.
         * @param errorCallback The errorCallback which is called asynchronously in case of error.
@@ -1627,7 +1625,7 @@ declare module MobileCRM.UI {
 		/**
 		* Binds or unbinds the handler for onSave event on EntityForm.
 		* @param handler The handler function that has to be bound or unbound.
-		* @param bind Determines whether to bind or unbind the handler.	
+		* @param bind Determines whether to bind or unbind the handler.
 		* @param scope The scope for callbacks.
 		*/
 		public static onSave(handler: (entityForm: EntityForm) => void, bind: boolean, scope?: any);
@@ -1647,7 +1645,7 @@ declare module MobileCRM.UI {
 		*/
 		public static onProcessLoaded(handler: (entityForm: EntityForm) => void, bind: boolean, scope?: any);
 		/**
-		* @since 11.2 
+		* @since 11.2
 		* Binds or unbinds the handler for specific item change event on EntityForm.
 	    * @param itemName The name of desired detail item (mostly logical name of the field).
 		* @param handler The handler function that has to be bound or unbound.
@@ -2106,7 +2104,7 @@ declare module MobileCRM.UI {
 		public static trySetAnswer(questionName: string, answer: any, errorCallback?: (err: string) => void, scope?: any);
 		/**
 		 * Asynchronously sets the image as answer value for this question
-		 * @param imageQuestionName 
+		 * @param imageQuestionName
 		 * @param base64Data A value that us used to create image answer.
 		 * @param mimeType The valid mime type of corresponding base64Data.
 		 * @param errorCallback A callback which is called in case of error.
@@ -2158,7 +2156,7 @@ declare module MobileCRM.UI {
 		/**
 		* Binds or unbinds the handler for onSave event on QuestionnaireForm.
 		* @param handler The handler function that has to be bound or unbound.
-		* @param bind Determines whether to bind or unbind the handler.	
+		* @param bind Determines whether to bind or unbind the handler.
 		* @param scope The scope for callbacks.
 		*/
 		public static onSave(handler: (questionnaireForm: QuestionnaireForm) => void, bind: boolean, scope?: any);
@@ -2170,7 +2168,7 @@ declare module MobileCRM.UI {
 		*/
 		public static onChange(handler: (questionnaireForm: QuestionnaireForm) => void, bind: boolean, scope?: any);
 		/**
-		* @since 11.2 
+		* @since 11.2
 		* Binds or unbinds the handler for specific question change event on QuestionnaireForm.
 	    * @param questionName The name of desired question.
 		* @param handler The handler function that has to be bound or unbound.
