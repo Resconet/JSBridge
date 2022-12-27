@@ -50,190 +50,190 @@ declare module MobileCRM {
 		public static requestObject(callback: (config: Configuration) => void, erroCallback?: (error: string) => void, scope?: any);
 	}
 
-    class Settings {
-        /**Gets the absolute URL (including the CrmOrganization).*/
+	class Settings {
+		/**Gets the absolute URL (including the CrmOrganization).*/
 		absoluteUrl: string;
 		/**Gets or sets the currently selected Application ID.*/
 		activeAppID: string;
-        /**Gets or sets the last active entity in the ActivityList.*/
-        activityListInitialEntity: number;
-        /**Gets or sets the application lock state (0=None, 1=Soft, 2=Permanent).*/
-        applicationLock: number;
-        /**Gets or sets the last active view mode in Calendar view.*/
-        appointmentViewMode: number;
-        /**Gets or sets the CRM server authentication method (0=ActiveDirectory, 1=CRM Online, 2=Internet facing., 3=CRM Online EMEA, 4=CRM Online APAC).*/
-        authenticationType: number;
-        /**Gets or sets when the application starts to sync on the background (0=Never, 1=OnStart, 2=OnChange, 3=OnStartAndChange).*/
-        autoSync: number;
-        /**Gets the number of seconds to wait before syncing after data change. Negative to disable.*/
-        autoSyncAfterChange: number;
-        /**Gets the number of seconds to wait before syncing after data change in online mode. 0 or negative to disable, default is 1.*/
-        autoSyncAfterStart: number;
-        /**Gets or sets the automatic sync delay in seconds.*/
-        autoSyncDelay: number;
+		/**Gets or sets the last active entity in the ActivityList.*/
+		activityListInitialEntity: number;
+		/**Gets or sets the application lock state (0=None, 1=Soft, 2=Permanent).*/
+		applicationLock: number;
+		/**Gets or sets the last active view mode in Calendar view.*/
+		appointmentViewMode: number;
+		/**Gets or sets the CRM server authentication method (0=ActiveDirectory, 1=CRM Online, 2=Internet facing., 3=CRM Online EMEA, 4=CRM Online APAC).*/
+		authenticationType: number;
+		/**Gets or sets when the application starts to sync on the background (0=Never, 1=OnStart, 2=OnChange, 3=OnStartAndChange).*/
+		autoSync: number;
+		/**Gets the number of seconds to wait before syncing after data change. Negative to disable.*/
+		autoSyncAfterChange: number;
+		/**Gets the number of seconds to wait before syncing after data change in online mode. 0 or negative to disable, default is 1.*/
+		autoSyncAfterStart: number;
+		/**Gets or sets the automatic sync delay in seconds.*/
+		autoSyncDelay: number;
 		/** Indicates whether the password can be used. All DB operations are forbidden until this flag is set.*/
 		canUsePassword: boolean;
-        /**Gets or sets whether entities can be disabled on the client.*/
-        clientCustomize: boolean;
-        /**Gets or sets whether to create the call entity after a call has been made from MobileCRM.*/
-        createCallEntity: boolean;
-        /**Gets or sets the discovered CRM service authentication server url.*/
-        crm2011AuthUrl: string;
-        /**Gets or sets the discovered CRM service authentication type.*/
-        crm2011AuthType: string;
-        /**Gets or sets the token (cookie) issued by LiveId services identifying this device.*/
-        crmOnlineDeviceToken: Date;
-        /**Gets or sets when the "CrmOnlineDeviceToken" expires (in UTC).*/
-        crmOnlineDeviceTokenExpires: Date;
-        /**Gets or sets the CRM organization (Absolute path in org url).*/
-        crmOrganization: string;
-        /**Gets or sets the discovered CRM service version (4 or 5).*/
-        crmWebServiceVersion: number;
-        /**Gets or sets the the discovered CRM service minor version (13 - for CRM 2011 Rollup 13 and up).*/
-        crmWebServiceMinorVersion: number;
-        /**Gets or sets the organization Pricing Decimal Precision configuration option (0..4).*/
-        currencyDecimalPrecision: number;
-        /**Gets or sets the currency field display option 0- Symbol ($), 1 - Code (USD).*/
-        currencyDisplayOption: string;
-        /**Gets or sets the customization directory.*/
-        customizationDirectory: string;
-        /**Gets or sets the database local language (for case-insensitive and language dependent compare). E.g. "en-US".*/
-        databaseLocale: string;
-        /**Gets the database schema hash.*/
-        databaseSchemaHash: string;
-        /**(Android only) Gets or sets the application Density (120=Low, 160=Medium, 240=High, 320=ExtraHigh, 480=ExtraExtraHigh).*/
-        density: number;
-        /**Gets or sets the device friendly name (Steve's iPhone).*/
-        deviceFriendlyName: string;
-        /**Gets or sets the hardware unique id.*/
-        deviceIdentifier: string;
-        /**Gets or sets the device system an hw information (OS, etc.)*/
-        deviceInfo: string;
-        /**Gets or sets the device name (Base64 encoded "InternalDeviceId").*/
-        deviceName: string;
-        /**Gets the names of the disabled entities. Use for limited runtime customization.*/
-        disabledEntities: boolean;
-        /**Gets or sets the user domain.*/
-        domain: string;
-        /**Gets or sets the email signature.*/
-        emailSignature: string;
-        /**(Android, WIndows Mobile)Enables the Call Import form (appears on the Home form)*/
-        enableCallImport: boolean;
-        /**Enables the Dashboard form (appears on the Home form).*/
-        enableDashboard: boolean;
-        enableListButtons: boolean;
-        /**Enables the Map form (appears on the Home form).*/
-        forcedFullSyncDate: Date;
-        /**Prevents remembered password to be used for next login.*/
-        forgetPassword: boolean;
-        /**Gets or sets the option for generating the entity full name (contact, lead)
-        e.g. how to combine the first, middle and last name (0="L,F", 1="F L", 2="L,F m", 3="F m L", 4="L,F M", 5="F M L", 6="L F", 7="LF").*/
-        fullNameConventionCode: number;
-        /**Gets whether there were any synchronization errors encountered.*/
-        hasSyncErrors: boolean;
-        /**Gets whether reminders should be scheduled for tasks.*/
-        hasTaskReminder: boolean;
-        /**Gets or sets the URL of the authentication server (ADFS) in case of multi domain deployment.*/
-        homeRealm: string;
-        /**Gets or sets whether to ignore HTTPS certificate errors. (Should be used for evaluation and DEBUG only!)*/
-        ignoreCertificateErrors: boolean;
-        /**Gets or sets the invalid login count.*/
-        invalidLoginCount: number;
-        /**Gets or sets the device id (GUID).*/
-        internalDeviceId: string;
-        /**(WP7 only)Gets or sets the UI theme (Dark or Light).*/
-        isDarkTheme: boolean;
-        /**Gets or sets whether the current database contains demo data and should not be synced.*/
-        isDemoDatabase: boolean;
+		/**Gets or sets whether entities can be disabled on the client.*/
+		clientCustomize: boolean;
+		/**Gets or sets whether to create the call entity after a call has been made from MobileCRM.*/
+		createCallEntity: boolean;
+		/**Gets or sets the discovered CRM service authentication server url.*/
+		crm2011AuthUrl: string;
+		/**Gets or sets the discovered CRM service authentication type.*/
+		crm2011AuthType: string;
+		/**Gets or sets the token (cookie) issued by LiveId services identifying this device.*/
+		crmOnlineDeviceToken: Date;
+		/**Gets or sets when the "CrmOnlineDeviceToken" expires (in UTC).*/
+		crmOnlineDeviceTokenExpires: Date;
+		/**Gets or sets the CRM organization (Absolute path in org url).*/
+		crmOrganization: string;
+		/**Gets or sets the discovered CRM service version (4 or 5).*/
+		crmWebServiceVersion: number;
+		/**Gets or sets the the discovered CRM service minor version (13 - for CRM 2011 Rollup 13 and up).*/
+		crmWebServiceMinorVersion: number;
+		/**Gets or sets the organization Pricing Decimal Precision configuration option (0..4).*/
+		currencyDecimalPrecision: number;
+		/**Gets or sets the currency field display option 0- Symbol ($), 1 - Code (USD).*/
+		currencyDisplayOption: string;
+		/**Gets or sets the customization directory.*/
+		customizationDirectory: string;
+		/**Gets or sets the database local language (for case-insensitive and language dependent compare). E.g. "en-US".*/
+		databaseLocale: string;
+		/**Gets the database schema hash.*/
+		databaseSchemaHash: string;
+		/**(Android only) Gets or sets the application Density (120=Low, 160=Medium, 240=High, 320=ExtraHigh, 480=ExtraExtraHigh).*/
+		density: number;
+		/**Gets or sets the device friendly name (Steve's iPhone).*/
+		deviceFriendlyName: string;
+		/**Gets or sets the hardware unique id.*/
+		deviceIdentifier: string;
+		/**Gets or sets the device system an hw information (OS, etc.)*/
+		deviceInfo: string;
+		/**Gets or sets the device name (Base64 encoded "InternalDeviceId").*/
+		deviceName: string;
+		/**Gets the names of the disabled entities. Use for limited runtime customization.*/
+		disabledEntities: boolean;
+		/**Gets or sets the user domain.*/
+		domain: string;
+		/**Gets or sets the email signature.*/
+		emailSignature: string;
+		/**(Android, WIndows Mobile)Enables the Call Import form (appears on the Home form)*/
+		enableCallImport: boolean;
+		/**Enables the Dashboard form (appears on the Home form).*/
+		enableDashboard: boolean;
+		enableListButtons: boolean;
+		/**Enables the Map form (appears on the Home form).*/
+		forcedFullSyncDate: Date;
+		/**Prevents remembered password to be used for next login.*/
+		forgetPassword: boolean;
+		/**Gets or sets the option for generating the entity full name (contact, lead)
+		e.g. how to combine the first, middle and last name (0="L,F", 1="F L", 2="L,F m", 3="F m L", 4="L,F M", 5="F M L", 6="L F", 7="LF").*/
+		fullNameConventionCode: number;
+		/**Gets whether there were any synchronization errors encountered.*/
+		hasSyncErrors: boolean;
+		/**Gets whether reminders should be scheduled for tasks.*/
+		hasTaskReminder: boolean;
+		/**Gets or sets the URL of the authentication server (ADFS) in case of multi domain deployment.*/
+		homeRealm: string;
+		/**Gets or sets whether to ignore HTTPS certificate errors. (Should be used for evaluation and DEBUG only!)*/
+		ignoreCertificateErrors: boolean;
+		/**Gets or sets the invalid login count.*/
+		invalidLoginCount: number;
+		/**Gets or sets the device id (GUID).*/
+		internalDeviceId: string;
+		/**(WP7 only)Gets or sets the UI theme (Dark or Light).*/
+		isDarkTheme: boolean;
+		/**Gets or sets whether the current database contains demo data and should not be synced.*/
+		isDemoDatabase: boolean;
 		/**Gets or sets whether the current user is demo user. */
 		isDemoUser: boolean;
-        /**Gets whether the login is for a CRM Online instance.*/
-        isCrmOnline: boolean
-        /**Gets whether the login information is valid and complete.
-        Indicates whether the user name and password are non-empty.
-        Whether they are correct is up to the we service. Also checks whether the web service url is non-empty.*/
-        isValid: boolean;
-        /**Gets or sets the UI text language.*/
-        language: string;
-        /**Gets or sets the time of the last processed call history entry.(Android, WM)*/
-        lastProcessedCallTime: Date;
-        /**Gets or sets the time of the last server contact (either sync or security policy).*/
-        lastServerContact: Date;
-        /**Gets or sets the last synchronization end date.*/
-        lastSyncDate: Date;
-        /**Gets or sets the last user interaction time.*/
-        lastUserInteraction: Date;
-        /**Gets or sets the synchronization service password.*/
-        legacyPassword: string;
-        /**Gets or sets the reason of the application lock.*/
-        lockReason: string;
-        /**Gets or sets the time in seconds after which the password expires and application login is required.*/
-        loginTimeout: number;
-        /**Gets or sets the maximum attachment size to sync (in KB).*/
-        maxAttachmentSize: number;
-        /**Gets or sets the maximum number of records (per entity) to download.*/
-        maxSyncCount: number;
-        /**Gets or sets whether to use multi-threaded synchronization. Default true.*/
-        multiThreadSync: boolean;
-        /**Gets or sets when and how the application is switched to online mode (0=Always, 1=WifiOnly, 2=Manual, 3=Never).*/
-        onlineMode: number;
-        /**Gets or sets the organization name. Obsolete, only for compatibility.*/
-        organization: string;
-        /**	Gets or sets the current user's organization GUID (given by the server).*/
-        organizationId: string;
-        /**Gets or sets the synchronization service password.*/
-        password: string;
-        /**Gets or sets the password hash.*/
-        passwordHash: string;
-        /**Gets or sets the URL scheme of application used for making calls.*/
-        phoneApplication: string;
-        /**Gets or sets the push id used for push notification send to this device.(Android, iOS)*/
-        pushId: string;
-        /**Gets the list of read-only settings.*/
-        readonlySettings: Array<string>;
-        /**Gets or sets whether the user must login at sync start.*/
-        requireSyncLogin: boolean;
-        /**Gets or sets whether to store the encrypted password in the config file.*/
-        savePassword: boolean;
-        /**Gets or sets whether to store signature attachments as SVG (vector) or PNG (image).*/
-        saveSignatureAsImage: boolean;
-        /**Gets or sets the hash code of the last downloaded security policy (zero for no policy).*/
-        secRulesHash: number;
-        /**Gets the CRM server host name.*/
-        serverHostName: string;
-        /**Gets or sets the version of the settings file as send with the customization.*/
-        serverSettingsVersion: string;
-        /**Gets or sets the server version, either 4 for CRM 4.0 or 5 for CRM 2011.*/
-        serverVersion: number;
-        /**Gets or sets the number of incremental synchronizations performed so far.*/
-        syncCount: number;
-        /**Gets or sets the sync filter file hash code.*/
-        syncFilterHash: string;
-        /**Gets or sets the current user GUID (given by the server).*/
-        systemUserId: string;
-        /**Gets or sets the last active entity in the Tourplan (Calendar).*/
-        tourplanInitialEntity: string;
-        /**Gets or sets whether to update entity objectypecodes on first sync.*/
-        updateObjectTypeCodes: boolean;
-        /**Gets or sets whether to create a CRM email entity or use the platform email service.*/
-        useCrmEmail: boolean;
-        /**Gets or sets whether to store attachment blobs in database or in files. If you change this setting you must perform a full sync!*/
-        useDatabaseBlobStore: boolean;
-        /**Gets or sets whether the database is encrypted. Only used when the database is created (full sync). Default true.*/
-        useDatabaseEncryption: boolean;
-        /**Gets or sets the user's default currency GUID. If not set use the organization default.*/
-        userDefaultCurrencyId: string;
-        /**Gets or sets the full user name (domain slash name).*/
-        userLogin: string;
-        /**Gets or sets the user name.*/
-        userName: string;
-        /**Gets or sets whether to use RowVersion or ModifiedOn based sync. Default is true.*/
-        useRowVersionChangeTracking: boolean;
-        /**Gets or sets the web service URL used for synchronization.*/
-        url: string;
-        /**Gets or sets whether to verify server SSL certificate. Since 6.3, default false (don't verify SSL).*/
-        verifyServerCertificate: boolean;
-    }
+		/**Gets whether the login is for a CRM Online instance.*/
+		isCrmOnline: boolean
+		/**Gets whether the login information is valid and complete.
+		Indicates whether the user name and password are non-empty.
+		Whether they are correct is up to the we service. Also checks whether the web service url is non-empty.*/
+		isValid: boolean;
+		/**Gets or sets the UI text language.*/
+		language: string;
+		/**Gets or sets the time of the last processed call history entry.(Android, WM)*/
+		lastProcessedCallTime: Date;
+		/**Gets or sets the time of the last server contact (either sync or security policy).*/
+		lastServerContact: Date;
+		/**Gets or sets the last synchronization end date.*/
+		lastSyncDate: Date;
+		/**Gets or sets the last user interaction time.*/
+		lastUserInteraction: Date;
+		/**Gets or sets the synchronization service password.*/
+		legacyPassword: string;
+		/**Gets or sets the reason of the application lock.*/
+		lockReason: string;
+		/**Gets or sets the time in seconds after which the password expires and application login is required.*/
+		loginTimeout: number;
+		/**Gets or sets the maximum attachment size to sync (in KB).*/
+		maxAttachmentSize: number;
+		/**Gets or sets the maximum number of records (per entity) to download.*/
+		maxSyncCount: number;
+		/**Gets or sets whether to use multi-threaded synchronization. Default true.*/
+		multiThreadSync: boolean;
+		/**Gets or sets when and how the application is switched to online mode (0=Always, 1=WifiOnly, 2=Manual, 3=Never).*/
+		onlineMode: number;
+		/**Gets or sets the organization name. Obsolete, only for compatibility.*/
+		organization: string;
+		/**	Gets or sets the current user's organization GUID (given by the server).*/
+		organizationId: string;
+		/**Gets or sets the synchronization service password.*/
+		password: string;
+		/**Gets or sets the password hash.*/
+		passwordHash: string;
+		/**Gets or sets the URL scheme of application used for making calls.*/
+		phoneApplication: string;
+		/**Gets or sets the push id used for push notification send to this device.(Android, iOS)*/
+		pushId: string;
+		/**Gets the list of read-only settings.*/
+		readonlySettings: Array<string>;
+		/**Gets or sets whether the user must login at sync start.*/
+		requireSyncLogin: boolean;
+		/**Gets or sets whether to store the encrypted password in the config file.*/
+		savePassword: boolean;
+		/**Gets or sets whether to store signature attachments as SVG (vector) or PNG (image).*/
+		saveSignatureAsImage: boolean;
+		/**Gets or sets the hash code of the last downloaded security policy (zero for no policy).*/
+		secRulesHash: number;
+		/**Gets the CRM server host name.*/
+		serverHostName: string;
+		/**Gets or sets the version of the settings file as send with the customization.*/
+		serverSettingsVersion: string;
+		/**Gets or sets the server version, either 4 for CRM 4.0 or 5 for CRM 2011.*/
+		serverVersion: number;
+		/**Gets or sets the number of incremental synchronizations performed so far.*/
+		syncCount: number;
+		/**Gets or sets the sync filter file hash code.*/
+		syncFilterHash: string;
+		/**Gets or sets the current user GUID (given by the server).*/
+		systemUserId: string;
+		/**Gets or sets the last active entity in the Tourplan (Calendar).*/
+		tourplanInitialEntity: string;
+		/**Gets or sets whether to update entity objectypecodes on first sync.*/
+		updateObjectTypeCodes: boolean;
+		/**Gets or sets whether to create a CRM email entity or use the platform email service.*/
+		useCrmEmail: boolean;
+		/**Gets or sets whether to store attachment blobs in database or in files. If you change this setting you must perform a full sync!*/
+		useDatabaseBlobStore: boolean;
+		/**Gets or sets whether the database is encrypted. Only used when the database is created (full sync). Default true.*/
+		useDatabaseEncryption: boolean;
+		/**Gets or sets the user's default currency GUID. If not set use the organization default.*/
+		userDefaultCurrencyId: string;
+		/**Gets or sets the full user name (domain slash name).*/
+		userLogin: string;
+		/**Gets or sets the user name.*/
+		userName: string;
+		/**Gets or sets whether to use RowVersion or ModifiedOn based sync. Default is true.*/
+		useRowVersionChangeTracking: boolean;
+		/**Gets or sets the web service URL used for synchronization.*/
+		url: string;
+		/**Gets or sets whether to verify server SSL certificate. Since 6.3, default false (don't verify SSL).*/
+		verifyServerCertificate: boolean;
+	}
 
 	class Localization {
 		public static stringTable: { [key: string]: string };
@@ -380,7 +380,7 @@ declare module MobileCRM {
 	/**
 	 *  Class for managing many to many relations.
 	 */
-	class ManyToManyReference	{
+	class ManyToManyReference {
 		/**
 		 * [Obsolete]Adds or removes an N-N relationship record between the two passed entities.
 		 * @param entityName The relationship entity name.
@@ -463,7 +463,7 @@ declare module MobileCRM {
 		getEntity(name: string): MobileCRM.MetaEntity;
 		/**
 		 * Gets the MetaEntity object describing the entity attributes
-	     * @requires required to request the Metadata object prior to using this object. See @see MobileCRM.Metadata.requestObject .
+		 * @requires required to request the Metadata object prior to using this object. See @see MobileCRM.Metadata.requestObject .
 		 * @param name logical name of entity.
 		 */
 		static getEntity(name: string): MobileCRM.MetaEntity;
@@ -479,6 +479,8 @@ declare module MobileCRM {
 	 * Represents an entity metadata.
 	 */
 	class MetaEntity {
+		attributes: EntityAttributes;
+
 		canRead(): boolean;
 		canWrite(): boolean;
 		canCreate(): boolean;
@@ -535,6 +537,67 @@ declare module MobileCRM {
 		isSingularParty: boolean;
 	}
 
+	enum EntityAttributes {
+		/** No additional attributes. */
+		None = 0,
+		/** Entity is an activity. */
+		IsActivity = 0x0001,
+		/** Entity is a child. */
+		IsChild = 0x0002,
+		/** Custom entity. */
+		IsCustom = 0x0004,
+		/** Intersection entity (Many to Many). */
+		IsIntersect = 0x0008,
+		/** Entity is an regular activity. */
+		IsRegularActivity = 0x0010,
+		/** Entity is only available in online mode. */
+		IsOnlineOnly = 0x0020,
+		/** Disable read permission. */
+		NoRead = 0x0040,
+		/** Disable write permission. */
+		NoWrite = 0x0080,
+		/** Disable create permission. */
+		NoCreate = 0x0100,
+		/** Disable delete permission. */
+		NoDelete = 0x0200,
+		/** Disable append permission. */
+		NoAppend = 0x0400,
+		/** Disable appendTo permission. */
+		NoAppendTo = 0x0800,
+		/** Disable assign permission. */
+		NoAssign = 0x1000,
+		/** Disable share permission. */
+		NoShare = 0x2000,
+		/** Resolves conflict by letting the device win. */
+		ConflictDeviceWins = 0x4000,
+		/** Resolves conflict by taking no action. User must decide; only changed entity properties are uploaded to the server. */
+		ConflictUserAction = 0x8000,
+		/** Resolves conflict by letting the device win; all entity properties are uploaded to the server. */
+		ConflictDeviceWinsFullUpload = 0x10000,
+		/** The database table has labels for lookup fields. */
+		HasLookupLabels = 0x100000,
+		/** Incremental sync uses linked entities. */
+		SyncLinked = 0x200000,
+		/** Incremental sync does not use linked entities. */
+		NoSyncLinked = 0x400000,
+		/** Always force full sync for this entity (Upload. */
+		FullSync = 0x800000,
+		/** Audit database operations. */
+		DatabaseAudit = 0x1000000,
+		/** Incremental sync filter uses normal sync filter. */
+		IncrementalSyncFilter = 0x2000000,
+		/** Salesforce only - Sync will perform additional scanning to ensure all linked ContentDocuments visible to users are download for offline usage. */
+		DownloadAllLinkedSalesforceFiles = 0x4000000,
+		/** Dynamics only - Server Entity does not have VersionNumber (RowVersion) field. This flag is set if AppSettings.CustomizationLevel>0. */
+		NoVersionNumber = 0x8000000,
+		/** Salesforce only - Feed items for this entity should be synced */
+		SyncSalesforceEntityFeed = 0x10000000,
+		/** Sync uploader does not leave status update for 2nd pass, but uploads it with the data. */
+		UploadStatusWithData = 0x20000000,
+		/** Salesforce only - Shared records for this entity should be synced */
+		SyncSharedSalesforce = 0x40000000,
+	}
+
 	class _DeviceInfo {
 		name: string;
 		oSVersion: string;
@@ -548,7 +611,7 @@ declare module MobileCRM {
 		screenWidth: number;
 		screenHeight: number;
 		screenDensity: number;
-        isMultiPanel: boolean;
+		isMultiPanel: boolean;
 		customImagePath: string;
 
 		public static openUrl(url: string);
@@ -584,24 +647,24 @@ declare module MobileCRM {
 		 * @returns Promise resolved with Location object.
 		 */
 		public static getLocationAsync(age?: number, precision?: number, timeout?: number): Promise<Location>;
-        public static requestObject(callback: (platform: Platform) => void, errorCallback: () => void, scope?: any);
-        /**
-         * @since 8.1
-         * Opens the platform-specific call application with specified phone number.
-         * @param phoneNumber Phone number.
-         * @param failed A callback function for command failure. The <b>error</b> argument will carry the error message.
+		public static requestObject(callback: (platform: Platform) => void, errorCallback: () => void, scope?: any);
+		/**
+		 * @since 8.1
+		 * Opens the platform-specific call application with specified phone number.
+		 * @param phoneNumber Phone number.
+		 * @param failed A callback function for command failure. The <b>error</b> argument will carry the error message.
 		 * @param scope A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.
-         */
-        public static makeCall(phoneNumber: string, failed?: (error: string) => void, scope?: any);
-        /**
-         * @since 11.2.3
-         * Opens the platform-specific sms application with specified phone number and pre-fill text.
-         * @param phoneNumber Phone number.
-         * @param text SMS text.
-         * @param failed A callback function for command failure. The <b>error</b> argument will carry the error message.
+		 */
+		public static makeCall(phoneNumber: string, failed?: (error: string) => void, scope?: any);
+		/**
+		 * @since 11.2.3
+		 * Opens the platform-specific sms application with specified phone number and pre-fill text.
+		 * @param phoneNumber Phone number.
+		 * @param text SMS text.
+		 * @param failed A callback function for command failure. The <b>error</b> argument will carry the error message.
 		 * @param scope A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.
-         */
-        public static sendSMS(phoneNumber: string, text: string, failed?: (error: string) => void, scope?: any);
+		 */
+		public static sendSMS(phoneNumber: string, text: string, failed?: (error: string) => void, scope?: any);
 		/**
 		* @since 8.1
 		* Opens the platform-specific e-mail message form with pre-filled data.
@@ -618,7 +681,7 @@ declare module MobileCRM {
 		* @param address Recipients email address.
 		* @param subject An e-mail subject.
 		* @param body A string with email body.
-	    * @param mimeType Body content MIME type.
+		* @param mimeType Body content MIME type.
 		* @param errorCallback The errorCallback which is called asynchronously in case of error.
 		* @param scope The scope for errorCallback.
 		*/
@@ -1132,12 +1195,12 @@ declare module MobileCRM.Services {
 		address: string;
 		public static getCompanyInfoFromVat(vat: string | number, success: (result: MobileCRM.Services.CompanyInformation) => void, failed?: (err: string) => void, scope?: any);
 	}
-    class FileInfo {
-        filePath: string;
-        url: string;
+	class FileInfo {
+		filePath: string;
+		url: string;
 		mimeType: string;
 		nextInfo: FileInfo;
-    }
+	}
 	class DocumentService {
 		/**Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size. [640x480,1024x768,1600x1200,2048x1536,2592x1936].*/
 		maxImageSize: string;
@@ -1152,16 +1215,16 @@ declare module MobileCRM.Services {
 		/**Indicates whether to allow handling of cancel event. Callback will pass the null argument in this case.*/
 		allowCancelHandler: boolean;
 
-        capturePhoto(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-        selectPhoto(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		capturePhoto(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		selectPhoto(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		selectMultiplePhotos(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		loadFrom(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		loadFromMultiple(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		selectFile(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		selectMultipleFiles(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-        recordAudio(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-        recordVideo(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
-        pasteFile(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		recordAudio(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		recordVideo(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		pasteFile(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		resizeImage(filePath: string, maxWidth: number, maxHeight: number, callback: (result: boolean) => void, scope?: any);
 		/**
 		 * @since 11.2
@@ -1173,22 +1236,22 @@ declare module MobileCRM.Services {
 		 * @param scope A scope for calling the callbacks. Set to call the callbacks in global scope.
 		 */
 		saveFileDialog(fileName: string, fileData: string, success: (result: boolean) => void, failed?: (err: string) => void, scope?: any)
-    }
+	}
 	/** Represents the synchronization result.
 	* @property newCustomizationReady {boolean} Indicates whether the new customization is ready.
-    * @property customizationDownloaded {boolean} Indicates whether the new customization was applied.
-    * @property dataErrorsEncountered {boolean} Indicates whether some data errors were encountered during sync (cannot upload, delete, change status, owner, etc.).
-    * @property appWasLocked {boolean} Application was locked.
-    * @property syncAborted {boolean}  Sync was aborted.
-    * @property adminFullSync {boolean} Full sync was requested so background sync was aborted.
-    * @property wasBackgroundSync {boolean} Indicates whether the last sync was background sync or foreground sync.
-    * @property connectFailed {boolean} Indicates whether sync could not start because of a connection failure.
-    * @property webError {boolean} Indicates whether sync failed due to a communication error (HttpException, for example).
-    * @property OAuthError {boolean} Sync failed because the OAuth access token can't be acquired or refreshed.
-    * @property syncDownloadRestartedOnBackground {boolean} New customization was downloaded. Sync is still downloading data on background.
-    * @property warning {boolean} Sync result contains some warnings that are not critical.
+	* @property customizationDownloaded {boolean} Indicates whether the new customization was applied.
+	* @property dataErrorsEncountered {boolean} Indicates whether some data errors were encountered during sync (cannot upload, delete, change status, owner, etc.).
+	* @property appWasLocked {boolean} Application was locked.
+	* @property syncAborted {boolean}  Sync was aborted.
+	* @property adminFullSync {boolean} Full sync was requested so background sync was aborted.
+	* @property wasBackgroundSync {boolean} Indicates whether the last sync was background sync or foreground sync.
+	* @property connectFailed {boolean} Indicates whether sync could not start because of a connection failure.
+	* @property webError {boolean} Indicates whether sync failed due to a communication error (HttpException, for example).
+	* @property OAuthError {boolean} Sync failed because the OAuth access token can't be acquired or refreshed.
+	* @property syncDownloadRestartedOnBackground {boolean} New customization was downloaded. Sync is still downloading data on background.
+	* @property warning {boolean} Sync result contains some warnings that are not critical.
 	*/
-    class SynchronizationResult {
+	class SynchronizationResult {
 		constructor(synchronizationResult?: number);
 		newCustomizationReady: boolean;
 		customizationDownloaded: boolean;
@@ -1202,77 +1265,77 @@ declare module MobileCRM.Services {
 		OAuthError: boolean;
 		syncDownloadRestartedOnBackground: boolean;
 		warning: boolean;
-    }
-    class AddressBookService {
-        public static getService(errorCallback?: (error: string) => void, scope?: any): AddressBookService;
-        getContact(id: string, callback: (addressBookRecord: MobileCRM.Services.AddressBookService.AddressBookRecord) => void, errorCallback?: (error: string) => void, scope?: any);
-    }
-    class ChatService {
-        chatUser: MobileCRM.DynamicEntity;
-        userEntity: string;
-        userId: string;
+	}
+	class AddressBookService {
+		public static getService(errorCallback?: (error: string) => void, scope?: any): AddressBookService;
+		getContact(id: string, callback: (addressBookRecord: MobileCRM.Services.AddressBookService.AddressBookRecord) => void, errorCallback?: (error: string) => void, scope?: any);
+	}
+	class ChatService {
+		chatUser: MobileCRM.DynamicEntity;
+		userEntity: string;
+		userId: string;
 
-        static getService(callback: (res: MobileCRM.Services.ChatService) => void, errorCallback?: (error: string) => void, scope?: any);
-        postMessage(regardingEntity: MobileCRM.Reference, text: string, callback?: (res: MobileCRM.DynamicEntity) => void, errorCallback?: (error: string) => void, scope?: any);
-        attachNoteToPost(postId: string, filePath: string, mimeType: string, subject: string, callback?: (res: MobileCRM.DynamicEntity) => void, errorCallback?: (error: string) => void, scope?: any);
-        subscribeToEntityChannel(regardingEntity: MobileCRM.Reference, subscribe: boolean, callback?: (res: MobileCRM.DynamicEntity) => void, errorCallback?: (error: string) => void, scope?: any);
-    }
+		static getService(callback: (res: MobileCRM.Services.ChatService) => void, errorCallback?: (error: string) => void, scope?: any);
+		postMessage(regardingEntity: MobileCRM.Reference, text: string, callback?: (res: MobileCRM.DynamicEntity) => void, errorCallback?: (error: string) => void, scope?: any);
+		attachNoteToPost(postId: string, filePath: string, mimeType: string, subject: string, callback?: (res: MobileCRM.DynamicEntity) => void, errorCallback?: (error: string) => void, scope?: any);
+		subscribeToEntityChannel(regardingEntity: MobileCRM.Reference, subscribe: boolean, callback?: (res: MobileCRM.DynamicEntity) => void, errorCallback?: (error: string) => void, scope?: any);
+	}
 
-    class GeoAddress {
-        streetNumber: string;
-        street: string;
-        city: string;
-        zip: string;
-        stateOrProvince: string;
-        country: string;
-        isValid: string;
+	class GeoAddress {
+		streetNumber: string;
+		street: string;
+		city: string;
+		zip: string;
+		stateOrProvince: string;
+		country: string;
+		isValid: string;
 
-        public static fromLocation(latitude: number, longitude: number, success: (res: MobileCRM.Services.GeoAddress) => void, failed?: (error: string) => void, scope?: any);
-        public toLocation(success: (res: Location) => void, failed?: (error: string) => void, scope?: any);
-    }
-    class HttpWebRequest {
-        /**The HTTP method to use for the request (e.g. "POST", "GET", "PUT")*/
-        public method: string;
-        /**An object of additional header key/value pairs to send along with requests using the HttpWebRequest.*/
-        public headers: any;
-        /**The body content of HttpWebRequest.*/
-        private body: string;
-        /**ending data content type.*/
-        public contentType: string;
-        /**The encoding (default: UTF-8), e.g. UTF-8, ASCII, Base64*/
-        private encoding: number;
-        /**The HttpWebResponse content type.*/
-        private responseType: string;
-        /**
-         * Allow to send http web request against an HTTP server.
-         * @param url Url of server where HTTP request will be sent.
-         * @param callback A callback function which will obtain the web response. @see IWebResponse.
-         * @param scope The scope for callbacks.
-         */
+		public static fromLocation(latitude: number, longitude: number, success: (res: MobileCRM.Services.GeoAddress) => void, failed?: (error: string) => void, scope?: any);
+		public toLocation(success: (res: Location) => void, failed?: (error: string) => void, scope?: any);
+	}
+	class HttpWebRequest {
+		/**The HTTP method to use for the request (e.g. "POST", "GET", "PUT")*/
+		public method: string;
+		/**An object of additional header key/value pairs to send along with requests using the HttpWebRequest.*/
+		public headers: any;
+		/**The body content of HttpWebRequest.*/
+		private body: string;
+		/**ending data content type.*/
+		public contentType: string;
+		/**The encoding (default: UTF-8), e.g. UTF-8, ASCII, Base64*/
+		private encoding: number;
+		/**The HttpWebResponse content type.*/
+		private responseType: string;
+		/**
+		 * Allow to send http web request against an HTTP server.
+		 * @param url Url of server where HTTP request will be sent.
+		 * @param callback A callback function which will obtain the web response. @see IWebResponse.
+		 * @param scope The scope for callbacks.
+		 */
 		public send(url: string, callback: (res: IWebResponse) => void, scope?: any);
 		/**
-         * Allow to send http web request against an HTTP server.
-         * @param url Url of server where HTTP request will be sent.
+		 * Allow to send http web request against an HTTP server.
+		 * @param url Url of server where HTTP request will be sent.
 		 * @returns A Promise object which is asynchronously resolved with the web response object, or rejected with the web response object, where responseText contains error message. @see IWebResponse.
-         */
+		 */
 		public sendAsync(url: string): Promise<IWebResponse>;
-        /**
-         * Set content body of http web request.
-         * @param body The body content.
-         * @param encoding The encoding (e.g. UTF-8, ASCII, Base64. Binary)
-         */
-        public setBody(body: string, encoding: string);
-        /**
-         * Set Network credentials information.
-         * @param userName The authentication user name.
-         * @param password The authentication password.
-         */
-        public setCredentials(userName: string, password: string);
-        /**
-         * Set encoding for content type of http web response
-         * @param encoding The encoding (e.g. UTF-8, ASCII, Base64)
-         */
-        public setResponseEncoding(encoding: string);
+		/**
+		 * Set content body of http web request.
+		 * @param body The body content.
+		 * @param encoding The encoding (e.g. UTF-8, ASCII, Base64. Binary)
+		 */
+		public setBody(body: string, encoding: string);
+		/**
+		 * Set Network credentials information.
+		 * @param userName The authentication user name.
+		 * @param password The authentication password.
+		 */
+		public setCredentials(userName: string, password: string);
+		/**
+		 * Set encoding for content type of http web response
+		 * @param encoding The encoding (e.g. UTF-8, ASCII, Base64)
+		 */
+		public setResponseEncoding(encoding: string);
 	}
 	class AIVision {
 		/**
@@ -1300,7 +1363,7 @@ declare module MobileCRM.Services {
 		 */
 		recognizeSelectedPicture(success: (res: MobileCRM.Services.IAIVisionResult) => void, failed?: (error: string) => void, scope?: any);
 	}
-	/** Represents the settings for AI image recognition service.</summary> */
+	/** Represents the settings for AI image recognition service. */
 	class AIVisionSettings {
 		/** Gets or sets the model name. */
 		public modelName: string;
@@ -1321,11 +1384,11 @@ declare module MobileCRM.Services {
 		probability: string;
 	}
 
-    interface IWebResponse {
-        responseCode: number;
-        responseText: string;
-        responseType: string;
-    }
+	interface IWebResponse {
+		responseCode: number;
+		responseText: string;
+		responseType: string;
+	}
 
 }
 declare module MobileCRM.Services.AddressBookService {
@@ -1419,13 +1482,13 @@ declare module MobileCRM.UI {
 		value: MobileCRM.Reference | string;
 	}
 
-    class _DetailView {
-        items: Array<DetailViewItems.Item>;
+	class _DetailView {
+		items: Array<DetailViewItems.Item>;
 		getItemByName(name: string): MobileCRM.UI._DetailItem;
-        getItemIndex(name: string): number;
+		getItemIndex(name: string): number;
 		insertItem(item: MobileCRM.UI._DetailItem, index: number);
-        insertItems(items: Array<MobileCRM.UI._DetailItem>, index: number);
-        removeItem(index: number);
+		insertItems(items: Array<MobileCRM.UI._DetailItem>, index: number);
+		removeItem(index: number);
 		removeItems(indexes: Array<number>);
 		isDirty: boolean;
 		/**
@@ -1506,8 +1569,8 @@ declare module MobileCRM.UI {
 		canClose: boolean;
 		/** Gets the specific context object for onChange and onSave handlers. The onChange context contains single property 'changedItem' with the name of the changed detail item and the onSave context contains property 'errorMessage' which can be used to break the save process with certain error message.*/
 		context?: IFormSaveContext | IFormChangeContext | IFormDetailCollectionChangeContext;
-        /** Gets the current view of entity list.*/
-        currentView: string;
+		/** Gets the current view of entity list.*/
+		currentView: string;
 		/** Gets the form controllers (map, web) as an array of { MobileCRM.UI._Controller } objects.*/
 		controllers: Array<_Controller>;
 		/** Gets the detailView controls  as an array of { MobileCRM.UI._DetailView } objects.*/
@@ -1565,15 +1628,15 @@ declare module MobileCRM.UI {
 		* @param errorCallback The errorCallback which is called asynchronously in case of error.
 		* @param scope The scope for callback.
 		*/
-        selectTab(tabName: string, errorCallback?: (err: string) => void, scope?: any);
-        /**
-        * @since 8.0
-        * Selects the form tab by its name using static method.
-        * @param tabName The name of the tab.
-        * @param errorCallback The errorCallback which is called asynchronously in case of error.
-        * @param scope The scope for callback.
-        */
-        public static selectTabEx(tabName: string, errorCallback?: (err: string) => void, scope?: any);
+		selectTab(tabName: string, errorCallback?: (err: string) => void, scope?: any);
+		/**
+		* @since 8.0
+		* Selects the form tab by its name using static method.
+		* @param tabName The name of the tab.
+		* @param errorCallback The errorCallback which is called asynchronously in case of error.
+		* @param scope The scope for callback.
+		*/
+		public static selectTabEx(tabName: string, errorCallback?: (err: string) => void, scope?: any);
 		/**
 		* The name of the associated entity list tab.
 		* @param tabName The name of the associated entity list tab.
@@ -1603,14 +1666,14 @@ declare module MobileCRM.UI {
 		 * A request object with single function 'resumePostSave'; which has to be called after all necessary operations completed.
 		 */
 		suspendPostSave(): IFormPostSaveHandler;
-        /**
+		/**
 		* @since 9.1
 		* Reactivates inactive entity and reloads the form.
 		* @param statuscode Activation status code.
 		*/
-        reactivateEntity(statuscode: number);
+		reactivateEntity(statuscode: number);
 
-        /**
+		/**
 		* Requests the managed EntityForm object.
 		* @description Method initiates an asynchronous request which either ends with calling the errorCallback or with calling the callback with Javascript version of EntityForm object. See { MobileCRM.Bridge.requestObject } for further details.
 		* @param callback The callback function that is called asynchronously with serialized EntityForm object as argument. Callback should return true to apply changed properties.
@@ -1647,7 +1710,7 @@ declare module MobileCRM.UI {
 		/**
 		* @since 11.2
 		* Binds or unbinds the handler for specific item change event on EntityForm.
-	    * @param itemName The name of desired detail item (mostly logical name of the field).
+		* @param itemName The name of desired detail item (mostly logical name of the field).
 		* @param handler The handler function that has to be bound or unbound.
 		* @param bind Determines whether to bind or unbind the handler.
 		* @param scope The scope for callbacks.
@@ -1754,7 +1817,7 @@ declare module MobileCRM.UI {
 		errorMessage: string;
 	}
 	interface IFormChangeContext {
-        changedItem: string;
+		changedItem: string;
 		selectedView: string;
 	}
 	/** Represents context of change on entity form detail collection. */
@@ -1997,9 +2060,9 @@ declare module MobileCRM.UI {
 	 */
 	enum EntityListClickAction {
 		Text = 0,
-		Image= 1,
-		Button=2,
-		InlineButton=3,
+		Image = 1,
+		Button = 2,
+		InlineButton = 3,
 		Editable = 0x1000,
 		Clickable = 0x2000,
 		DirectEdit = 0x4000 | Editable,
@@ -2170,12 +2233,12 @@ declare module MobileCRM.UI {
 		/**
 		* @since 11.2
 		* Binds or unbinds the handler for specific question change event on QuestionnaireForm.
-	    * @param questionName The name of desired question.
+		* @param questionName The name of desired question.
 		* @param handler The handler function that has to be bound or unbound.
 		* @param bind Determines whether to bind or unbind the handler.
 		* @param scope The scope for callbacks.
 		*/
-		public static onAnswerChanged(questionName:string, handler: (questionnaireForm: QuestionnaireForm) => void, bind: boolean, scope?: any);
+		public static onAnswerChanged(questionName: string, handler: (questionnaireForm: QuestionnaireForm) => void, bind: boolean, scope?: any);
 		/**
 		* Binds or unbinds the handler for onPostSave event on QuestionnaireForm.
 		* @param handler The handler function that has to be bound or unbound.
@@ -2337,8 +2400,7 @@ declare module MobileCRM.UI {
 		isVisible?: boolean;
 	}
 
-	class HomeItem
-	{
+	class HomeItem {
 		name: string;
 		path: string;
 		title: string;
@@ -2829,10 +2891,10 @@ declare module MobileCRM.UI {
 		 * @param errorCallback The errorCallback which is called in case of error.
 		 */
 		static setDate(date: Date, callback?: () => void, errorCallback?: (err: string) => void);
-        static setMode(mode, callback, errorCallback);
-    }
-    /** Represents the UI component hosting the calendar. */
-    interface AppointmentView {
+		static setMode(mode, callback, errorCallback);
+	}
+	/** Represents the UI component hosting the calendar. */
+	interface AppointmentView {
 		/** Gets or sets whether the view is visible. */
 		isVisible: boolean;
 		/** Gets the name of view. */
@@ -2840,7 +2902,7 @@ declare module MobileCRM.UI {
 		/** Gets a view mode @see TourplanForm.TourplanViewMode */
 		mode: TourplanViewMode;
 		/** Gets the current date of displayed view. */
-        currentDate: Date;
+		currentDate: Date;
 	}
 	/** TourplanForm.onCreateNew context interface. */
 	interface ITourplanCreateNewContext {
