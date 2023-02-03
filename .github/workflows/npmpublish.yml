@@ -27,14 +27,14 @@ jobs:
         registry-url: https://registry.npmjs.org/
 
     - name: Set beta version
-      if: ${{ github.event.inputs.beta }}
+      if: ${{ inputs.beta }}
       run: |
         version=$(npm run env | grep npm_package_version | cut -d = -f 2)
-        npm version --no-git-tag-version --allow-same-version $version-beta.${{ github.event.inputs.relno }}
+        npm version --no-git-tag-version --allow-same-version $version-beta.${{ inputs.relno }}
 
     - name: Publish package
       run: |
-        [[ ${{ github.event.inputs.beta }} != false ]] && tag=beta || tag=latest
+        [[ ${{ inputs.beta }} != false ]] && tag=beta || tag=latest
         echo tag: $tag
         npm publish --access public --tag $tag
       env:

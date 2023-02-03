@@ -20,7 +20,7 @@ jobs:
         git config user.name "resconet"
 
     - name: Set package version
-      run: npm version ${{ github.event.inputs.version }} -m "Set package version to %s"
+      run: npm version ${{ inputs.version }} -m "Set package version to %s"
 
     - name: Push changes
       run: git push
