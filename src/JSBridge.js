@@ -4024,7 +4024,7 @@
 		MobileCRM.MobileReport.runReportAsync = function (fetch, reportXML, reportFormat, isExportOnly, isOnline, outputFile) {
 			/// <summary>[v9.1] Executes the mobile reporting request which produces the mobile report document of given format.</summary>
 			/// <param name="fetch" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
-			/// <param name="reportXML" type="String">The mobile report XML definition which can be loaded from the resco_report entity or constructed dynamically. Ignored if IsExportOnly parameter is true.</param>
+			/// <param name="reportXML" type="String">The mobile report XML definition which can be loaded from the resco_mobilereport entity or constructed dynamically. Ignored if IsExportOnly parameter is true.</param>
 			/// <param name="reportFormat" type="String">Report format: Pdf (default), Html, Excel, Text.</param>
 			/// <param name="isExportOnly" type="Boolean">If true then ReportXml is optional. The default is false.</param>
 			/// <param name="isOnline" type="Boolean">Indicates whether the report should be run against the online data or local database. The default is current application mode.</param>
@@ -4034,19 +4034,15 @@
 				MobileCRM.MobileReport.runReport(fetch, reportXML, reportFormat, isExportOnly, isOnline, outputFile, resolve, function (err) { reject(new Error(err)); });
 			});
 		};
-	    MobileCRM.MobileReport.showForm = function (entity, source, fetchXml, failed, scope) {
+	    MobileCRM.MobileReport.showForm = function (report, source, fetchXml, failed, scope) {
 	        /// <summary>[v10.1] Shows new MobileReport form. Source for the report can be defined either as list of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> objects or as FetchXML query.</summary>
 			/// <remarks>If both types of source are passed, user can select which one to use.</remarks>
-	        /// <param name="entity" type="MobileCRM.Reference">The reference to the entity that the report is related to.</param>
+	        /// <param name="report" type="MobileCRM.Reference">Optional reference to the resco_mobilereport entity that will be pre-selected.</param>
 	        /// <param name="source" type="MobileCRM.Reference[]">The list of entity references used as report input.</param>
 	        /// <param name="fetchXML" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
 	        /// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
-
-	        if (typeof (entity) == "string")
-	            entity = new MobileCRM.Reference(entity, null, null);
-
-	        var params = { fetchXml: fetchXml, entityName: entity.entityName, entity: entity, source: source };
+	        var params = { fetchXml: fetchXml, report: report, source: source };
 	        MobileCRM.bridge.command("showMobileReportForm", JSON.stringify(params), null, failed, scope);
 	    };
 	    // MobileCRM.UI.Questionnaire

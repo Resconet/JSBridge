@@ -900,7 +900,16 @@ declare module MobileCRM {
 		 * @returns The file path to successfully created report.
 		 */
 		static runReportAsync(fetch: string, reportXML: string, reportFormat: string, isExportOnly: boolean, isOnline: boolean, outputFile: string): Promise<string>;
-		static showForm(entityName: string, source: Array<MobileCRM.Reference>, fetchXml: string, failed?: (err: string) => void, scope?: any);
+		/**
+		 * @since 10.1
+		 * Shows new MobileReport form. Source for the report can be defined either as list of MobileCRM.Reference objects or as FetchXML query.
+		 * @param report Optional reference to the resco_mobilereport entity that will be pre-selected.
+		 * @param source The list of entity references used as report input.
+		 * @param fetchXml The fetch XML defining the entity (entities) query used as report input.
+		 * @param failed A callback which is called in case of error.
+		 * @param scope The scope for callbacks.
+		 */
+		static showForm(report: MobileCRM.Reference, source: Array<MobileCRM.Reference>, fetchXml: string, failed?: (err: string) => void, scope?: any);
 	}
 	class Questionnaire {
 		static getQuestionName(name: string, repeatIndex: number): string;
