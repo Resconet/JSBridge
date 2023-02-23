@@ -574,6 +574,8 @@ declare module MobileCRM {
 		ConflictUserAction = 0x8000,
 		/** Resolves conflict by letting the device win; all entity properties are uploaded to the server. */
 		ConflictDeviceWinsFullUpload = 0x10000,
+		/** Entity is a virtual entity, a custom entity that has fields containing data from an external data source. */
+		IsVirtual = 0x20000,
 		/** The database table has labels for lookup fields. */
 		HasLookupLabels = 0x100000,
 		/** Incremental sync uses linked entities. */
