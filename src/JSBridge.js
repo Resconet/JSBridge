@@ -4046,12 +4046,13 @@
 	        MobileCRM.bridge.command("showMobileReportForm", JSON.stringify(params), null, failed, scope);
 	    };
 	    // MobileCRM.UI.Questionnaire
-	    MobileCRM.Questionnaire.showForm = function(id, failed, scope) {
+	    MobileCRM.Questionnaire.showForm = function(id, failed, scope, relationship) {
 	        /// <summary>[v10.2] Shows the questionnaire form.</summary>
 	        /// <param name="id" type="String">Id (guid) of the questionnaire.</param>
 	        /// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
-	        var params = { id: id };
+			/// <param name="relationship" type="MobileCRM.Relationship">Optional relationship with the parent record.</param>
+			var params = { id: id, relationship: relationship };
 	        MobileCRM.bridge.command("showQuestionnaire", JSON.stringify(params), null, failed, scope);
 	    };
 		function _padTo3digits(num) {

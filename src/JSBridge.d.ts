@@ -916,7 +916,7 @@ declare module MobileCRM {
 	class Questionnaire {
 		static getQuestionName(name: string, repeatIndex: number): string;
 		static getGroupName(name: string, repeatIndex: number): string;
-		static showForm(id: string, failed?: (err: string) => void, scope?: any);
+		static showForm(id: string, failed?: (err: string) => void, scope?: any, relationship?: MobileCRM.Relationship);
 	}
 }
 /**
