@@ -17,7 +17,7 @@ jobs:
     - name: Setup Git
       run: |
         git config user.email "mobilecrm@resco.net"
-        git config user.name "resconet"
+        git config user.name "rescocrm"
 
     - name: Set package version
       run: npm version ${{ inputs.version }} -m "Set package version to %s"
