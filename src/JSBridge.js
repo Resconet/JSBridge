@@ -1,5 +1,5 @@
 (function () {
-	var _scriptVersion = 15.3
+	var _scriptVersion = 16.0
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -4044,7 +4044,19 @@
 	        /// <param name="scope" type="Object">The scope for callbacks.</param>
 	        var params = { fetchXml: fetchXml, report: report, source: source };
 	        MobileCRM.bridge.command("showMobileReportForm", JSON.stringify(params), null, failed, scope);
-	    };
+		};
+		MobileCRM.MobileReport.showFormWithConfiguration = function (report, source, fetchXml, paramString, failed, scope) {
+			/// <summary>[v16.0] Shows new MobileReport form. Source for the report can be defined either as list of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> objects or as FetchXML query.</summary>
+			/// <remarks>If both types of source are passed, user can select which one to use.</remarks>
+			/// <param name="report" type="MobileCRM.Reference">Optional reference to the resco_mobilereport entity that will be pre-selected.</param>
+			/// <param name="source" type="MobileCRM.Reference[]">The list of entity references used as report input.</param>
+			/// <param name="fetchXML" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
+			/// <param name="paramString" type="String">Run report form <see cref="https://docs.resco.net/wiki/Configure_Run_Report_command#Configuration_string">Configuration string</see> in JSON format.</param>
+			/// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var params = { fetchXml: fetchXml, report: report, source: source, paramString: paramString };
+			MobileCRM.bridge.command("showMobileReportForm", JSON.stringify(params), null, failed, scope);
+		};
 	    // MobileCRM.UI.Questionnaire
 	    MobileCRM.Questionnaire.showForm = function(id, failed, scope, relationship) {
 	        /// <summary>[v10.2] Shows the questionnaire form.</summary>
