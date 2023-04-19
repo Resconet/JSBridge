@@ -368,6 +368,17 @@ declare module MobileCRM {
 		static loadAsync(entityName: string, id: string): Promise<Reference>;
 	}
 
+	/** 
+	 * Person or group associated with an activity.
+	 * An activity can have multiple activity parties.
+	 */
+	class ActivityParty extends Reference {
+		/** Gets or sets whether the party is direct (email) or a pointer to an CRM record.*/
+		isDirectParty: boolean;
+		/** The actual email address used.*/
+		addressUsed: string;
+	}
+
 	class Relationship {
 		constructor(sourceProperty: string, target?: Reference, intersectEntity?: string, intersectProperty?: string);
 

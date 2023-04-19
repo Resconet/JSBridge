@@ -1,5 +1,5 @@
 (function () {
-	var _scriptVersion = 16.0
+	var _scriptVersion = 16.1
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -284,6 +284,23 @@
 				this.id = id;
 				this.isNew = (id ? false : true);
 				this.primaryName = primaryName;
+			},
+
+			ActivityParty: function (entityName, id, primaryName, isDirectParty, addressUsed) {
+				/// <summary>Person or group associated with an activity. An activity can have multiple activity parties.</summary>
+				/// <param name="entityName" type="String">The logical entity name of the party (account, contact, lead, systemuser, etc.)</param>
+				/// <param name="id" type="String">GUID of the existing entity or null for new one or direct party.</param>
+				/// <param name="primaryName" type="String">The human readable name of the reference, e.g "Alexandro".</param>
+				/// <param name="isDirectParty" type="Boolean">Gets or sets whether the party is direct (email) or a pointer to an CRM record.</param>
+				/// <param name="addressUsed" type="String">Gets or sets the actual address used.</param>
+				/// <field name="entityName" type="String">The entity name of the party (account, contact, lead, systemuser, etc.)</field>
+				/// <field name="id" type="String">GUID of the existing entity or null for new one or direct party.</field>
+				/// <field name="primaryName" type="String">The human readable name of the reference, e.g. "Alexandro".</field>
+				/// <field name="isDirectParty" type="Boolean">Gets or sets whether the party is direct (email) or a pointer to an CRM record.</field>
+				/// <field name="addressUsed" type="String">Gets or sets the actual address used.</field>
+				MobileCRM.ActivityParty.superproto.constructor.apply(this, arguments);
+				this.isDirectParty = isDirectParty;
+				this.addressUsed = addressUsed;
 			},
 
 			Relationship: function (sourceProperty, target, intersectEntity, intersectProperty) {
@@ -2047,7 +2064,10 @@
 	        /// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 	        /// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 	        MobileCRM.ManyToManyReference.addRecord(entityName, ref1, ref2, false, success, failed, scope);
-	    };
+		};
+
+		// MobileCRM.ActivityParty
+		_inherit(MobileCRM.ActivityParty, MobileCRM.Reference);
 
 	    // MobileCRM.DynamicEntity
 	    _inherit(MobileCRM.DynamicEntity, MobileCRM.Reference);
