@@ -1466,6 +1466,7 @@ declare module MobileCRM.UI {
 		label: string;
 		dataMember: string;
 		errorMessage: string;
+		supportingText: string;
 		isEnabled: boolean;
 		isVisible: boolean;
 		value: any;
