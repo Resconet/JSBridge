@@ -774,6 +774,7 @@
 						/// <field name="label" type="String">Gets or sets the item label.</field>
 						/// <field name="dataMember" type="String">Gets or sets the name of the property containing the item value in data source objects.</field>
 						/// <field name="errorMessage" type="String">Gets or sets the item error message.</field>
+						/// <field name="supportingText" type="String">Gets or sets the item supporting text (e.g. description).</field>
 						/// <field name="isEnabled" type="Boolean">Gets or sets whether the item is editable.</field>
 						/// <field name="isVisible" type="Boolean">Gets or sets whether the item is visible.</field>
 						/// <field name="value" type="Object">Gets or sets the bound item value.</field>
