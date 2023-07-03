@@ -1,5 +1,5 @@
 (function () {
-	var _scriptVersion = 16.0
+	var _scriptVersion = 16.1
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -744,6 +744,7 @@
 					/// <field name="source" type="MobileCRM.Relationship">The entity whose property will be set to the chosen value.</field>
 					/// <field name="dataSource" type="MobileCRM.Reference[]">The list of entities that should be displayed as selected.</field>
 					/// <field name="allowNull" type="Boolean">Whether to allow selecting no entity.</field>
+					/// <field name="initialTab" type="Number">Optional index of the tab which has to be pre-selected - 0=All Items, 1=Selected Items (default).</field>
 					MobileCRM.UI.MultiLookupForm.superproto.constructor.apply(this, arguments);
 					this.dataSource = [];
 				},
@@ -3852,22 +3853,24 @@
 	        return { entities: this.entities, source: this.source, prevSelection: this.prevSelection, allowedViews: xml, allowNull: this.allowNull, preventClose: this.preventClose };
 	    };
 
-	    // MobileCRM.UI.MultiLookupForm
-	    _inherit(MobileCRM.UI.MultiLookupForm, MobileCRM.UI.LookupForm);
-	    MobileCRM.UI.MultiLookupForm.prototype.show = function (success, failed, scope) {
-	        /// <summary>Shows a dialog which allows the user to select a list of entities from a configurable list of entity types.</summary>
-	        /// <param name="success" type="function(obj)">The callback function that is called with chosen array of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> objects.</param>
-	        /// <param name="failed" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
-	        /// <param name="scope" type="Object">The scope for callbacks.</param>
-	        var params = this._constructParams();
-	        params.dataSource = this.dataSource;
-	        MobileCRM.bridge.command("multiLookupForm", JSON.stringify(params), success, failed, scope);
-	    };
+		// MobileCRM.UI.MultiLookupForm
+		_inherit(MobileCRM.UI.MultiLookupForm, MobileCRM.UI.LookupForm);
+		MobileCRM.UI.MultiLookupForm.prototype.show = function (success, failed, scope) {
+			/// <summary>Shows a dialog which allows the user to select a list of entities from a configurable list of entity types.</summary>
+			/// <param name="success" type="function(obj)">The callback function that is called with chosen array of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> objects.</param>
+			/// <param name="failed" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			var params = this._constructParams();
+			params.dataSource = this.dataSource;
+			params.initialTab = this.initialTab;
+			MobileCRM.bridge.command("multiLookupForm", JSON.stringify(params), success, failed, scope);
+		};
 		MobileCRM.UI.MultiLookupForm.prototype.showAsync = function () {
 			/// <summary>Shows a dialog which allows the user to select a list of entities from a configurable list of entity types.</summary>
 			/// <returns type="Promise&lt;MobileCRM.Reference[]&gt;">A Promise object which will be resolved with an array of Reference objects representing chosen entity records.</returns>
 			var params = this._constructParams();
 			params.dataSource = this.dataSource;
+			params.initialTab = this.initialTab;
 			return MobileCRM.bridge.invokeCommandPromise("multiLookupForm", JSON.stringify(params));
 		};
 
