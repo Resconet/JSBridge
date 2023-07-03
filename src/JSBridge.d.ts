@@ -1,5 +1,5 @@
 // JSBridge.js TypeScript definition file
-// (c) 2022 Resco
+// (c) 2023 Resco
 
 declare module MobileCRM {
 
@@ -2559,6 +2559,7 @@ declare module MobileCRM.UI {
 		source: MobileCRM.Relationship;
 		dataSource: Array<MobileCRM.Reference>;
 		allowNull: boolean;
+		initialTab: number;
 
 		show(success: (obj?: MobileCRM.Reference) => void, failed?: (err: string) => void, scope?: any);
 		showAsync(): Promise<Reference>;
