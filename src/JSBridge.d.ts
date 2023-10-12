@@ -2343,6 +2343,8 @@ declare module MobileCRM.UI {
 			value: any;
 			/** Gets or sets the question item style name.*/
 			style: string;
+			/** Indicates whether the item is answered.*/
+			isAnswered: boolean;
 			/** Indicates whether the item is visible.*/
 			isVisible: boolean;
 			/** Indicates whether the item is enabled.*/
