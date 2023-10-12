@@ -4816,6 +4816,7 @@
 	        /// <field name="type" type="Number">Gets the value type of the question item.</field>
 	        /// <field name="value" type="Any">Gets current answer value. To change it, use trySetAnswer method.</field>
 	        /// <field name="style" type="String">Gets or sets the question item style name.</field>
+	        /// <field name="isAnswered" type="Boolean">Indicates whether the item is answered.</field>
 	        /// <field name="isVisible" type="Boolean">Indicates whether the item is visible.</field>
 	        /// <field name="isEnabled" type="Boolean">Indicates whether the item is enabled.</field>
 	        /// <field name="focus" type="Boolean">Set to true to focus the question item.</field>
