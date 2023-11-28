@@ -5996,6 +5996,9 @@
 						var cmdId = this._createCmdObject(success, failed, scope);
 						chrome.webview.postMessage(cmdId + ';' + command + ':' + params);
 					};
+					MobileCRM.Bridge.prototype.alert = function (text, callback, scope) {
+						MobileCRM.bridge.command("alert", text, callback, callback, scope);
+					};
 					MobileCRM.bridge = new MobileCRM.Bridge('Windows');
 				}
 				else if ("external" in window && external) {
@@ -6022,9 +6025,6 @@
 							};
 						}
 						MobileCRM.Bridge.prototype.alert = function (text, callback, scope) {
-							/// <summary>Shows a message asynchronously and calls the callback after it is closed by user.</summary>
-							/// <param name="callback" type="function(obj)">The callback function that is called asynchronously.</param>
-							/// <param name="scope" type="Object">The scope for callbacks.</param>
 							MobileCRM.bridge.command("alert", text, callback, callback, scope);
 						};
 						var platformName = win10 ? window.win10version : (navigator.userAgent.indexOf("Windows Phone") > 0 ? "WindowsPhone" : "WindowsRT");
