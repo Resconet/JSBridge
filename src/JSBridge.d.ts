@@ -1258,6 +1258,15 @@ declare module MobileCRM.Services {
 		recordAudio(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		recordVideo(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
 		pasteFile(callback: (fileInfo: FileInfo) => void, errorCallback?: (error: string) => void, scope?: any);
+		/**
+		 * @since 9.1
+		 * Prints the document defined by file path.
+		 * @param filePath A file path.
+		 * @param landscape True, to print the document in landscape. False, to print it in portrait
+		 * @param errorCallback The error callback which is called in case of error.
+		 * @param scope The scope for callbacks.
+		 */
+		print(filePath: string, landscape: boolean, callback: (result: boolean) => void, scope?: any);
 		resizeImage(filePath: string, maxWidth: number, maxHeight: number, callback: (result: boolean) => void, scope?: any);
 		/**
 		 * @since 11.2
