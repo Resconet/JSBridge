@@ -1,5 +1,5 @@
 (function () {
-	var _scriptVersion = 16.1
+	var _scriptVersion = 17.0
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() { }
@@ -2365,7 +2365,8 @@
 	            MobileCRM.Localization.initialize(fn, errorCallback, scope);
 	    };
 	    MobileCRM.Metadata.getStringListOptions = function (entityName, propertyName) {
-	        /// <summary>Gets the list of options for the string list property.</summary>
+			/// <summary>Gets the list of options for the string list property.</summary>
+			/// <remarks><see cref="MobileCRM.Localization">MobileCRM.Localization</see> needs to be initialized prior to using this function. Otherwise empty array is returned.</remarks>
 	        /// <param name="entityName" type="String">The entity name.</param>
 	        /// <param name="propertyName" type="String">The string list property name.</param>
 	        var options = {};
