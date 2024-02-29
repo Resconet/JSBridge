@@ -156,8 +156,10 @@
 			}
 		};
 	};
+	var _global = window || global;
+	var MobileCrmException = _global.MobileCrmException;
 	if (typeof MobileCrmException === "undefined") {
-		MobileCrmException = function (msg) {
+		_global.MobileCrmException = MobileCrmException = function (msg) {
 			this.message = msg;
 			this.name = "MobileCrmException";
 		};
@@ -169,8 +171,9 @@
 		return "message" in err ? err.message : "Message" in err ? err.Message : err.toString();
 	}
 	// MobileCRM object definition
+	var MobileCRM = _global.MobileCRM;
 	if (typeof MobileCRM === "undefined") {
-		MobileCRM = {
+		_global.MobileCRM = MobileCRM = {
 			/// <summary>An entry point for Mobile CRM data model.</summary>
 			/// <field name="bridge" type="MobileCRM.Bridge">Singleton instance of <see cref="MobileCRM.Bridge">MobileCRM.Bridge</see> providing the management of the Javascript/native code cross-calls.</field>
 			bridge: null,

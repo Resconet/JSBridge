@@ -1,49 +1,71 @@
-# JSBridge Source
+# JSBridge
 
-The repository is used to publish **public** npm package to ... https://registry.npmjs.org/
+JSBridge - Javascript API for Resco Mobile CRM
 
-The homepage of package : https://www.npmjs.com/package/@resconet/jsbridge
+Getting started with working and debugging of an offline HTML solution.  
+https://www.resco.net/debugging-offline-html-solution/
 
-The package can be installed using following command **npm i @resconet/jsbridge**@[version of package]
+## Introduction
 
-The directory contains:
-* javascript **.js** and typescript **.d.ts** source file
-* readme file **README.md**
+Resco Mobile CRM application functionality can be extended using HTML + Javascript code.
+Your html file containing custom code can be executed both online and offline.
+Offline html files are part of Woodford customization project.
 
-# Install package in project
+Watch webinars for intro to OfflineHTML in Resco MobileCRM.
+<br />[Webinar Offline HTML in Resco Mobile CRM - Part 1/2 (Intro)](https://www.youtube.com/watch?v=cplZLC_mAc0&list=PLPMCnAPD5b56XNEiGTcy5VBxdP8rcB86b&index=12)  
+[Webinar Offline HTML in Resco Mobile CRM - Part 2/2 (Data Access)](https://www.youtube.com/watch?v=R7GpdC_y17Y&t=1s)
+
+Release contains the debugging/development build(s) of the Resco Mobile CRM application.  
+Per platform application packages are available.
+
+## IFrame
+
+You can put a web browser, known as IFrame, in various components in the app.
+IFrames can be used within EntityForm, EntityList or within HomeForm.
+IFrame points to your custom html code file.
+
+## Documentation
+
+Description of the methods and objects defined in Resco JavaScript Bridge.  
+[Latest Reference](https://www.resco.net/javascript-bridge-reference/)  
+[Guide](http://www.resco.net/mobilecrm/support/jsbridge.aspx)
+
+## Installing the package
 
 In your project directory use **npm init** to set up a new or existing npm package. If you want to create default package json file then use --yes parameter. For more information please visit https://docs.npmjs.com/cli/init
 
-* install package **npm i @resconet/jsbridge**
-## Include npm module in project
+- install package **npm i @resconet/jsbridge**
 
-* **Javascript file**
-You can use require to include npm module from installed package. For example
+## Using the library
+
+- **Javascript file**
+  You can use require to include the module from installed packages. For example
 
 ```javascript
-require ("@resconet/jsbridge/src/JSBridge");
+require("@resconet/jsbridge");
 
-function testAlert(){
-    MobileCRM.bridge.alert("Test");
+function testAlert() {
+  MobileCRM.bridge.alert("Test");
 }
 ```
 
-* **Typescript file**
-You can use import to include npm module from installed package. For example
+- **Typescript file**
+  You can use import to include the module from installed packages. For example
 
 ```javascript
-import "@resconet/jsbridge/src/JSBridge"
+import "@resconet/jsbridge";
 
-function testAlert(){
-    MobileCRM.bridge.alert("Test");
+function testAlert() {
+  MobileCRM.bridge.alert("Test");
 }
 ```
 
 ## Versioning
 
 The package.json defines the version of JSBridge. e.g. "version": "12.3.1", it means
-* 12.3: Major revision (copies the version of underlying Mobile CRM app)
-* 1: Bug fix release
+
+- 12.3: Major revision (copies the version of underlying Mobile CRM app)
+- 1: Bug fix release
 
 **important** first two numbers mirror the latest version of Mobile CRM native application that supports the features.
 
@@ -58,4 +80,5 @@ The Package is published to npm registry page on release publish event.
 The Bug fix release number is automatically updated when new js or ts file is pushed.
 
 ## Contact
+
 For any questions or any specific circumstances, please contact us on the email mobilecrm@resco.net
