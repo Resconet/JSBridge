@@ -1,6 +1,12 @@
 // JSBridge.js TypeScript definition file
 // (c) 2023 Resco
 
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/prefer-namespace-keyword */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable no-var */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 declare namespace MobileCRM {
 	class Size {
 		width: string;
@@ -2776,9 +2782,9 @@ declare module MobileCRM.UI {
 
 		addView(entityName: string, viewName: string, isDefault?: boolean);
 		addEntityFilter(entityName: string, filterXML: string);
+		addEntityFilter(entityName: string, filterXml);
 		show(success: (obj?: MobileCRM.Reference) => void, failed?: (err: string) => void, scope?: any);
 		showAsync(): Promise<Reference>;
-		addEntityFilter(entityName: string, filterXml);
 	}
 
 	class MultiLookupForm {
