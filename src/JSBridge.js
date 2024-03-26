@@ -156,7 +156,7 @@
 			}
 		};
 	};
-	var _global = window || global;
+	var _global = typeof window == "undefined" ? global : window;
 	var MobileCrmException = _global.MobileCrmException;
 	if (typeof MobileCrmException === "undefined") {
 		_global.MobileCrmException = MobileCrmException = function (msg) {
@@ -1420,7 +1420,7 @@
 					callback.call(scope);
 				}
 			});
-			window.setTimeout(function () {
+			_global.setTimeout(function () {
 				var nextWorker = _alertQueue.splice(0, 1);
 				nextWorker[0]();
 			});
@@ -2277,7 +2277,7 @@
 			}
 			var cmdParams = JSON.stringify(request);
 			var self = this;
-			window.MobileCRM.bridge.command(
+			_global.MobileCRM.bridge.command(
 				"entitysave",
 				cmdParams,
 				function (res) {
@@ -2493,7 +2493,7 @@
 			/// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the objects array of type specified by <b>resultformat</b> XML attribute (Array, JSON, XML or DynamicEntities).</param>
 			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-			window.MobileCRM.bridge.command("fetchXML", fetchXmlData, success, failed, scope);
+			_global.MobileCRM.bridge.command("fetchXML", fetchXmlData, success, failed, scope);
 		};
 		MobileCRM.FetchXml.Fetch.prototype.execute = function (output, success, failed, scope) {
 			/// <summary>Performs the asynchronous CRM Fetch request.</summary>
@@ -6192,7 +6192,7 @@
 			/// <param name="success" type="function(string)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the serialized response from the server.</param>
 			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-			window.MobileCRM.bridge.command(
+			_global.MobileCRM.bridge.command(
 				"executeWorkflowAction",
 				JSON.stringify({ actionName: actionName, actionParameters: JSON.stringify(parameters) }),
 				success,
