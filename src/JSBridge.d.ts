@@ -1594,6 +1594,40 @@ declare module MobileCRM.Services {
 		responseText: string;
 		responseType: string;
 	}
+
+	class GeoFencingService {
+		/** Indicates whether the service is active. */
+		isEnabled: boolean;
+		/** Indicates whether the events should be delivered realtime using Resco forwarding service.*/
+		realtimeFlushing: boolean;
+		/** Defines logging verbosity (0=Normal, 1=Diagnostic, -1=None) */
+		logLevel: number;
+		/** Defines event mask for showing notifications (0=None, 1=WhenArrived, 2=WhenExited, 3=Always) */
+		notificationMask: number;
+		/** Business hours interval (default value is '9:00-17:00') */
+		businessHours: string;
+		/** Business days mask (the lowest bit is Sunday, the next Monday, ...) */
+		businessDaysMask: number;
+
+		updateGeoFences(records: GeoFenceRecord[]);
+	}
+
+	interface GeoFenceRecord {
+		/** Defines numeric mask for geo fence events (Enter = 1, Exit = 2, Both = 3).*/
+		eventTypeMask: number;
+		/** Unique id of geo-fence record. If it is associated with some entity record, it must have form logicalname:id (e.g. appointment:4595AA3E-9873-4DC4-B723-C94DE27B82BE).*/
+		id: string;
+		/** Human-readable name of record used for notifications.*/
+		name: string;
+		/** Latitude of geo-fence center.*/
+		latitude: number;
+		/** Longitude of geo-fence center.*/
+		longitude: number;
+		/** Geo-fence radius in meters.*/
+		radius: number;
+		/** Geo-fence expiration in seconds.*/
+		expiration: number;
+	}
 }
 declare module MobileCRM.Services.AddressBookService {
 	class AddressBookRecord {

@@ -1048,6 +1048,38 @@
 					this.url = "";
 					this.serviceType = "Azure"; // [v12.3] supports only azure service, used as default.
 				},
+				GeoFencingService: function () {
+					/// <summary>[v17.1] Represents geo-fencing service.</summary>
+					/// <field name="isEnabled" type="Boolean">Indicates whether the service is active.</field>
+					/// <field name="realtimeFlushing" type="Boolean">Indicates whether the events should be delivered realtime using Resco forwarding service.</field>
+					/// <field name="logLevel" type="number">Defines logging verbosity (0=Normal, 1=Diagnostic, -1=None)</field>
+					/// <field name="notificationMask" type="number">Defines event mask for showing notifications (0=None, 1=WhenArrived, 2=WhenExited, 3=Always)</field>
+					/// <field name="businessHours" type="String">Business hours interval (e.g. '9:00-17:00')</field>
+					/// <field name="businessDaysMask" type="number">Business days mask (the lowest bit is Sunday, the next Monday, ...)</field>
+					this.isEnabled = false;
+					this.realtimeFlushing = true;
+					this.logLevel = 0;
+					this.notificationMask = 1;
+					this.businessHours = null;
+					this.businessDaysMask = -1;
+				},
+				GeoFenceRecord: function (eventTypeMask, id, name, latitude, longitude, radius, expiration) {
+					/// <summary>[v17.1] Represents geo-fence definition record.</summary>
+					/// <field name="eventTypeMask" type="number">Defines numeric mask for geo fence events (Enter = 1, Exit = 2, Both = 3).</field>
+					/// <field name="id" type="String">Unique id of geo-fence record. If it is associated with some entity record, it must have form logicalname:id (e.g. appointment:4595AA3E-9873-4DC4-B723-C94DE27B82BE).</field>
+					/// <field name="name" type="String">Human-readable name of record used for notifications.</field>
+					/// <field name="latitude" type="number">Latitude of geo-fence center.</field>
+					/// <field name="longitude" type="number">Longitude of geo-fence center.</field>
+					/// <field name="radius" type="number">Geo-fence radius in meters.</field>
+					/// <field name="expiration" type="number">Geo-fence expiration in seconds.</field>
+					this.eventTypeMask = eventTypeMask;
+					this.id = id;
+					this.name = name;
+					this.latitude = latitude;
+					this.longitude = longitude;
+					this.radius = radius;
+					this.expiration = expiration;
+				},
 			},
 		};
 
@@ -6094,6 +6126,30 @@
 				scope
 			);
 		};
+
+		MobileCRM.Services.GeoFencingService.prototype.updateGeoFences = function (geoFences, errorCallback) {
+			/// <summary>[v17.1] Updates geo-fences being monitored.</summary>
+			/// <param name="geoFences" type="Array">An array of GeoFenceRecord objects.</field>
+			var cfg = {
+				isEnabled: !!this.isEnabled,
+				realtimeFlushing: !!this.realtimeFlushing,
+			};
+			if (this.logLevel >= -1 && this.logLevel <= 1) {
+				cfg.logLevel = this.logLevel;
+			}
+			if (this.notificationMask >= 0 && this.notificationMask <= 4) {
+				cfg.notificationMask = this.notificationMask;
+			}
+			if (this.businessHours) {
+				cfg.businessHours = this.businessHours;
+			}
+			if (this.businessDaysMask) {
+				cfg.businessDaysMask = this.businessDaysMask;
+			}
+			cfg.geoFences = geoFences;
+			MobileCRM.bridge.command("geofencing", JSON.stringify(cfg), null, errorCallback);
+		};
+
 		MobileCRM.Services.DynamicsReport.prototype.download = function (fileName, format, success, failed, scope) {
 			/// <summary>Downloads the MS Dynamics report into a file.</summary>
 			/// <param name="fileName" type="String">A file name for resulting file. Leave &quot;null&quot; to let app to safely generate the file name and extension.</param>
