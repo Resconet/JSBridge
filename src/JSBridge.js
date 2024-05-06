@@ -25,6 +25,21 @@
 		}
 		return null;
 	};
+	var _normalizeArray = function (arr, convertCallback) {
+		var retVal = undefined;
+		if (arr instanceof Array && arr.length > 0) {
+			const normArr = [];
+			for (const o of arr) {
+				if (o) {
+					normArr.push(convertCallback(o));
+				}
+			}
+			if (normArr.length > 0) {
+				retVal = normArr;
+			}
+		}
+		return retVal;
+	};
 	var _addProperty = function (obj, name, writable, value) {
 		if (!obj._privVals) {
 			obj._privVals = {};
@@ -398,11 +413,19 @@
 					/// <field name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</field>
 					/// <field name="page" type="int">1-based index of the data page to retrieve.</field>
 					/// <field name="distinct" type="Boolean">Whether to return only distinct (different) values.</field>
-					this.entity = entity;
-					this.count = count;
-					this.page = page;
+					if (entity) {
+						this.entity = entity;
+					}
+					if (typeof count !== "undefined") {
+						this.count = count;
+					}
+					if (typeof page !== "undefined") {
+						this.page = page;
+					}
 					this.aggregate = false;
-					this.distinct = distinct;
+					if (typeof distinct !== "undefined") {
+						this.distinct = distinct;
+					}
 				},
 				Entity: function (name) {
 					/// <summary>Represents a FetchXml query root entity.</summary>
@@ -412,25 +435,23 @@
 					/// <field name="linkentities" type="Array">An array of <see cref="MobileCRM.FetchXml.LinkEntity">MobileCRM.FetchXml.LinkEntity</see> objects.</field>
 					/// <field name="name" type="String">An entity logical name.</field>
 					/// <field name="order" type="Array">An array of <see cref="MobileCRM.FetchXml.Order">MobileCRM.FetchXml.Order</see> objects.</field>
-					this.name = name;
+					if (name) {
+						this.name = name;
+					}
 					this.attributes = [];
 					this.order = [];
 					this.filter = null;
 					this.linkentities = [];
 				},
-				LinkEntity: function (name) {
+				LinkEntity: function () {
 					/// <summary>Represents a FetchXml query linked entity.</summary>
 					/// <remarks>This object is derived from <see cref="MobileCRM.FetchXml.Entity">MobileCRM.FetchXml.Entity</see></remarks>
+					/// <param name="name" type="String">An entity name</param>
 					/// <field name="alias" type="String">A link alias.</field>
 					/// <field name="from" type="String">The "from" field (if parent then target entity primary key).</field>
 					/// <field name="linkType" type="String">The link (join) type ("inner" or "outer").</field>
-					/// <param name="name" type="String">An entity name</param>
 					/// <field name="to" type="String">The "to" field.</field>
 					MobileCRM.FetchXml.LinkEntity.superproto.constructor.apply(this, arguments);
-					this.from = null;
-					this.to = null;
-					this.linktype = null;
-					this.alias = null;
 				},
 				Attribute: function (name) {
 					/// <summary>Represents a FetchXml select statement (CRM field).</summary>
@@ -440,11 +461,10 @@
 					/// <field name="dategrouping" type="String">A date group by modifier (year, quarter, month, week, day).</field>
 					/// <field name="groupby" type="Boolean">Indicates whether to group by this attribute.</field>
 					/// <field name="name" type="String">A lower-case entity attribute name (CRM logical field name).</field>
-					this.name = name;
-					this.aggregate = null;
+					if (name) {
+						this.name = name;
+					}
 					this.groupby = false;
-					this.alias = null;
-					this.dategrouping = null;
 				},
 				Order: function (attribute, descending) {
 					/// <summary>Represents a FetchXml order statement.</summary>
@@ -453,8 +473,9 @@
 					/// <field name="alias" type="String">Defines an order alias.</field>
 					/// <field name="attribute" type="String">An attribute name (CRM logical field name).</field>
 					/// <field name="descending" type="Boolean">true, for descending order; false, for ascending order.</field>
-					this.attribute = attribute;
-					this.alias = null;
+					if (attribute) {
+						this.attribute = attribute;
+					}
 					this.descending = descending ? true : false;
 				},
 				Filter: function () {
@@ -462,7 +483,6 @@
 					/// <field name="conditions" type="Array">An array of <see cref="MobileCRM.FetchXml.Condition">Condition</see> objects.</field>
 					/// <field name="filters" type="Array">An array of <see cref="MobileCRM.FetchXml.Filter">Filter</see> objects representing child-filters.</field>
 					/// <field name="type" type="String">Defines the filter operator ("or" / "and").</field>
-					this.type = null;
 					this.conditions = [];
 					this.filters = [];
 				},
@@ -474,15 +494,10 @@
 					/// <field name="uitype" type="String">The lookup target entity logical name.</field>
 					/// <field name="value" type="">The value to compare to.</field>
 					/// <field name="values" type="Array">The list of values to compare to.</field>
-					this.attribute = null;
-					this.operator = null;
-					this.uitype = null;
-					this.uiname = null;
-					this.value = null;
 					this.values = [];
 				},
 			},
-			Platform: function (props) {
+			Platform: function () {
 				/// <summary>Represents object for querying platform specific information and executing platform integrated actions.</summary>
 				/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.Platform.requestObject">MobileCRM.Platform.requestObject</see> function.</remarks>
 				/// <field name="capabilities" type="Number">Gets the mask of capability flags supported by this device (MakePhoneCalls=1; HasMapView=2).</field>
@@ -544,7 +559,7 @@
 			},
 			UI: {
 				FormManager: {},
-				EntityForm: function (props) {
+				EntityForm: function () {
 					/// <summary>Represents the Javascript equivalent of native entity form object.</summary>
 					/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">MobileCRM.UI.EntityForm.requestObject</see> function.</remarks>
 					/// <field name="associatedViews" type="Array">Gets the associated views as an array of <see cref="MobileCRM.UI._EntityList">MobileCRM.UI._EntityList</see> objects.</field>
@@ -572,11 +587,11 @@
 					/// <field name="relationship" type="MobileCRM.Relationship">Gets the relation source and related entity. &quot;null&quot;, if there is no relationship.</field>
 					MobileCRM.UI.QuestionnaireForm.superproto.constructor.apply(this, arguments);
 				},
-				EntityChart: function (props) {
+				EntityChart: function () {
 					/// <summary>[13.0] Represents the Javascript equivalent of native entity chart object.</summary>
 					MobileCRM.UI.EntityChart.superproto.constructor.apply(this, arguments);
 				},
-				EntityList: function (props) {
+				EntityList: function () {
 					/// <summary>[v9.2] Represents the Javascript equivalent of native entity list object.</summary>
 					/// <field name="allowAddExisting" type="Boolean">Gets or sets whether adding an existing entity is allowed.</field>
 					/// <field name="allowCreateNew" type="Boolean">Gets or sets whether create a new entity (or managing the N:N entities in the case of N:N list) is allowed.</field>
@@ -604,7 +619,7 @@
 					/// <field name="uniqueName" type="Number">Gets or sets the unique name of the list. Used to save/load list specific settings.</field>
 					MobileCRM.UI.EntityList.superproto.constructor.apply(this, arguments);
 				},
-				HomeForm: function (props) {
+				HomeForm: function () {
 					/// <summary>[v8.0] Represents the Javascript equivalent of the home form object which contains the Home/UI replacement iFrame.</summary>
 					/// <remarks><p>This class works only from Home/UI replacement iFrame.</p><p>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.HomeForm.requestObject">MobileCRM.UI.HomeForm.requestObject</see> function.</p></remarks>
 					/// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
@@ -2527,21 +2542,144 @@
 			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 			_global.MobileCRM.bridge.command("fetchXML", fetchXmlData, success, failed, scope);
 		};
+		MobileCRM.FetchXml.Condition._constructConditionParams = function (condition) {
+			if (condition) {
+				var conditionParams = {};
+				if (condition.attribute) {
+					conditionParams.attribute = condition.attribute;
+				}
+				if (condition.operator) {
+					conditionParams.operator = condition.operator;
+				}
+				if (condition.uiname) {
+					conditionParams.uiname = condition.uiname;
+				}
+				if (condition.uitype) {
+					conditionParams.uitype = condition.uitype;
+				}
+				if (typeof condition.value !== "undefined") {
+					conditionParams.value = condition.value;
+				}
+				if (condition.values instanceof Array && condition.values.length > 0) {
+					conditionParams.values = condition.values;
+				}
+				return conditionParams;
+			} else {
+				return undefined;
+			}
+		};
+		MobileCRM.FetchXml.Filter._constructFilterParams = function (filter) {
+			if (filter) {
+				var filterParams = {};
+				if (filter.type) {
+					filterParams.type = filter.type;
+				}
+				filterParams.conditions = _normalizeArray(filter.conditions, MobileCRM.FetchXml.Condition._constructConditionParams);
+				filterParams.filters = _normalizeArray(filter.filters, MobileCRM.FetchXml.Filter._constructFilterParams);
+				return filterParams;
+			} else {
+				return undefined;
+			}
+		};
+		MobileCRM.FetchXml.Order._constructOrderParams = function (order) {
+			if (order) {
+				var orderParams = { attribute: order.attribute };
+				if (typeof order.descending != "undefined") {
+					orderParams.descending = order.descending;
+				}
+				if (order.alias) {
+					orderParams.alias = order.alias;
+				}
+				return orderParams;
+			} else {
+				return undefined;
+			}
+		};
+		MobileCRM.FetchXml.Attribute._constructAttributeParams = function (attribute) {
+			if (attribute) {
+				var attrParams = {};
+				if (attribute.name) {
+					attrParams.name = attribute.name;
+				}
+				if (attribute.aggregate) {
+					attrParams.aggregate = attribute.aggregate;
+				}
+				if (typeof attribute.groupby != "undefined") {
+					attrParams.groupby = attribute.groupby;
+				}
+				if (attribute.alias) {
+					attrParams.alias = attribute.alias;
+				}
+				if (attribute.dategrouping) {
+					attrParams.dategrouping = attribute.dategrouping;
+				}
+				return attrParams;
+			} else {
+				return undefined;
+			}
+		};
+		MobileCRM.FetchXml.Entity._constructEntityParams = function (entity) {
+			if (entity) {
+				var entityParams = {};
+				if (entity.name) {
+					entityParams.name = entity.name;
+				}
+				entityParams.attributes = _normalizeArray(entity.attributes, MobileCRM.FetchXml.Attribute._constructAttributeParams);
+				entityParams.order = _normalizeArray(entity.order, MobileCRM.FetchXml.Order._constructOrderParams);
+				if (entity.filter) {
+					entityParams.filter = MobileCRM.FetchXml.Filter._constructFilterParams(entity.filter);
+				}
+				entityParams.linkentities = _normalizeArray(entity.linkentities, MobileCRM.FetchXml.LinkEntity._constructLinkParams);
+				return entityParams;
+			} else {
+				return undefined;
+			}
+		};
+		MobileCRM.FetchXml.LinkEntity._constructLinkParams = function (linkEntity) {
+			var linkParams = MobileCRM.FetchXml.Entity._constructEntityParams(linkEntity);
+			if (linkParams) {
+				if (linkEntity.alias) {
+					linkParams.alias = linkEntity.alias;
+				}
+				if (linkEntity.from) {
+					linkParams.from = linkEntity.from;
+				}
+				if (linkEntity.to) {
+					linkParams.to = linkEntity.to;
+				}
+				if (linkEntity.linkType) {
+					linkParams.linkType = linkEntity.linkType;
+				}
+			}
+			return linkParams;
+		};
+		MobileCRM.FetchXml.Fetch.prototype._constructFetchParams = function () {
+			var reqParams = { entity: MobileCRM.FetchXml.Entity._constructEntityParams(this.entity) };
+			if (typeof this.page !== "undefined") {
+				reqParams.page = this.page;
+			}
+			if (typeof this.count !== "undefined") {
+				reqParams.count = this.count;
+			}
+			if (typeof this.aggregate !== "undefined") {
+				reqParams.aggregate = this.aggregate;
+			}
+			if (this.distinct) {
+				reqParams.distinct = this.distinct;
+			}
+			return reqParams;
+		};
 		MobileCRM.FetchXml.Fetch.prototype.execute = function (output, success, failed, scope) {
 			/// <summary>Performs the asynchronous CRM Fetch request.</summary>
 			/// <param name="output" type="String">A string defining the output format: Array, JSON, XML or DynamicEntities.</param>
 			/// <param name="success" type="function(result)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the objects array of type specified by <b>output</b> argument.</param>
 			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-			var reqParams = JSON.stringify({
-				entity: this.entity,
-				resultformat: output,
-				page: this.page,
-				count: this.count,
-				aggregate: this.aggregate,
-				distinct: this.distinct,
-			});
-			MobileCRM.bridge.command("fetch", reqParams, success, failed, scope);
+			var reqParams = this._constructFetchParams();
+			if (output) {
+				reqParams.resultformat = output;
+			}
+			MobileCRM.bridge.command("fetch", JSON.stringify(reqParams), success, failed, scope);
 		};
 		MobileCRM.FetchXml.Fetch.prototype.executeOnline = function (output, success, failed, scope) {
 			/// <summary>[v8.0] Performs the online CRM Fetch request regardless of the app online/offline mode.</summary>
@@ -2605,13 +2743,13 @@
 			/// <param name="success" type="function(String)">A callback function for successful asynchronous result. The <b>result</b> argument will carry the XML representation of the Fetch object.</param>
 			/// <param name="failed" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
 			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
-			var reqParams = JSON.stringify({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate, distinct: this.distinct });
+			var reqParams = this._constructFetchParams();
 			MobileCRM.bridge.command("fetchToXml", reqParams, success, failed, scope);
 		};
 		MobileCRM.FetchXml.Fetch.prototype.serializeToXmlAsync = function () {
 			/// <summary>[v10.0] Serializes the Fetch object to XML.</summary>
 			/// <returns type="Promise&lt;string&gt;">A Promise object which will be resolved with the XML representation of this Fetch object.</returns>
-			var reqParams = JSON.stringify({ entity: this.entity, page: this.page, count: this.count, aggregate: this.aggregate, distinct: this.distinct });
+			var reqParams = this._constructFetchParams();
 			return MobileCRM.bridge.invokeCommandPromise("fetchToXml", reqParams);
 		};
 		// MobileCRM.FetchXml.Entity
