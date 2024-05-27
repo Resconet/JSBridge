@@ -430,6 +430,7 @@
 				Entity: function (name) {
 					/// <summary>Represents a FetchXml query root entity.</summary>
 					/// <param name="name" type="String">An entity logical name.</param>
+					/// <field name="allattributes" type="Boolean">Indicates whether to fetch all attributes instead of explicitly chosen set.</field>
 					/// <field name="attributes" type="Array">An array of <see cref="MobileCRM.FetchXml.Attribute">MobileCRM.FetchXml.Attribute</see> objects.</field>
 					/// <field name="filter" type="MobileCRM.FetchXml.Filter">A query filter.</field>
 					/// <field name="linkentities" type="Array">An array of <see cref="MobileCRM.FetchXml.LinkEntity">MobileCRM.FetchXml.LinkEntity</see> objects.</field>
@@ -2630,6 +2631,9 @@
 					entityParams.filter = MobileCRM.FetchXml.Filter._constructFilterParams(entity.filter);
 				}
 				entityParams.linkentities = _normalizeArray(entity.linkentities, MobileCRM.FetchXml.LinkEntity._constructLinkParams);
+				if (entity.allattributes) {
+					entityParams.allattributes = entity.allattributes;
+				}
 				return entityParams;
 			} else {
 				return undefined;
