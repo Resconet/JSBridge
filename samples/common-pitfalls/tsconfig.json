@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "outDir": "dist",
+    "strict": false,
+    "types": ["@resconet/jsbridge"],
+  },
+	  "include": ["src/*"],
+}

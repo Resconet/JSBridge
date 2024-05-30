@@ -1,0 +1,20 @@
+{
+  "name": "common-pitfalls",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build-mac": "tsc && cp -f node_modules/@resconet/jsbridge/src/JSBridge.js *.html dist/",
+    "build-win": "tsc && copy /Y node_modules\\@resconet\\jsbridge\\src\\JSBridge.js + *.html dist\\",
+    "deploy-ios-sim":"npm run build-mac && cp -f dist/* $(sh ../../tools/iOS/ios-sim-offline-html-dir.sh)",
+    "deploy-win-desktop": "npm run build-win && ..\\..\\tools\\Windows\\win-desktop-deploy dist\\*",
+    "deploy-win-store": "npm run build-win && ..\\..\\tools\\Windows\\win-store-deploy dist\\*"
+  },
+  "author": "Resco",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@resconet/jsbridge": "^17.0.0"
+  }
+}
