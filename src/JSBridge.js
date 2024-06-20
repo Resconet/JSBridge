@@ -491,6 +491,7 @@
 					/// <summary>Represents a FetchXml attribute condition statement.</summary>
 					/// <field name="attribute" type="String">The attribute name (CRM logical field name).</field>
 					/// <field name="operator" type="String">The condition operator. "eq", "ne", "in", "not-in", "between", "not-between", "lt", "le", "gt", "ge", "like", "not-like", "null", "not-null", "eq-userid", "eq-userteams", "today", "yesterday", "tomorrow", "this-year", "last-week", "last-x-hours", "next-x-years", "olderthan-x-months", ...</field>
+					/// <field name="entityname" type="String">The link name or alias to which this condition is relative to.</summary>
 					/// <field name="uiname" type="String">The lookup target entity display name.</field>
 					/// <field name="uitype" type="String">The lookup target entity logical name.</field>
 					/// <field name="value" type="">The value to compare to.</field>
@@ -2551,6 +2552,9 @@
 				}
 				if (condition.operator) {
 					conditionParams.operator = condition.operator;
+				}
+				if (condition.entityname) {
+					conditionParams.entityname = condition.entityname;
 				}
 				if (condition.uiname) {
 					conditionParams.uiname = condition.uiname;

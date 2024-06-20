@@ -1333,6 +1333,7 @@ declare module MobileCRM.FetchXml {
 	/**
 	 * @class Represents a FetchXml attribute condition statement.
 	 * @property  attribute {string} The attribute name (CRM logical field name).
+	 * @property  entityname {string} The link name or alias to which this condition is relative to.
 	 * @property  operator {string} The condition operator. "eq", "ne", "in", "not-in", "between", "not-between", "lt", "le", "gt", "ge", "like", "not-like", "null", "not-null", "eq-userid", "eq-userteams", "today", "yesterday", "tomorrow", "this-year", "last-week", "last-x-hours", "next-x-years", "olderthan-x-months", ...
 	 * @property  uitype {string} The lookup target entity display name.
 	 * @property  uiname {string} The lookup target entity logical name.
