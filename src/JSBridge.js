@@ -402,12 +402,13 @@
 				/// <field name="isSingularParty" type="Boolean">Gets whether the property represents a singular activity party property. These properties exists as both a Lookup property on the entity and an ActivytParty record.</field>
 			},
 			FetchXml: {
-				Fetch: function (entity, count, page, distinct) {
+				Fetch: function (entity, count, page, distinct, aggregate) {
 					/// <summary>Represents a FetchXml query object.</summary>
 					/// <param name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</param>
 					/// <param name="count" type="int">the maximum number of records to retrieve.</param>
 					/// <param name="page" type="int">1-based index of the data page to retrieve.</param>
 					/// <param name="distinct" type="bool">Whether to return only distinct (different) values.</param>
+					/// <param name="aggregate" type="bool">Indicates whether the fetch is aggregated.</param>
 					/// <field name="aggregate" type="Boolean">Indicates whether the fetch is aggregated.</field>
 					/// <field name="count" type="int">the maximum number of records to retrieve.</field>
 					/// <field name="entity" type="MobileCRM.FetchXml.Entity">An entity object.</field>
@@ -422,12 +423,12 @@
 					if (typeof page !== "undefined") {
 						this.page = page;
 					}
-					this.aggregate = false;
+					this.aggregate = !!aggregate;
 					if (typeof distinct !== "undefined") {
 						this.distinct = distinct;
 					}
 				},
-				Entity: function (name) {
+				Entity: function (name, attributes, order, filter, linkentities) {
 					/// <summary>Represents a FetchXml query root entity.</summary>
 					/// <param name="name" type="String">An entity logical name.</param>
 					/// <field name="allattributes" type="Boolean">Indicates whether to fetch all attributes instead of explicitly chosen set.</field>
@@ -439,22 +440,42 @@
 					if (name) {
 						this.name = name;
 					}
-					this.attributes = [];
-					this.order = [];
-					this.filter = null;
-					this.linkentities = [];
+					if (attributes) {
+						if (attributes == "*") {
+							this.allattributes = true;
+						} else {
+							this.attributes = attributes;
+						}
+					} else {
+						this.attributes = [];
+					}
+					this.order = order instanceof Array ? order : [];
+					this.filter = filter ? filter : null;
+					this.linkentities = linkentities ? linkentities : [];
 				},
-				LinkEntity: function () {
+				LinkEntity: function (name, attributes, order, filter, linkentities, from, to, alias, linkType) {
 					/// <summary>Represents a FetchXml query linked entity.</summary>
 					/// <remarks>This object is derived from <see cref="MobileCRM.FetchXml.Entity">MobileCRM.FetchXml.Entity</see></remarks>
 					/// <param name="name" type="String">An entity name</param>
 					/// <field name="alias" type="String">A link alias.</field>
 					/// <field name="from" type="String">The "from" field (if parent then target entity primary key).</field>
-					/// <field name="linkType" type="String">The link (join) type ("inner" or "outer").</field>
+					/// <field name="linktype" type="String">The link (join) type ("inner" or "outer").</field>
 					/// <field name="to" type="String">The "to" field.</field>
 					MobileCRM.FetchXml.LinkEntity.superproto.constructor.apply(this, arguments);
+					if (from) {
+						this.from = from;
+					}
+					if (to) {
+						this.to = to;
+					}
+					if (alias) {
+						this.alias = alias;
+					}
+					if (linkType) {
+						this.linktype = linkType;
+					}
 				},
-				Attribute: function (name) {
+				Attribute: function (name, alias, aggregate, groupBy, dateGrouping) {
 					/// <summary>Represents a FetchXml select statement (CRM field).</summary>
 					/// <param name="name" type="String">A lower-case entity attribute name (CRM logical field name).</param>
 					/// <field name="aggregate" type="String">An aggregation function.</field>
@@ -465,9 +486,18 @@
 					if (name) {
 						this.name = name;
 					}
-					this.groupby = false;
+					if (alias) {
+						this.alias = alias;
+					}
+					this.groupby = !!groupBy;
+					if (aggregate) {
+						this.aggregate = aggregate;
+					}
+					if (dateGrouping) {
+						this.dategrouping = dateGrouping;
+					}
 				},
-				Order: function (attribute, descending) {
+				Order: function (attribute, descending, alias) {
 					/// <summary>Represents a FetchXml order statement.</summary>
 					/// <param name="attribute" type="String">An attribute name (CRM logical field name).</param>
 					/// <param name="descending" type="Boolean">true, for descending order; false, for ascending order</param>
@@ -478,16 +508,22 @@
 						this.attribute = attribute;
 					}
 					this.descending = descending ? true : false;
+					if (alias) {
+						this.alias = alias;
+					}
 				},
-				Filter: function () {
+				Filter: function (type, conditions, filters) {
 					/// <summary>Represents a FetchXml filter statement. A logical combination of <see cref="MobileCRM.FetchXml.Condition">Conditions</see> and child-filters.</summary>
 					/// <field name="conditions" type="Array">An array of <see cref="MobileCRM.FetchXml.Condition">Condition</see> objects.</field>
 					/// <field name="filters" type="Array">An array of <see cref="MobileCRM.FetchXml.Filter">Filter</see> objects representing child-filters.</field>
 					/// <field name="type" type="String">Defines the filter operator ("or" / "and").</field>
-					this.conditions = [];
-					this.filters = [];
+					if (type) {
+						this.type = type;
+					}
+					this.conditions = conditions instanceof Array ? conditions : [];
+					this.filters = filters instanceof Array ? filters : [];
 				},
-				Condition: function () {
+				Condition: function (attribute, operator, value, entityName, refTarget, refLabel) {
 					/// <summary>Represents a FetchXml attribute condition statement.</summary>
 					/// <field name="attribute" type="String">The attribute name (CRM logical field name).</field>
 					/// <field name="operator" type="String">The condition operator. "eq", "ne", "in", "not-in", "between", "not-between", "lt", "le", "gt", "ge", "like", "not-like", "null", "not-null", "eq-userid", "eq-userteams", "today", "yesterday", "tomorrow", "this-year", "last-week", "last-x-hours", "next-x-years", "olderthan-x-months", ...</field>
@@ -496,7 +532,29 @@
 					/// <field name="uitype" type="String">The lookup target entity logical name.</field>
 					/// <field name="value" type="">The value to compare to.</field>
 					/// <field name="values" type="Array">The list of values to compare to.</field>
+					if (attribute) {
+						this.attribute = attribute;
+					}
+					if (operator) {
+						this.operator = operator;
+					}
 					this.values = [];
+					if (value) {
+						if (value instanceof Array) {
+							this.values = value;
+						} else {
+							this.value = value;
+						}
+					}
+					if (entityName) {
+						this.entityname = entityName;
+					}
+					if (refTarget) {
+						this.uitype = refTarget;
+					}
+					if (refLabel) {
+						this.uiname = refLabel;
+					}
 				},
 			},
 			Platform: function () {

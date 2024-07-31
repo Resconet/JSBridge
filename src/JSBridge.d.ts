@@ -1042,7 +1042,7 @@ declare namespace MobileCRM {
 		 * @param failed A callback which is called in case of error.
 		 * @param scope The scope for callbacks.
 		 */
-		static showForm(report: MobileCRM.Reference, source: Array<MobileCRM.Reference>, fetchXml: string, failed?: (err: string) => void, scope?: any);
+		static showForm(report: MobileCRM.Reference, source: MobileCRM.Reference[], fetchXml: string, failed?: (err: string) => void, scope?: any);
 		/**
 		 * @since 16.0
 		 * Shows new MobileReport form. Source for the report can be defined either as list of MobileCRM.Reference objects or as FetchXML query.
@@ -1055,7 +1055,7 @@ declare namespace MobileCRM {
 		 */
 		static showFormWithConfiguration(
 			report: MobileCRM.Reference,
-			source: Array<MobileCRM.Reference>,
+			source: MobileCRM.Reference[],
 			fetchXml: string,
 			paramString: string,
 			failed?: (err: string) => void,
@@ -1075,13 +1075,20 @@ declare module MobileCRM.FetchXml {
 	/**
 	 * @class Represents a FetchXml
 	 * @property entity {MobileCRM.FetchXml.Entity} An entity object.
-	 * @property  count {number} The maximum number of records to retrieve.
-	 * @property  page {number} 1-based index of the data page to retrieve.
-	 * @property  aggregate {boolean} Indicates whether the fetch is aggregated.
-	 * @property  distinct {boolean} Indicates whether to return only distinct (different) values.
+	 * @property count {number} The maximum number of records to retrieve.
+	 * @property page {number} 1-based index of the data page to retrieve.
+	 * @property aggregate {boolean} Indicates whether the fetch is aggregated.
+	 * @property distinct {boolean} Indicates whether to return only distinct (different) values.
 	 */
 	class Fetch {
-		constructor(entity?: MobileCRM.FetchXml.Entity, count?: number, page?: number, distinct?: boolean);
+		/** Constructs Fetch object
+		 * @param entity {MobileCRM.FetchXml.Entity} An entity object.
+		 * @param count {number} The maximum number of records to retrieve.
+		 * @param page {number} 1-based index of the data page to retrieve.
+		 * @param distinct {boolean} Indicates whether to return only distinct (different) values.
+		 * @param aggregate {boolean} Indicates whether the fetch is aggregated.
+		 */
+		constructor(entity?: MobileCRM.FetchXml.Entity, count?: number, page?: number, distinct?: boolean, aggregate?: boolean);
 
 		public entity: MobileCRM.FetchXml.Entity;
 		count: number;
@@ -1096,7 +1103,7 @@ declare module MobileCRM.FetchXml {
 		 * @param failed A callback function for command failure. The error argument will carry the error message.
 		 * @param scope A scope for calling the callbacks. Set to call the callbacks in global scope.
 		 */
-		public static executeFromXML(fetchXmlData: string, success: (res: Array<any>) => void, failed?: (error: string) => void, scope?: any);
+		public static executeFromXML(fetchXmlData: string, success: (res: any[]) => void, failed?: (error: string) => void, scope?: any);
 		/**
 		 * @since 10.0
 		 * Deserializes XML to the Fetch object.
@@ -1134,7 +1141,7 @@ declare module MobileCRM.FetchXml {
 		 * @param failed A callback function for command failure. The error argument will carry the error message.
 		 * @param scope A scope for calling the callbacks. Set to call the callbacks in global scope.
 		 */
-		public execute(output: string, success: (res: Array<any>) => void, failed?: (err: string) => void, scope?: any);
+		public execute(output: string, success: (res: any[]) => void, failed?: (err: string) => void, scope?: any);
 		/**
 		 * @since 8.0
 		 * Performs the online CRM Fetch request regardless of the app online/offline mode.
@@ -1143,7 +1150,7 @@ declare module MobileCRM.FetchXml {
 		 * @param failed A callback function for command failure. The error argument will carry the error message.
 		 * @param scope A scope for calling the callbacks. Set to call the callbacks in global scope.
 		 */
-		public executeOnline(output: string, success: (res: Array<any>) => void, failed?: (error: string) => void, scope?: any);
+		public executeOnline(output: string, success: (res: any[]) => void, failed?: (error: string) => void, scope?: any);
 		/**
 		 * @since 8.0
 		 * Performs the offline CRM Fetch request regardless of the app online/offline mode.
@@ -1152,7 +1159,7 @@ declare module MobileCRM.FetchXml {
 		 * @param failed A callback function for command failure. The error argument will carry the error message.
 		 * @param scope A scope for calling the callbacks. Set to call the callbacks in global scope.
 		 */
-		public executeOffline(output: string, success: (res: Array<any>) => void, failed?: (error: string) => void, scope?: any);
+		public executeOffline(output: string, success: (res: any[]) => void, failed?: (error: string) => void, scope?: any);
 		/**
 		 * Performs the asynchronous CRM Fetch request.
 		 * @param output A string defining the output format: Array, JSON, XML or DynamicEntities.
@@ -1164,19 +1171,32 @@ declare module MobileCRM.FetchXml {
 	/**
 	 * @class Represents a FetchXml query root entity.
 	 * @param name {string} An entity logical name.
-	 * @property attributes {Array<Attribute>}  An array of <see cref="MobileCRM.FetchXml.Attribute">MobileCRM.FetchXml.Attribute</see> objects.
-	 * @property order {Array<Order>} An array of {MobileCRM.FetchXml.Order} objects
+	 * @property attributes {Attribute[]}  An array of <see cref="MobileCRM.FetchXml.Attribute">MobileCRM.FetchXml.Attribute</see> objects.
+	 * @property order {Order[]} An array of {MobileCRM.FetchXml.Order} objects
 	 * @property filter {Filter} A query filter.
-	 * @property linkentities {Array<LinkEntity>} An array of {MobileCRM.FetchXml.LinkEntity} objects.
+	 * @property linkentities {LinkEntity[]} An array of {MobileCRM.FetchXml.LinkEntity} objects.
 	 */
 	class Entity {
-		constructor(name: string);
+		/**
+		 * Constructs Entity object
+		 * @param name An entity logical name.
+		 * @param attributes An array of Attribute objects or "*" for all attributes.
+		 * @param order An array of Order objects.
+		 * @param filter A query filter.
+		 * @param linkentities An array of LinkEntity objects.
+		 */
+		constructor(name: string, attributes?: Attribute[] | "*", order?: Order[], filter?: Filter, linkentities?: LinkEntity[]);
 
+		/** An entity logical name. */
 		name: string;
-		attributes: Array<Attribute>;
-		order: Array<Order>;
+		/** An array of Attribute objects. */
+		attributes: Attribute[];
+		/** An array of Order objects. */
+		order: Order[];
+		/** A query filter. */
 		filter: Filter;
-		linkentities: Array<LinkEntity>;
+		/** An array of LinkEntity objects. */
+		linkentities: LinkEntity[];
 
 		/**
 		 * Adds an order by statement to the fetch query.
@@ -1240,7 +1260,28 @@ declare module MobileCRM.FetchXml {
 	 * @property  alias {string} Defines an order alias.
 	 */
 	class LinkEntity extends Entity {
-		constructor(name: string);
+		/** Constructs LinkEntity object.
+		 * @param name An entity logical name.
+		 * @param attributes An array of Attribute objects or "*" for all attributes.
+		 * @param order An array of Order objects.
+		 * @param filter A query filter.
+		 * @param linkentities An array of LinkEntity objects.
+		 * @param  from {number} The "from" field (if parent then target entity primary key).
+		 * @param  to {number}
+		 * @param  alias {string} Defines an order alias.
+		 * @param  linktype {boolean} The link (join) type ("inner" or "outer").
+		 */
+		constructor(
+			name: string,
+			attributes?: Attribute[] | "*",
+			order?: Order[],
+			filter?: Filter,
+			linkentities?: LinkEntity[],
+			from?: string,
+			to?: string,
+			alias?: string,
+			linkType?: string
+		);
 
 		from: string;
 		to: string;
@@ -1257,7 +1298,16 @@ declare module MobileCRM.FetchXml {
 	 * @property  dategrouping {string} A date group by modifier (year, quarter, month, week, day).
 	 */
 	class Attribute {
-		constructor(name: string);
+		/**
+		 * Constructs Attribute object.
+		 * @param name A lower-case entity attribute name (CRM logical field name).
+		 * @param alias Defines an order alias.
+		 * @param aggregate An aggregation function.
+		 * @param groupBy Indicates whether to group by this attribute.
+		 * @param dateGrouping A date group by modifier (year, quarter, month, week, day).
+		 */
+		constructor(name: string, alias?: string, aggregate?: boolean, groupBy?: boolean, dateGrouping?: string);
+
 		name: string;
 		aggregate: string;
 		groupby: boolean;
@@ -1271,7 +1321,13 @@ declare module MobileCRM.FetchXml {
 	 * @property  descending {boolean} true, for descending order; false, for ascending order
 	 */
 	class Order {
-		constructor(attribute?: string, descending?: boolean);
+		/**
+		 * Constructs Order object
+		 * @param attribute An attribute name (CRM logical field name).
+		 * @param descending true, for descending order; false, for ascending order
+		 * @param alias Defines an order alias.
+		 */
+		constructor(attribute?: string, descending?: boolean, alias?: string);
 		attribute: string;
 		alias: string;
 		descending: boolean;
@@ -1279,13 +1335,21 @@ declare module MobileCRM.FetchXml {
 	/**
 	 * @class Represents a FetchXml filter statement. A logical combination of {Condition} and child-filters.
 	 * @property  type {string} Defines the filter operator ("or" / "and").
-	 * @property  conditions {Array<Condition>} An array of {Condition} objects.
-	 * @property  filters { Array<Filter>} An array of <see cref="MobileCRM.FetchXml.Filter"/> objects representing child-filters.
+	 * @property  conditions {Condition[]} An array of {Condition} objects.
+	 * @property  filters {Filter[]} An array of {Filter} objects representing child-filters.
 	 */
 	class Filter {
+		/**
+		 * Constructs {Filter} object.
+		 * @param type Defines the filter operator ("or" / "and").
+		 * @param conditions  An array of {Condition} objects.
+		 * @param filters  An array of {Filter} objects representing child-filters.
+		 */
+		constructor(type?: string, conditions?: Condition[], filters?: Filter[]);
+
 		type: string;
-		conditions: Array<Condition>;
-		filters: Array<Filter>;
+		conditions: Condition[];
+		filters: Filter[];
 		/**
 		 * Adds a attribute condition to the filter.
 		 * @param attribute The attribute name (CRM logical field name).
@@ -1338,16 +1402,27 @@ declare module MobileCRM.FetchXml {
 	 * @property  uitype {string} The lookup target entity display name.
 	 * @property  uiname {string} The lookup target entity logical name.
 	 * @property  value {any} The value to compare to.
-	 * @property  values {Array<any>} The list of values to compare to.
+	 * @property  values {any[]} The list of values to compare to.
 	 */
 	class Condition {
+		/**
+		 * Constructs {Condition} object.
+		 * @param attribute The attribute name (CRM logical field name).
+		 * @param operator The condition operator. "eq", "ne", "in", "not-in", "between", "not-between", "lt", "le", "gt", "ge", "like", "not-like", "null", "not-null", "eq-userid", "eq-userteams", "today", "yesterday", "tomorrow", "this-year", "last-week", "last-x-hours", "next-x-years", "olderthan-x-months", ...
+		 * @param value The value (or values) to compare to.
+		 * @param entityName The link name or alias to which this condition is relative to.
+		 * @param refTarget The lookup target entity logical name.
+		 * @param refLabel The lookup target entity display name.
+		 */
+		constructor(attribute?: string, operator?: string, value?: any | any[], entityName?: string, refTarget?: string, refLabel?: string);
+
 		attribute: string;
 		entityname: string;
 		operator: string;
 		uitype: string;
 		uiname: string;
 		value: any;
-		values: Array<any>;
+		values: any[];
 	}
 }
 declare module MobileCRM.Services {
