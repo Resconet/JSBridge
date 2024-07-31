@@ -1,6 +1,6 @@
 {
   "name": "@resconet/jsbridge",
-  "version": "17.1.5",
+  "version": "17.1.9",
   "main": "./src/JSBridge.js",
   "types": "./src/JSBridge.d.ts",
   "description": "Install npm JSBridge module",
