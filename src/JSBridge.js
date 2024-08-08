@@ -219,6 +219,9 @@
 				/// <field name="settings" type="MobileCRM._Settings">Gets the application settings.</field>
 				/// <field name="storageDirectory" type="String">Gets the root folder of the application storage.</field>
 			},
+			GlobalConstants: function () {
+				/// <summary>Provides access to the global constants.</summary>
+			},
 			CultureInfo: function () {
 				/// <summary>[v10.2] Provides information about current device culture. The information includes the names for the culture, the writing system, the calendar used, and formatting for dates.</summary>
 				/// <field name="name" type="String">Gets the culture name in the format languageCode/region (e.g. &quot;en-US&quot;). languageCode is a lowercase two-letter code derived from ISO 639-1. regioncode is derived from ISO 3166 and usually consists of two uppercase letters.</field>
@@ -1679,6 +1682,18 @@
 				errorCallback,
 				scope
 			);
+		};
+		//MobileCRM.GlobalConstants
+		MobileCRM.GlobalConstants.getAllAsync = function () {
+			/// <summary>Asynchronously returns the JSON object representing the GlobalConstants variables.</summary>
+			/// <returns type="Promise&lt;Object&gt;">A Promise object that will be resolved with the properties representing the constant variables.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("getGlobalConstants");
+		};
+		MobileCRM.GlobalConstants.getAsync = function (key) {
+			/// <summary>Asynchronously returns the constant associated with the specified key in the GlobalConstants variables.</summary>
+			/// <param name="key" type="String">The key of the constant to get.</param>
+			/// <returns type="Promise&lt;Object&gt;">A Promise object that will be resolved with an object representing the constant variable.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("getGlobalConstants", key);
 		};
 		// MobileCRM._Settings
 		MobileCRM._Settings = {

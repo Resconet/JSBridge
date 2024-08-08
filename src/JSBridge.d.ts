@@ -70,6 +70,16 @@ declare namespace MobileCRM {
 		public static requestObject(callback: (config: Configuration) => void, erroCallback?: (error: string) => void, scope?: any);
 	}
 
+	class GlobalConstants {
+		/**Gets the JSON object representing the GlobalConstants variables. */
+		public static getAllAsync(): Promise<Object>;
+		/**
+		 *Gets the constant associated with specified key in the GlobalConstants variables.
+		 * @param key The key of the constant to get.
+		 */
+		public static getAsync(key: String): Promise<Object>;
+	}
+
 	class Settings {
 		/**Gets the absolute URL (including the CrmOrganization).*/
 		absoluteUrl: string;
