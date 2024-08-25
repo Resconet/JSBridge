@@ -1687,7 +1687,7 @@
 		MobileCRM.GlobalConstants.getAllAsync = function () {
 			/// <summary>Asynchronously returns the JSON object representing the GlobalConstants variables.</summary>
 			/// <returns type="Promise&lt;Object&gt;">A Promise object that will be resolved with the properties representing the constant variables.</returns>
-			return MobileCRM.bridge.invokeCommandPromise("getGlobalConstants");
+			return MobileCRM.bridge.invokeCommandPromise("getGlobalConstants", "");
 		};
 		MobileCRM.GlobalConstants.getAsync = function (key) {
 			/// <summary>Asynchronously returns the constant associated with the specified key in the GlobalConstants variables.</summary>
