@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* globals MobileCRM:writable, MobileCrmException:writable, CrmBridge, webkit, chrome */
 (function () {
-	var _scriptVersion = 17.2;
+	var _scriptVersion = 18.0;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() {
@@ -5760,6 +5760,20 @@
 			/// <param name="detail" type="MobileCRM.DynamicEntity">detail entity.</param>
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
 			MobileCRM.bridge.invokeMethodAsync("EntityForm", "ShowEntityDetailDialog", [detail.id], null, errorCallback, null);
+		};
+		/// <summary>[v18.0] Obtains a clearance to perform manipulation with data.
+		/// The clearance must be dutifully released using leaveUiTransaction() when manipulation is finished.
+		/// The clearance will not be obtained if background sync is running and form sync behavior is configured to 'Block save during sync'
+		/// or 'Block save during sync and prevent sync while form is open'".
+		/// If form sync behavior is configured as 'No action', the clearance is always obtained.
+		/// </summary>
+		/// <returns>Returns true if form can give the clearance, false if it is not possible at this time.</returns>
+		MobileCRM.UI.EntityForm.tryEnterUiTransaction = function () {
+			return MobileCRM.bridge.invokeCommandPromise("tryEnterUiTransaction");
+		};
+		/// <summary>[v18.0] Notifies UI form that clearance obtained using successful call to tryEnterUiTransaction() is no longer needed, because data manipulation is complete.</summary>
+		MobileCRM.UI.EntityForm.leaveUiTransaction = function () {
+			return MobileCRM.bridge.invokeCommandPromise("leaveUiTransaction");
 		};
 		// MobileCRM.UI.EntityForm.DetailCollection
 		MobileCRM.UI.EntityForm.DetailCollection = function () {
