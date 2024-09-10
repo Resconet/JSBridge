@@ -2128,7 +2128,21 @@ declare module MobileCRM.UI {
 		 */
 		public static openSalesEntityDetail(detail: MobileCRM.DynamicEntity, errorCallback: (err?: string) => void);
 		/**
-		 * @ since 9.3
+		 * @since 18.0
+		 * The clearance must be dutifully released using leaveUiTransaction() when manipulation is finished.
+		 * The clearance will not be obtained if background sync is running and form sync behavior is configured to 'Block save during sync'
+		 * or 'Block save during sync and prevent sync while form is open'".
+		 * If form sync behavior is configured as 'No action', the clearance is always obtained.
+		 * @returns true if form can give the clearance, false if it is not possible at this time.
+		 */
+		public static tryEnterUiTransaction(): Promise<boolean>;
+		/**
+		 * @since 18.0
+		 * Notifies UI form that clearance obtained using successful call to tryEnterUiTransaction() is no longer needed, because data manipulation is complete.
+		 */
+		public static leaveUiTransaction(): Promise;
+		/**
+		 * @since 9.3
 		 * Binds or unbinds the handler for onSelectedViewChanged event on EntityForm.
 		 * @description Bound handler is called with the EntityForm object as an argument. The EntityForm context object contains 'selectedView' property with the name of currently selected view.
 		 * @param handler The handler function that has to be bound or unbound.
