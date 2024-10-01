@@ -1233,10 +1233,10 @@ declare module MobileCRM.FetchXml {
 		 * @param target The target entity.
 		 * @param from The "from" field (if parent then target entity primary key).
 		 * @param to The "to" field.
-		 * @param linkType The link (join) type ("inner" or "outer").
+		 * @param linktype The link (join) type ("inner" or "outer").
 		 * @returns MobileCRM.FetchXml.LinkEntity
 		 */
-		addLink(target: string, from: string, to: string, linkType: string): MobileCRM.FetchXml.LinkEntity;
+		addLink(target: string, from: string, to: string, linktype: string): MobileCRM.FetchXml.LinkEntity;
 		removeLink(link: MobileCRM.FetchXml.LinkEntity): void;
 		/**
 		 * Adds a filter for this fetch entity.
@@ -1290,7 +1290,7 @@ declare module MobileCRM.FetchXml {
 			from?: string,
 			to?: string,
 			alias?: string,
-			linkType?: string
+			linktype?: string
 		);
 
 		from: string;

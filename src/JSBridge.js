@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* globals MobileCRM:writable, MobileCrmException:writable, CrmBridge, webkit, chrome */
 (function () {
-	var _scriptVersion = 17.1;
+	var _scriptVersion = 17.2;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() {
@@ -456,7 +456,7 @@
 					this.filter = filter ? filter : null;
 					this.linkentities = linkentities ? linkentities : [];
 				},
-				LinkEntity: function (name, attributes, order, filter, linkentities, from, to, alias, linkType) {
+				LinkEntity: function (name, attributes, order, filter, linkentities, from, to, alias, linktype) {
 					/// <summary>Represents a FetchXml query linked entity.</summary>
 					/// <remarks>This object is derived from <see cref="MobileCRM.FetchXml.Entity">MobileCRM.FetchXml.Entity</see></remarks>
 					/// <param name="name" type="String">An entity name</param>
@@ -474,8 +474,8 @@
 					if (alias) {
 						this.alias = alias;
 					}
-					if (linkType) {
-						this.linktype = linkType;
+					if (linktype) {
+						this.linktype = linktype;
 					}
 				},
 				Attribute: function (name, alias, aggregate, groupBy, dateGrouping) {
@@ -2728,8 +2728,8 @@
 				if (linkEntity.to) {
 					linkParams.to = linkEntity.to;
 				}
-				if (linkEntity.linkType) {
-					linkParams.linkType = linkEntity.linkType;
+				if (linkEntity.linktype) {
+					linkParams.linktype = linkEntity.linktype;
 				}
 			}
 			return linkParams;
@@ -2870,7 +2870,7 @@
 			/// <param name="target" type="String">The target entity.</param>
 			/// <param name="from" type="String">The "from" field (if parent then target entity primary key).</param>
 			/// <param name="to" type="String">The "to" field.</param>
-			/// <param name="linkType" type="String">The link (join) type ("inner" or "outer").</param>
+			/// <param name="linktype" type="String">The link (join) type ("inner" or "outer").</param>
 			/// <returns type="MobileCRM.FetchXml.LinkEntity">The newly created MobileCRM.FetchXml.LinkEntity object.</returns>
 			var link = new MobileCRM.FetchXml.LinkEntity(target);
 			link.from = from;
