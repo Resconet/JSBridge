@@ -990,6 +990,9 @@
 				},
 			},
 			Services: {
+				ZebraScanner: function () {
+					/// <summary>Represents a service for scanning barcodes using Zebra scanner.</summary>
+				},
 				FileInfo: function (filePath, url, mimeType, nextInfo) {
 					/// <summary>Carries the result of a DocumentService operation.</summary>
 					/// <remarks>In case of canceled document service operation, all properties in this object will be set to &quot;null&quot;.</remarks>
@@ -1178,6 +1181,46 @@
 				return typeof result == "string" ? result : JSON.stringify(result);
 			}
 		};
+		
+		MobileCRM.Services.ZebraScanner.onScan = function (handler, bind, scope) {
+			/// <summary>Registers the handler for the scan event.</summary>
+			/// <param name="handler" type="function(data)">The handler function that is called when the scan event is raised.</param>
+			/// <param name="bind" type="Boolean">Indicates whether to bind the handler to the event.</param>
+			/// <param name="scope" type="Object">The scope in which the handler function is called.</param>
+			let handlerName = "onScan";
+			let handlers = MobileCRM.Services.ZebraScanner._handlers[handlerName];
+
+			if (!handlers) {
+				MobileCRM.Services.ZebraScanner._handlers[handlerName] = handlers = [];
+			}
+
+			const register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+
+			if (register) {
+				MobileCRM.bridge.command("registerEvents", handlerName);
+			}
+		};
+
+		MobileCRM.Services.ZebraScanner.connect = function (successCallback, errorCallback, scope) {
+			/// <summary>Connects to the Zebra scanner.</summary>
+			/// <param name="successCallback" type="function">The callback function that is called when the connection is established.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope in which the callback function is called.</param>
+			MobileCRM.bridge.command("initZebra", null, successCallback, errorCallback, scope);
+		};
+
+		MobileCRM.Services.ZebraScanner._callHandlers = function (event, data) {
+			/// <summary>Invokes the registered handlers for the specified event.</summary>
+			const handlers = MobileCRM.Services.ZebraScanner._handlers[event];
+
+			if (handlers && handlers.length > 0) {
+				return _callHandlers(handlers, data);
+			}
+
+			return null;
+		};
+
 		// MobileCRM.UI._MediaTab
 		MobileCRM.UI.MediaTab.prototype._onCommand = function (commandIndex, errorCallback) {
 			/// <summary>Executes the MediaTab command by index.</summary>
@@ -4941,6 +4984,7 @@
 			/// <param name="entities" type="Array[MobileCRM.DynamicEntity]">A chunk (array) of <see cref="MobileCRM.DynamicEntity">DynamicEntities</see> that has to be passed back to the native code to fill in to the list view.</param>
 			MobileCRM.bridge.command(this._chunkReadyCmdId, JSON.stringify(entities));
 		};
+		MobileCRM.Services.ZebraScanner._handlers = { onScan: [] };
 		// MobileCRM.UI.QuestionnaireForm
 		_inherit(MobileCRM.UI.QuestionnaireForm, MobileCRM.ObservableObject);
 		MobileCRM.UI.QuestionnaireForm._handlers = { onChange: [], onSave: [], onPostSave: [], onRepeatGroup: [], onDeleteGroup: [] };
