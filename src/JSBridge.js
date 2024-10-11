@@ -1181,7 +1181,7 @@
 				return typeof result == "string" ? result : JSON.stringify(result);
 			}
 		};
-		
+
 		MobileCRM.Services.ZebraScanner.onScan = function (handler, bind, scope) {
 			/// <summary>Registers the handler for the scan event.</summary>
 			/// <param name="handler" type="function(data)">The handler function that is called when the scan event is raised.</param>
