@@ -420,14 +420,14 @@
 					if (entity) {
 						this.entity = entity;
 					}
-					if (typeof count !== "undefined") {
+					if (count !== undefined && count !== null) {
 						this.count = count;
 					}
-					if (typeof page !== "undefined") {
+					if (page) {
 						this.page = page;
 					}
 					this.aggregate = !!aggregate;
-					if (typeof distinct !== "undefined") {
+					if (distinct !== undefined && distinct !== null) {
 						this.distinct = distinct;
 					}
 				},
@@ -2660,6 +2660,13 @@
 			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 			_global.MobileCRM.bridge.command("fetchXML", fetchXmlData, success, failed, scope);
 		};
+		MobileCRM.FetchXml.Fetch.executeFromXmlAsync = function (fetchXmlData) {
+			/// <summary>Executes fetch XML asynchronously.</summary>
+			/// <remarks>The format of result output is controlled by internal XML attribute &quot;resultformat&quot; on root fetch XML element.</remarks>
+			/// <param name="fetchXmlData" type="String">CRM fetch in XML representation.</param>
+			/// <returns type="Promise">A promise object fulfilled with the array of objects having type specified by resultformat XML attribute (Array, JSON, XML or DynamicEntities).</returns>
+			return MobileCRM.bridge.invokeCommandPromise("fetchXML", fetchXmlData);
+		};
 		MobileCRM.FetchXml.Condition._constructConditionParams = function (condition) {
 			if (condition) {
 				var conditionParams = {};
@@ -2779,13 +2786,13 @@
 		};
 		MobileCRM.FetchXml.Fetch.prototype._constructFetchParams = function () {
 			var reqParams = { entity: MobileCRM.FetchXml.Entity._constructEntityParams(this.entity) };
-			if (typeof this.page !== "undefined") {
+			if (this.page) {
 				reqParams.page = this.page;
 			}
-			if (typeof this.count !== "undefined") {
+			if (this.count !== undefined && this.count !== null) {
 				reqParams.count = this.count;
 			}
-			if (typeof this.aggregate !== "undefined") {
+			if (this.aggregate !== undefined && this.aggregate !== null) {
 				reqParams.aggregate = this.aggregate;
 			}
 			if (this.distinct) {

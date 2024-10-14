@@ -1115,6 +1115,13 @@ declare module MobileCRM.FetchXml {
 		 */
 		public static executeFromXML(fetchXmlData: string, success: (res: any[]) => void, failed?: (error: string) => void, scope?: any);
 		/**
+		 * Executes fetch XML asynchronously.
+		 * The format of result output is controlled by internal XML attribute &quot;resultformat&quot; on root fetch XML element.
+		 * @param fetchXmlData CRM fetch in XML representation.
+		 * @returns A promise object fulfilled with the array of objects having type specified by resultformat XML attribute (Array, JSON, XML or DynamicEntities).
+		 */
+		public static executeFromXmlAsync(fetchXmlData: string): Promise<any[]>;
+		/**
 		 * @since 10.0
 		 * Deserializes XML to the Fetch object.
 		 * @param xml A string defining the fetch XML request.
