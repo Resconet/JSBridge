@@ -1461,7 +1461,9 @@ declare module MobileCRM.Services {
 	}
 	class ZebraScanner {
 		static connect: (success: (result: string) => void, failed?: (err: string) => void, scope?: any) => void;
-		static onScan: (handler: (questionnaireForm: QuestionnaireForm) => void, bind: boolean, scope?: any) => void;
+		static setPower: (power: number, success: (result: string) => void, failed?: (err: string) => void, scope?: any) => void;
+		static setVolume: (volume: number, success: (result: string) => void, failed?: (err: string) => void, scope?: any) => void;
+		static onScan: (handler: (tags: string[]) => void, bind: boolean, scope?: any) => void;
 	}
 	class DocumentService {
 		/**Gets or sets the maximum captured image size. If captured image size is greater, the image is resized to specified maximum size. [640x480,1024x768,1600x1200,2048x1536,2592x1936].*/

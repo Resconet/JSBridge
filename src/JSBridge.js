@@ -1210,12 +1210,30 @@
 			MobileCRM.bridge.command("initZebra", null, successCallback, errorCallback, scope);
 		};
 
+		MobileCRM.Services.ZebraScanner.setPower = function (power, successCallback, errorCallback, scope) {
+			/// <summary>Set power of antenna the Zebra scanner.</summary>
+			/// <param name="power" type="Number">The power of the scanner.</param>
+			/// <param name="successCallback" type="function">The callback function that is called when the connection is established.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope in which the callback function is called.</param>
+			MobileCRM.bridge.command("setPower", JSON.stringify({ power: power }), successCallback, errorCallback, scope);
+		};
+
+		MobileCRM.Services.ZebraScanner.setVolume = function (volume, successCallback, errorCallback, scope) {
+			/// <summary>Set volume of the Zebra scanner.</summary>
+			/// <param name="volume" type="Number">The volume of the scanner.</param>
+			/// <param name="successCallback" type="function">The callback function that is called when the connection is established.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope in which the callback function is called.</param>
+			MobileCRM.bridge.command("setVolume", JSON.stringify({ volume: volume }), successCallback, errorCallback, scope);
+		};
+
 		MobileCRM.Services.ZebraScanner._callHandlers = function (event, data) {
 			/// <summary>Invokes the registered handlers for the specified event.</summary>
 			const handlers = MobileCRM.Services.ZebraScanner._handlers[event];
 
 			if (handlers && handlers.length > 0) {
-				return _callHandlers(handlers, data);
+				return _callHandlers(handlers, JSON.parse(data));
 			}
 
 			return null;
