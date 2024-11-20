@@ -4470,7 +4470,7 @@
 			MobileCRM.bridge.command("showReport", JSON.stringify(params), success, failed, scope);
 		};
 		MobileCRM.MobileReport.runReport = function (fetch, reportXML, reportFormat, isExportOnly, isOnline, outputFile, success, failed, scope) {
-			/// <summary>[v9.1] Executes the mobile reporting request which produces the mobile report document of given format.</summary>
+			/// <summary>[v9.1] Deprecated: please use MobileCRM.MobileReport.generateReportAsync instead. Executes the mobile reporting request which produces the mobile report document of given format.</summary>
 			/// <param name="fetch" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
 			/// <param name="reportXML" type="String">The mobile report XML definition which can be loaded from the resco_report entity or constructed dynamically. Ignored if IsExportOnly parameter is true.</param>
 			/// <param name="reportFormat" type="String">Report format: Pdf (default), Html, Excel, Text.</param>
@@ -4490,7 +4490,7 @@
 			MobileCRM.bridge.command("runMobileReportAsync", JSON.stringify(params), success, failed, scope);
 		};
 		MobileCRM.MobileReport.runReportAsync = function (fetch, reportXML, reportFormat, isExportOnly, isOnline, outputFile) {
-			/// <summary>[v9.1] Executes the mobile reporting request which produces the mobile report document of given format.</summary>
+			/// <summary>[v9.1] Deprecated: please use MobileCRM.MobileReport.generateReportAsync instead. Executes the mobile reporting request which produces the mobile report document of given format.</summary>
 			/// <param name="fetch" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
 			/// <param name="reportXML" type="String">The mobile report XML definition which can be loaded from the resco_mobilereport entity or constructed dynamically. Ignored if IsExportOnly parameter is true.</param>
 			/// <param name="reportFormat" type="String">Report format: Pdf (default), Html, Excel, Text.</param>
@@ -4504,6 +4504,42 @@
 				});
 			});
 		};
+
+		MobileCRM.MobileReport.GenerateReportRequest = function () {
+			/// <summary>[v18.0] The request class specifying behavior of MobileCRM.MobileReport.generateReportAsync function.</summary>
+			/// <param name="source" type="String | MobileCRM.Reference">The identifier of report source record(s) as MobileCRM.Reference or fetch in its xml representation.</param>
+			/// <param name="template" type="String | MobileCRM.Reference">The identifier of report template as its string record ID, exact logical name, MobileCRM.Reference or actual xml definition of report.</param>
+			/// <param name="format" type="String">Optional code of report format. Supported values are: Pdf (default), Html, Excel, Text.</param>
+			/// <param name="customNameOrPath" type="String">Optional custom name of report file or its full path. If not provided, default report name and path are used. When using full path, it is recommended to place it in MobileCRM.Configuration.storageDirectory.</param>
+			/// <param name="languageCode" type="String">Optional iso code (e.g. "en-US") of report language. Currently it only works for reports on localized Questionnaires.</param>
+			/// <param name="waitMessage" type="String">Optional custom message displayed to user while report is being generated. When null or empty string is provided, default message is shown. When undefined, shows no wait message.</param>
+			/// <param name="isOnline" type="Boolean">Optionally specifies if report should be created in Online, or Offline mode. If undefined, the mode in which app is currently running is used.</param>
+			/// <param name="attachTo" type="MobileCRM.Reference">A MobileCRM.Reference to parent record. If provided, method will generate new attachment record and link it to the parent record.</param>
+			/// <param name="attachmentEntity" type="String">When attachmentRecord is provided, optionally specifies the type of attachment entity. If not specified, the default attachment entity is created.</param>
+			this.source = undefined;
+			this.template = undefined;
+			this.format = "Pdf";
+			this.customNameOrPath = undefined;
+			this.languageCode = undefined;
+			this.waitMessage = undefined;
+			this.isOnline = undefined;
+			this.attachTo = undefined;
+			this.attachmentEntity = undefined;
+		};
+		MobileCRM.MobileReport.GenerateReportResult = function () {
+			/// <summary>[v18.0] The result class for MobileCRM.MobileReport.generateReportAsync function.</summary>
+			/// <param name="outputReportPath" type="String">The full file path to generated report. Not present if MobileCRM.MobileReport.GenerateReportRequest.attachTo is provided.</param>
+			/// <param name="attachmentRecord" type="MobileCRM.Reference">The reference to attachment record containing the generated report. Only present if MobileCRM.MobileReport.GenerateReportRequest.attachTo is provided.</param>
+			this.outputReportPath = undefined;
+			this.attachmentRecord = undefined;
+		};
+		MobileCRM.MobileReport.generateReportAsync = async function (request) {
+			/// <summary>[v18.0] Generates the mobile report based on provided request parameters. The generated report will be saved to file system or attached to a record.</summary>
+			/// <param name="request" type="MobileCRM.MobileReport.GenerateReportRequest">The request specifying the details of how the report will be created.</param>
+			/// <returns type="MobileCRM.MobileReport.GenerateReportResult">The promise with <see cref="MobileCRM.MobileReport.GenerateReportResult">GenerateReportResult</see> object.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("generateMobileReportAsync", JSON.stringify(request));
+		};
+
 		MobileCRM.MobileReport.showForm = function (report, source, fetchXml, failed, scope) {
 			/// <summary>[v10.1] Shows new MobileReport form. Source for the report can be defined either as list of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> objects or as FetchXML query.</summary>
 			/// <remarks>If both types of source are passed, user can select which one to use.</remarks>

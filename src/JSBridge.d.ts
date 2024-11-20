@@ -1,5 +1,5 @@
 // JSBridge.js TypeScript definition file
-// (c) 2023 Resco
+// (c) 2024 Resco
 
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/prefer-namespace-keyword */
@@ -1001,6 +1001,7 @@ declare namespace MobileCRM {
 	 */
 	class MobileReport {
 		/**
+		 * @deprecated Please use {@link generateReportAsync} instead.
 		 * @since 9.1
 		 * Executes the mobile reporting request which produces the mobile report document of given format.
 		 * @param fetch The fetch XML defining the entity (entities) query used as report input.
@@ -1025,6 +1026,7 @@ declare namespace MobileCRM {
 			scope?: any
 		);
 		/**
+		 * @deprecated Please use {@link generateReportAsync} instead.
 		 * @since 9.1
 		 * Executes the mobile reporting request which produces the mobile report document of given format.
 		 * @param fetch The fetch XML defining the entity (entities) query used as report input.
@@ -1043,6 +1045,50 @@ declare namespace MobileCRM {
 			isOnline: boolean,
 			outputFile: string
 		): Promise<string>;
+
+		/**
+		 * The request class specifying behavior of {@link generateReportAsync} function.
+		 */
+		static GenerateReportRequest = class {
+			/** The identifier of report source record(s) as {@link MobileCRM.Reference} or fetch in its xml representation. */
+			source: string | Reference;
+			/** The identifier of report template as its string record ID, exact logical name, {@link MobileCRM.Reference} or actual xml definition of report.*/
+			template: string | Reference;
+			/** Optional code of report format. Supported values are: Pdf (default), Html, Excel, Text. */
+			format = "Pdf";
+			/** Optional custom name of report file or its full path. If not provided, default report name and path are used.
+			 * When using full path, it is recommended to place it in {@link MobileCRM.Configuration.storageDirectory}. */
+			customNameOrPath: string;
+			/** Optional iso code (e.g. 'en-US') of report language. Currently it only works for reports on localized Questionnaires. */
+			languageCode: string | undefined;
+			/** Optional custom message displayed to user while report is being generated.
+			 * When null or empty string is provided, default message is shown. When undefined, shows no wait message. */
+			waitMessage: string | undefined;
+			/** Optionally specifies if report should be created in Online, or Offline mode. If undefined, the mode in which app is currently running is used. */
+			isOnline: boolean | undefined;
+			/** A {@link MobileCRM.Reference} to parent record. If provided, method will generate new attachment record and link it to the parent record. */
+			attachTo: Reference | undefined;
+			/**
+			 * When {@link attachmentRecord} is provided, optionally specifies the type of attachment entity.
+			 * If not specified, the default attachment entity is created. */
+			attachmentEntity: string | undefined;
+		};
+		/**
+		 * The result class for {@link generateReportAsync} function.
+		 */
+		static GenerateReportResult = class {
+			/** The full file path to generated report. Not present if {@link GenerateReportRequest.attachTo} is provided. */
+			outputReportPath: string | undefined;
+			/** The reference to attachment record containing the generated report. Only present if {@link GenerateReportRequest.attachTo} is provided.*/
+			attachmentRecord: Reference | undefined;
+		};
+		/**
+		 * @since 18.0
+		 * Generates the mobile report based on provided request parameters. The generated report will be saved to file system or attached to a record.
+		 * @param request The request specifying the details of how the report will be created.
+		 * @returns The promise with the result object.
+		 */
+		static generateReportAsync(request: MobileCRM.MobileReport.GenerateReportRequest): Promise<MobileCRM.MobileReport.GenerateReportResult>;
 		/**
 		 * @since 10.1
 		 * Shows new MobileReport form. Source for the report can be defined either as list of MobileCRM.Reference objects or as FetchXML query.
@@ -2489,6 +2535,11 @@ declare module MobileCRM.UI {
 		questionnaire: DynamicEntity;
 		/** Custom event context */
 		context: any;
+		/**
+		 * @since 18.0
+		 * Language of the questionnaire
+		 */
+		language: string;
 
 		/**
 		 * Stops the onSave validation and optionally causes an error message to be displayed.
