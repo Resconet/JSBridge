@@ -2301,6 +2301,7 @@ declare module MobileCRM.UI {
 		 */
 		public static requestObject(callback: (entityList: EntityList) => void, errorCallback?: (err: string) => void, scope?: any);
 		/**
+		 * @deprecated Use {@link setDataSourceFactory} instead.
 		 * Sets the entity list data source replacement.
 		 * @see Data source must be set during the document load stage and must not be delayed. It is used only if the entity view iFrame is marked as data source provider in Woodford.
 		 * @param dataSource A data source object implementing the DynamicEntity list loading routine.

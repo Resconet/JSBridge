@@ -4876,7 +4876,7 @@
 			);
 		};
 		MobileCRM.UI.EntityList.setDataSource = function (dataSource) {
-			/// <summary>Sets the entity list data source replacement.</summary>
+			/// <summary>Deprecated: Please use setDataSourceFactory instead. Sets the entity list data source replacement.</summary>
 			/// <remarks><p>Data source must be set during the document load stage and must not be delayed.</p><p>It is used only if the entity view iFrame is marked as data source provider in Woodford.</p></remarks>
 			/// <param name="dataSource" type="MobileCRM.UI.ListDataSource">A data source object implementing the DynamicEntity list loading routine.</param>
 			MobileCRM.UI.EntityList._dataSource = dataSource;
@@ -5030,7 +5030,7 @@
 		// MobileCRM.UI.ListDataSource
 		MobileCRM.UI.ListDataSource = function () {
 			/// <summary>The data source loading routine implementation.</summary>
-			/// <remarks><p>An instance of this object can be used to supply the data source for <see cref="MobileCRM.UI.EntityList.setDataSource">MobileCRM.UI.EntityList.setDataSource</see> function.</p><p>The instance of this object is valid only if the method loadNextChunk is implemented. See example <see cref="MobileCRM.UI.EntityList.setDataSource">here</see>.</p></remarks>
+			/// <remarks><p>An instance of this object can be used to supply the data source for <see cref="MobileCRM.UI.EntityList.setDataSourceFactory">MobileCRM.UI.EntityList.setDataSourceFactory</see> function.</p><p>The instance of this object is valid only if the method loadNextChunk is implemented. See example <see cref="MobileCRM.UI.EntityList.setDataSourceFactory">here</see>.</p></remarks>
 			/// <field name="chunkSize" type="Number">Controls the number of entities loaded in once.</field>
 			/// <field name="fetch" type="MobileCRM.FetchXml.Fetch">Gets the original fetch request for this list view.</field>
 			/// <field name="loadNextChunk" type="function(page, count)">Controls the number of entities loaded in once. It is called from native code to get chunk (array) of <see cref="MobileCRM.DynamicEntity">DynamicEntities</see>. The chunk is defined by 1-based page number and the desired count which corresponds to the value of chunkSize property.</field>
