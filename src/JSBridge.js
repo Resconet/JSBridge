@@ -3927,17 +3927,22 @@
 			//this.items[index].value = defaultValue !== undefined ? defaultValue : listDataSource[Object.keys(listDataSource)[0]];
 			MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
 		};
-		MobileCRM.UI._DetailView.prototype.updateLinkItemViews = function (index, dialogSetup, inlinePickSetup, dialogOnly) {
+		MobileCRM.UI._DetailView.prototype.updateLinkItemViews = function (index, dialogSetup, inlinePickSetup, dialogOnly, allowCreateNew) {
 			/// <summary>[v10.1] Changes the <see cref="MobileCRM.UI.DetailViewItems.ComboBoxItem">ComboBoxItem</see> views and/or filters.</summary>
 			/// <param name="index" type="Number">Item index on the view.</param>
 			/// <param name="dialogSetup" type="MobileCRM.UI.DetailViewItems.LookupSetup">Lookup setup for modal lookup dialog.</param>
 			/// <param name="inlinePickSetup" type="MobileCRM.UI.DetailViewItems.LookupSetup">Optional setup for inline lookup picker. Leave empty to use the same setup as modal dialog.</param>
-			/// <param name="dialogOnly" type="Boolean">Indicates whether to allow the inline picker. Set &quot;true&quot; to disable the inline picker and always use the modal dialog. Set &quot;false&quot; to allow the inline picker.<param>
+			/// <param name="dialogOnly" type="Boolean">Optional - indicates whether to allow the inline picker. Set **true** to disable the inline picker and always use the modal dialog. Set **false**; to allow the inline picker. Default value is **true**</param>
+			/// <param name="allowCreateNew" type="Boolean">Optional - [v18.0] Indicates whether to allow creation of new items. Default value is **true**.</param>
 			var xml = "<lookup>";
 			xml += dialogSetup._serialize();
 			if (!dialogOnly && inlinePickSetup) {
 				xml += inlinePickSetup._serialize();
 			}
+			if (allowCreateNew === undefined || allowCreateNew === null) {
+				allowCreateNew = true;
+			}
+			xml += "<createNew>" + (allowCreateNew ? 1 : 0) + "</createNew>";
 			xml += "<dialog>" + (dialogOnly ? 1 : 0) + "</dialog>";
 			xml += "</lookup>";
 			var data = {

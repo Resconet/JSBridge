@@ -1899,9 +1899,16 @@ declare module MobileCRM.UI {
 		 * @param index Item index on the view.
 		 * @param dialogSetup Lookup setup for modal lookup dialog.
 		 * @param inlinePickSetup Optional setup for inline lookup picker. Leave empty to use the same setup as modal dialog.
-		 * @param dialogOnly Indicates whether to allow the inline picker. Set "true" to disable the inline picker and always use the modal dialog. Set false to allow the inline picker.
+		 * @param dialogOnly Optional - indicates whether to allow the inline picker. Set "true" to disable the inline picker and always use the modal dialog. Set "false" to allow the inline picker. Default value is "false".
+		 * @param allowCreateNew Optional - [18.0+] indicates whether to allow creation of new items. Default value is "true".
 		 */
-		updateLinkItemViews(index: number, dialogSetup: DetailViewItems.LookupSetup, inlinePickSetup?: DetailViewItems.LookupSetup, dialogOnly?: boolean);
+		updateLinkItemViews(
+			index: number,
+			dialogSetup: DetailViewItems.LookupSetup,
+			inlinePickSetup?: DetailViewItems.LookupSetup,
+			dialogOnly?: boolean = false,
+			allowCreateNew?: boolean = true
+		);
 		/**
 		 * @since 13.1
 		 * Add detail item to desired position in to grid.
