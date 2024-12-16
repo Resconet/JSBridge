@@ -5730,6 +5730,21 @@
 			/// <param name="scope" type="Object">The scope for callback.</param>
 			MobileCRM.bridge.invokeMethodAsync("EntityForm", "LoadView", [tabName, load], undefined, errorCallback, scope);
 		};
+		MobileCRM.UI.EntityForm.setFieldValue = function (fieldName, value) {
+			/// <summary>[v18.0] Sets the field value on entity record shown on this EntityForm.</summary>
+			/// <param name="fieldName" type="String">Logical name of the field that has to be changed.</param>
+			/// <param name="value" type="any">New value of entity field with given name.</param>
+			/// <returns type="Promise&lt;boolean&gt;">A promise resolved with boolean result of native field setter.</returns>
+			var obj = {};
+			obj[fieldName] = value;
+			MobileCRM.UI.EntityForm.setFieldValues(obj);
+		};
+		MobileCRM.UI.EntityForm.setFieldValues = function (changes) {
+			/// <summary>[v18.0] Sets several field values on entity record loaded on this EntityForm.</summary>
+			/// <param name="changes" type="{ [fieldName: string]: any }">An object defining field changes that has to be done on form entity record.</param>
+			/// <returns type="Promise&lt;boolean&gt;">A promise resolved with boolean result of native field setter.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("setFormEntityFields", JSON.stringify(changes));
+		};
 		MobileCRM.UI.EntityForm.requestObject = function (callback, errorCallback, scope) {
 			/// <summary>Requests the managed EntityForm object.</summary>
 			/// <remarks>Method initiates an asynchronous request which either ends with calling the <b>errorCallback</b> or with calling the <b>callback</b> with Javascript version of EntityForm object. See <see cref="MobileCRM.Bridge.requestObject">MobileCRM.Bridge.requestObject</see> for further details.</remarks>

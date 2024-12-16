@@ -2142,6 +2142,21 @@ declare module MobileCRM.UI {
 			scope?: any
 		);
 		/**
+		 * @since 18.0
+		 * Sets the field value on entity record shown on this EntityForm.
+		 * @param fieldName Logical name of the field that has to be changed.
+		 * @param value New value of entity field with given name.
+		 * @returns A promise resolved with boolean result of native field setter.
+		 */
+		public static setFieldValue(fieldName: string, value: any): Promise<boolean>;
+		/**
+		 * @since 18.0
+		 * Sets several field values on entity record loaded on this EntityForm.
+		 * @param changes An object defining field changes that has to be done on form entity.
+		 * @returns A promise resolved with boolean result of native field setter.
+		 */
+		public static setFieldValues(changes: { [fieldName: string]: any }): Promise<boolean>;
+		/**
 		 * Binds or unbinds the handler for EntityForm command.
 		 * @param command The name of the EntityForm command.
 		 * @param handler The handler function that has to be bound or unbound.
