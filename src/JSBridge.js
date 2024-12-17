@@ -5737,7 +5737,7 @@
 			/// <returns type="Promise&lt;boolean&gt;">A promise resolved with boolean result of native field setter.</returns>
 			var obj = {};
 			obj[fieldName] = value;
-			MobileCRM.UI.EntityForm.setFieldValues(obj);
+			return MobileCRM.UI.EntityForm.setFieldValues(obj);
 		};
 		MobileCRM.UI.EntityForm.setFieldValues = function (changes) {
 			/// <summary>[v18.0] Sets several field values on entity record loaded on this EntityForm.</summary>
