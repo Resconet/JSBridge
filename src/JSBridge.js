@@ -724,6 +724,7 @@
 					/// <summary>[v8.0] Represents the Javascript equivalent of the form object.</summary>
 					/// <field name="canMaximize" type="Boolean">Gets or sets whether form can be maximized to fullscreen (full application frame).</field>
 					/// <field name="isMaximized" type="Boolean">Gets or sets whether form is currently maximized to fullscreen (full application frame).</field>
+					/// <field name="isModal" type="Boolean">Indicates whether this form is presented as modal window.</field>
 					/// <field name="caption" type="String">Gets or sets the form caption.</field>
 					/// <field name="selectedViewIndex" type="Number">Gets or sets the selected view (tab) index.</field>
 					/// <field name="showTitle" type="Boolean">[v8.1] Determines whether the form caption bar should be visible.</field>

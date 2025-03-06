@@ -2915,6 +2915,8 @@ declare module MobileCRM.UI {
 	class Form {
 		canMaximize: boolean;
 		isMaximized: boolean;
+		/** Indicates whether this form is presented as modal window. */
+		isModal: boolean;
 		caption: string;
 		selectedViewIndex: number;
 		showTitle: boolean;
