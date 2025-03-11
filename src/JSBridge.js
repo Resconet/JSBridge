@@ -4990,6 +4990,24 @@
 				MobileCRM.bridge.command("registerEvents", "onClick");
 			}
 		};
+		MobileCRM.UI.EntityList.onCellClick = function (propertyName, handler, bind, scope) {
+			/// <summary>[v18.1] Binds or unbinds the handler for onCellClick event on EntityList.</summary>
+			/// <remarks>Bound handler is called with the EntityList object as an argument. The EntityList context property contains <see cref="MobileCRM.UI.EntityListClickContext">EntityListClickContext</see> object.</remarks>
+			/// <param name="propertyName" type="String">The name of desired cell within the list item.</param>
+			/// <param name="handler" type="function(entityList)">The handler function that has to be bound or unbound.</param>
+			/// <param name="bind" type="Boolean">Determines whether to bind or unbind the handler.</param>
+			/// <param name="scope" type="Object">The scope for handler calls.</param>
+			var handlerName = "onCellClick:" + propertyName;
+			var handlers = MobileCRM.UI.EntityList._handlers[handlerName];
+			if (!handlers) {
+				MobileCRM.UI.EntityList._handlers[handlerName] = handlers = [];
+			}
+			var register = handlers.length == 0;
+			_bindHandler(handler, handlers, bind, scope);
+			if (register) {
+				MobileCRM.bridge.command("registerEvents", handlerName);
+			}
+		};
 		MobileCRM.UI.EntityListClickContext = function () {
 			/// <summary>Represents a context for the <see cref="MobileCRM.UI.EntityList.onClick">MobileCRM.UI.EntityList.onClick</see> handler.</summary>
 			/// <field name="entities" type="Array">Single item array containing the <see cref="MobileCRM.DynamicEntity">DynamicEntity</see> object representing clicked entity.</field>

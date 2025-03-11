@@ -2447,6 +2447,16 @@ declare module MobileCRM.UI {
 		 */
 		public static onClick(handler: (entityList: EntityList) => void, bind: boolean, scope?: any);
 		/**
+		 * @since 18.1
+		 * Binds or unbinds the handler for onCellClick event on EntityList.
+		 * Bound handler is called with the EntityList object as an argument. The EntityList context object contains &quot;entities&quot; property with the list of clicked entities (just one entity), property &quot;propertyName&quot; with the field name that was clicked within the list item and property &quot;event&quot; with event details.
+		 * @param propertyName The name of desired cell within the list item. (mostly logical name of the field).
+		 * @param handler The handler function that has to be bound or unbound.
+		 * @param bind Determines whether to bind or unbind the handler.
+		 * @param scope The scope for handler calls.
+		 */
+		public static onCellClick(propertyName: string, handler: (entityList: EntityList) => void, bind: boolean, scope?: any);
+		/**
 		 * @since 10.0
 		 * Asynchronously gets the list of entities that were changed on the list.
 		 * Bound handler is called with the EntityList object as an argument. The EntityList context object contains 'entities' property with the list of all changed entities and property 'errorMessage' that can be used to cancel save with an error.
