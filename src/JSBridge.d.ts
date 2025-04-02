@@ -1006,7 +1006,7 @@ declare namespace MobileCRM {
 		 * Executes the mobile reporting request which produces the mobile report document of given format.
 		 * @param fetch The fetch XML defining the entity (entities) query used as report input.
 		 * @param reportXML The mobile report XML definition which can be loaded from the resco_report entity or constructed dynamically. Ignored if IsExportOnly parameter is true.
-		 * @param reportFormat Report format: Pdf (default), Html, Excel, Text.
+		 * @param reportFormat Report format: Pdf (default), Html, Excel, Word.
 		 * @param isExportOnly If true then ReportXml is optional. The default is false.
 		 * @param isOnline Indicates whether the report should be run against the online data or local database. The default is current application mode.
 		 * @param outputFile The full path to the output file. If omitted a temp file is created. The output path is always passed to the success callback.
@@ -1031,7 +1031,7 @@ declare namespace MobileCRM {
 		 * Executes the mobile reporting request which produces the mobile report document of given format.
 		 * @param fetch The fetch XML defining the entity (entities) query used as report input.
 		 * @param reportXML The mobile report XML definition which can be loaded from the resco_report entity or constructed dynamically. Ignored if IsExportOnly parameter is true.
-		 * @param reportFormat Report format: Pdf (default), Html, Excel, Text.
+		 * @param reportFormat Report format: Pdf (default), Html, Excel, Word.
 		 * @param isExportOnly If true then ReportXml is optional. The default is false.
 		 * @param isOnline Indicates whether the report should be run against the online data or local database. The default is current application mode.
 		 * @param outputFile The full path to the output file. If omitted a temp file is created. The output path is always passed to the success callback.
@@ -1054,7 +1054,7 @@ declare namespace MobileCRM {
 			source: string | Reference;
 			/** The identifier of report template as its string record ID, exact logical name, {@link MobileCRM.Reference} or actual xml definition of report.*/
 			template: string | Reference;
-			/** Optional code of report format. Supported values are: Pdf (default), Html, Excel, Text. */
+			/** Optional code of report format. Supported values are: Pdf (default), Html, Excel, Word. */
 			format = "Pdf";
 			/** Optional custom name of report file or its full path. If not provided, default report name and path are used.
 			 * When using full path, it is recommended to place it in {@link MobileCRM.Configuration.storageDirectory}. */

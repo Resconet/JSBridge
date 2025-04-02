@@ -4478,7 +4478,7 @@
 			/// <summary>[v9.1] Deprecated: please use MobileCRM.MobileReport.generateReportAsync instead. Executes the mobile reporting request which produces the mobile report document of given format.</summary>
 			/// <param name="fetch" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
 			/// <param name="reportXML" type="String">The mobile report XML definition which can be loaded from the resco_report entity or constructed dynamically. Ignored if IsExportOnly parameter is true.</param>
-			/// <param name="reportFormat" type="String">Report format: Pdf (default), Html, Excel, Text.</param>
+			/// <param name="reportFormat" type="String">Report format: Pdf (default), Html, Excel, Word.</param>
 			/// <param name="isExportOnly" type="Boolean">If true then ReportXml is optional. The default is false.</param>
 			/// <param name="isOnline" type="Boolean">Indicates whether the report should be run against the online data or local database. The default is current application mode.</param>
 			/// <param name="outputFile" type="String">The full path to the output file. If omitted a temp file is created. The output path is always passed to the success callback.</param>
@@ -4498,7 +4498,7 @@
 			/// <summary>[v9.1] Deprecated: please use MobileCRM.MobileReport.generateReportAsync instead. Executes the mobile reporting request which produces the mobile report document of given format.</summary>
 			/// <param name="fetch" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
 			/// <param name="reportXML" type="String">The mobile report XML definition which can be loaded from the resco_mobilereport entity or constructed dynamically. Ignored if IsExportOnly parameter is true.</param>
-			/// <param name="reportFormat" type="String">Report format: Pdf (default), Html, Excel, Text.</param>
+			/// <param name="reportFormat" type="String">Report format: Pdf (default), Html, Excel, Word.</param>
 			/// <param name="isExportOnly" type="Boolean">If true then ReportXml is optional. The default is false.</param>
 			/// <param name="isOnline" type="Boolean">Indicates whether the report should be run against the online data or local database. The default is current application mode.</param>
 			/// <param name="outputFile" type="String">The full path to the output file. If omitted a temp file is created.</param>
@@ -4514,7 +4514,7 @@
 			/// <summary>[v18.0] The request class specifying behavior of MobileCRM.MobileReport.generateReportAsync function.</summary>
 			/// <param name="source" type="String | MobileCRM.Reference">The identifier of report source record(s) as MobileCRM.Reference or fetch in its xml representation.</param>
 			/// <param name="template" type="String | MobileCRM.Reference">The identifier of report template as its string record ID, exact logical name, MobileCRM.Reference or actual xml definition of report.</param>
-			/// <param name="format" type="String">Optional code of report format. Supported values are: Pdf (default), Html, Excel, Text.</param>
+			/// <param name="format" type="String">Optional code of report format. Supported values are: Pdf (default), Html, Excel, Word.</param>
 			/// <param name="customNameOrPath" type="String">Optional custom name of report file or its full path. If not provided, default report name and path are used. When using full path, it is recommended to place it in MobileCRM.Configuration.storageDirectory.</param>
 			/// <param name="languageCode" type="String">Optional iso code (e.g. "en-US") of report language. Currently it only works for reports on localized Questionnaires.</param>
 			/// <param name="waitMessage" type="String">Optional custom message displayed to user while report is being generated. When null or empty string is provided, default message is shown. When undefined, shows no wait message.</param>
