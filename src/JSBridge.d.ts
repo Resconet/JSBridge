@@ -1121,7 +1121,14 @@ declare namespace MobileCRM {
 	class Questionnaire {
 		static getQuestionName(name: string, repeatIndex: number): string;
 		static getGroupName(name: string, repeatIndex: number): string;
-		static showForm(id: string, failed?: (err: string) => void, scope?: any, relationship?: MobileCRM.Relationship);
+		static showForm(
+			id: string,
+			failed?: (err: string) => void,
+			scope?: any,
+			relationship?: MobileCRM.Relationship,
+			modal?: boolean,
+			version?: number
+		): void;
 	}
 }
 /**
