@@ -1893,13 +1893,21 @@ declare module MobileCRM.UI {
 		startEditItem(index: number);
 		/**
 		 * @since 9.1
-		 * Changes the data source for ComboBoxItem {MobileCRM.UI.DetailViewItems.ComboBoxItem}.</see>.
+		 * Changes the data source for ComboBoxItem {MobileCRM.UI.DetailViewItems.ComboBoxItem}.
 		 * @param index Item index on the view.
 		 * @param listDataSource The data source object (e.g. {label1 : 1, label2 : 2}).
 		 * @param defaultValue New data source default value. If not defined, the first item from listDataSource will be used.
 		 * @param valueType Type of list data source element value. Default is string, allowed int, string.
 		 */
 		updateComboItemDataSource(index: number, listDataSource: any, defaultValue?: string, valueType?: string);
+		/**
+		 * @since 18.1
+		 * Filters allowed StringList options in LinkItem {MobileCRM.UI.DetailViewItems.LinkItem}.
+		 * @param index Item index on the view.
+		 * @param allowedOptions An array with options to be allowed (e.g. ["Option1", "Option2"]).
+		 * @param defaultValue New data source default value. If not defined, the first item from allowedOptions will be used. Ignored, if value isn't in allowedOptions.
+		 */
+		filterStringListOptions(index: number, allowedOptions: string[], defaultValue?: string);
 		/**
 		 * @since 10.1
 		 * Changes the data source for MobileCRM.UI.DetailViewItems.ComboBoxItem.

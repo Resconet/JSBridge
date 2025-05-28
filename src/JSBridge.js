@@ -3915,7 +3915,7 @@
 			/// <param name="index" type="Number">Item index on the view.</param>
 			/// <param name="listDataSource" type="Object">The data source object (e.g. {&quot;label1&quot;:1, &quot;label2&quot;:2}).</param>
 			/// <param name="valueType" type="String">Type of list data source element value. Default is string, allowed int, string.</param>
-			/// <param name="defaultValue" type="String">New data source default value. If not defined, the first item from listDataSource will be used.</param>
+			/// <param name="defaultValue" type="String|Number">New data source default value. If not defined, the first item from listDataSource will be used.</param>
 			var data = {
 				action: "updateDataSource",
 				viewName: this.name,
@@ -3926,6 +3926,20 @@
 			};
 			// Code used in version < 11.2
 			//this.items[index].value = defaultValue !== undefined ? defaultValue : listDataSource[Object.keys(listDataSource)[0]];
+			MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
+		};
+		MobileCRM.UI._DetailView.prototype.filterStringListOptions = function (index, allowedOptions, defaultValue) {
+			/// <summary>[v18.1] Filters allowed StringList options in <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.LinkItem</see>.</summary>
+			/// <param name="index" type="Number">Item index on the view.</param>
+			/// <param name="allowedOptions" type="string[]">An array with options to be allowed (e.g. [&quot;New&quot;, &quot;Completed&quot;]).</param>
+			/// <param name="defaultValue" type="String">New data source default value. If not defined, the first item from allowedOptions will be used. Ignored, if value isn&apos;t in allowedOptions.</param>
+			var data = {
+				action: "filterStringList",
+				viewName: this.name,
+				index: index,
+				filterOptions: allowedOptions,
+				value: defaultValue || allowedOptions[0],
+			};
 			MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
 		};
 		MobileCRM.UI._DetailView.prototype.updateLinkItemViews = function (index, dialogSetup, inlinePickSetup, dialogOnly, allowCreateNew) {
