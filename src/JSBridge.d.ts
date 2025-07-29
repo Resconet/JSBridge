@@ -749,6 +749,16 @@ declare namespace MobileCRM {
 		 * @returns Promise resolved with Location object.
 		 */
 		public static getLocationAsync(age?: number, precision?: number, timeout?: number): Promise<Location>;
+		/**
+		 * @since 18.2
+		 * Registers or unregisters a handler for location updates.
+		 * When the location is updated, the handler is called with a Location object representing new location.
+		 * @param handler Handler function which will be called each time when the location is updated.
+		 * @param bind Indicates whether to bind or unbind handler.
+		 * @param scope Optional scope for calling the handler; set &quot;null&quot; to call the handler in global scope.
+		 * @returns Promise resolved when the handler is registered or unregistered.
+		 */
+		public static watchLocationUpdates(handler: (obj: Location) => void, bind: boolean, scope?: any): Promise<void>;
 		public static requestObject(callback: (platform: Platform) => void, errorCallback: () => void, scope?: any);
 		/**
 		 * @since 8.1

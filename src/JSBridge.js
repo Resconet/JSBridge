@@ -3198,6 +3198,26 @@
 			}
 			return MobileCRM.bridge.invokeCommandPromise("getLocation", JSON.stringify(params));
 		};
+		MobileCRM.Platform._watchLocationHandlers = [];
+		MobileCRM.Platform.watchLocationUpdates = function (handler, bind, scope) {
+			/// <summary>[v18.2] Registers or unregisters a handler for location updates.</summary>
+			/// <remarks>When the location is updated, the handler is called with a <see cref="MobileCRM.Location"/> object having <b>latitude</b>, <b>longitude</b> and <b>timestamp</b> properties.</remarks>
+			/// <param name="handler" type="function(location)">Handler function which will be called each time when the location is updated. The <b>location</b> argument will carry an object with <b>latitude</b>, <b>longitude</b> and <b>timestamp</b> properties.</param>
+			/// <param name="bind" type="Boolean">Indicates whether to bind or unbind handler.</param>
+			/// <param name="scope" type="">Optional scope for calling the handler; set &quot;null&quot; to call the handler in global scope.</param>
+			/// <returns type="Promise&lt;void&gt;">A Promise object which will be resolved when the handler is successfully bound/unbound.</returns>
+			var register = bind && MobileCRM.Platform._watchLocationHandlers.length == 0;
+			_bindHandler(handler, MobileCRM.Platform._watchLocationHandlers, bind, scope);
+			if (register) {
+				return MobileCRM.bridge.invokeCommandPromise("watchLocation", JSON.stringify({ active: true }));
+			} else if (!bind && MobileCRM.Platform._watchLocationHandlers.length == 0) {
+				return MobileCRM.bridge.invokeCommandPromise("watchLocation", JSON.stringify({ active: false }));
+			}
+			return Promise.resolve();
+		};
+		MobileCRM.Platform._callLocationHandlers = function (location) {
+			_callHandlers(MobileCRM.Platform._watchLocationHandlers, location);
+		};
 		MobileCRM.Platform.preventBackButton = function (handler, scope) {
 			/// <summary>Prevents application to close when HW back button is pressed and installs handler which is called instead.</summary>
 			/// <remarks><p>Pass &quot;null&quot; handler to allow the HW back button.</p><p>Works only under OS having HW back button (Android, Windows 10).</p></remarks>
