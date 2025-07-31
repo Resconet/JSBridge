@@ -5905,18 +5905,14 @@
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called asynchronously in case of error.</param>
 			MobileCRM.bridge.invokeMethodAsync("EntityForm", "ShowEntityDetailDialog", [detail.id], null, errorCallback, null);
 		};
-		/// <summary>[v18.0] Obtains a clearance to perform manipulation with data.
-		/// The clearance must be dutifully released using leaveUiTransaction() when manipulation is finished.
-		/// The clearance will not be obtained if background sync is running and form sync behavior is configured to 'Block save during sync'
-		/// or 'Block save during sync and prevent sync while form is open'".
-		/// If form sync behavior is configured as 'No action', the clearance is always obtained.
-		/// </summary>
-		/// <returns>Returns true if form can give the clearance, false if it is not possible at this time.</returns>
 		MobileCRM.UI.EntityForm.tryEnterUiTransaction = function () {
+			/// <summary>[v18.0] Provides means to control concurrent access to data by form logic and background sync. This method obtains a clearance to perform data manipulation. The clearance will be obtained when background sync is not running, or form sync behavior is configured as 'No action'. If background sync is running and form sync behavior is configured to 'Block save during sync' or 'Block save during sync and prevent sync while form is open'", the clearance is not obtained. Each obtained clearance must be dutifully released using leaveUiTransaction(). It is possible to call this method multiple times, but each call reserves its own internal clearance, so there must be the same number of calls to leaveUiTransaction to properly release clearance and allow background sync.</summary>
+			/// <returns type="Promise&lt;boolean&gt;">Returns true if clearance is obtained, false if it is not possible at this time.</returns>
 			return MobileCRM.bridge.invokeCommandPromise("tryEnterUiTransaction");
 		};
-		/// <summary>[v18.0] Notifies UI form that clearance obtained using successful call to tryEnterUiTransaction() is no longer needed, because data manipulation is complete.</summary>
 		MobileCRM.UI.EntityForm.leaveUiTransaction = function () {
+			/// <summary>[v18.0] Provides means to control concurrent access to data by form logic and background sync. This method releases the last clearance obtained by successful call to tryEnterUiTransaction. Can be called even if all clearances are already released or were not obtained at all. See tryEnterUiTransaction for more info.</summary>
+			/// <returns type="Promise&lt;void&gt;">Returns an awaitable promise.</returns>
 			return MobileCRM.bridge.invokeCommandPromise("leaveUiTransaction");
 		};
 		// MobileCRM.UI.EntityForm.DetailCollection
