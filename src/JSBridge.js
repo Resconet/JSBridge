@@ -193,7 +193,7 @@
 			/// <field name="bridge" type="MobileCRM.Bridge">Singleton instance of <see cref="MobileCRM.Bridge">MobileCRM.Bridge</see> providing the management of the Javascript/native code cross-calls.</field>
 			bridge: null,
 			Bridge: function (platform) {
-				/// <summary>Provides the management of the Javascript/native code cross-calls. Its only instance <see cref="MobileCRMbridge">MobileCRM.bridge</see> is created immediately after the &quot;JSBridge.js&quot; script is loaded.</summary>
+				/// <summary>Provides the management of the Javascript/native code cross-calls. Its only instance <see cref="MobileCRM.bridge">MobileCRM.bridge</see> is created immediately after the &quot;JSBridge.js&quot; script is loaded.</summary>
 				/// <param name="platform" type="String">A platform name</param>
 				/// <field name="platform" type="String">A string identifying the device platform (e.g. Android, iOS, Windows, WindowsRT, Windows10 or WindowsPhone).</field>
 				/// <field name="version" type="Number">A number identifying the version of the JSBridge. This is the version of the script which might not match the version of the application part of the bridge implementation. Application version must be equal or higher than the script version.</field>
@@ -821,7 +821,7 @@
 				},
 				DetailViewItems: {
 					Item: function (name, label) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						/// <field name="name" type="String">Gets or sets the item name.</field>
@@ -840,14 +840,14 @@
 						this.label = label;
 					},
 					SeparatorItem: function (name, label) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> separator item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> separator item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						MobileCRM.UI.DetailViewItems.SeparatorItem.superproto.constructor.apply(this, arguments);
 						this._type = "Separator";
 					},
 					TextBoxItem: function (name, label) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> text item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> text item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						/// <field name="numberOfLines" type="Number">Gets or sets the number of lines to display. Default is one.</field>
@@ -859,7 +859,7 @@
 						this._type = "TextBox";
 					},
 					NumericItem: function (name, label) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> numeric item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> numeric item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						/// <field name="minimum" type="Number">Gets or sets the minimum allowed value.</field>
@@ -878,7 +878,7 @@
 						//this.displayFormat = "";
 					},
 					CheckBoxItem: function (name, label) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> checkbox item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> checkbox item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						/// <field name="textChecked" type="String">Gets or sets the text for checked state.</field>
@@ -888,7 +888,7 @@
 						this.isNullable = false;
 					},
 					DateTimeItem: function (name, label) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> date/time item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> date/time item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						/// <field name="minimum" type="Date">Gets or sets the minimum allowed value.</field>
@@ -898,14 +898,14 @@
 						this._type = "DateTime";
 					},
 					DurationItem: function (name, label) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> duration item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> duration item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						MobileCRM.UI.DetailViewItems.DurationItem.superproto.constructor.apply(this, arguments);
 						this._type = "Duration";
 					},
 					ComboBoxItem: function (name, label) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> combobox item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> combobox item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						/// <field name="listDataSource" type="Object">Gets or sets the object with props and values to be displayed in the combo list (e.g. {&quot;label1&quot;:1, &quot;label2&quot;:2}).</field>
@@ -914,7 +914,7 @@
 						this._type = "ComboBox";
 					},
 					LinkItem: function (name, label, listDropDownFormat) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> link item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> link item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						/// <param name="listDropDownFormat" type="MobileCRM.UI.DetailViewItems.DropDownFormat">Defines item&apos;s drop down format.</param>
@@ -926,7 +926,7 @@
 						}
 					},
 					ButtonItem: function (name, clickText) {
-						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> duration item.</summary>
+						/// <summary>[8.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> duration item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="clickText" type="String">Gets or sets the text content of click button.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
@@ -944,7 +944,7 @@
 						MultiStringListInput: 20,
 					},
 					GridItem: function (name, label, gridStyleDefintion) {
-						/// <summary>[13.0] Represents the <see cref="MobileCRM.UI._DetailView"></see> grid item.</summary>
+						/// <summary>[13.0] Represents the <see cref="MobileCRM.UI._DetailView">MobileCRM.UI._DetailView</see> grid item.</summary>
 						/// <param name="name" type="String">Defines the item name.</param>
 						/// <param name="label" type="String">Defines the item label.</param>
 						/// <param name="gridStyleDefintion" type="MobileCRM.UI.DetailViewItems.GridStyleDefintion">Gets or sets the style definition for grid item.</param>
@@ -965,7 +965,7 @@
 					DetailGridLength: function (value, gridUnitType) {
 						/// <summary>[13.0] Represents the grid length in grid unit type.</summary>
 						/// <param name="value" type="String">Grid length value.</param>
-						/// <param name="gridUnitType" type="MobileCRM.UI.DetailViewItems.DetailGridUnitType">Defines the grid <see cref="MobileCRM.UI.DetailViewItems.DetailGridUnitType"></see> unit type.</param>
+						/// <param name="gridUnitType" type="MobileCRM.UI.DetailViewItems.DetailGridUnitType">Defines the grid <see cref="MobileCRM.UI.DetailViewItems.DetailGridUnitType">MobileCRM.UI.DetailViewItems.DetailGridUnitType</see> unit type.</param>
 						this._value = value;
 						this._gridUnitType = gridUnitType;
 					},
@@ -1136,7 +1136,7 @@
 					/// <field name="realtimeFlushing" type="Boolean">Indicates whether the events should be delivered realtime using Resco forwarding service.</field>
 					/// <field name="logLevel" type="number">Defines logging verbosity (0=Normal, 1=Diagnostic, -1=None)</field>
 					/// <field name="notificationMask" type="number">Defines event mask for showing notifications (0=None, 1=WhenArrived, 2=WhenExited, 3=Always)</field>
-					/// <field name="businessHours" type="String">Business hours interval (e.g. '9:00-17:00')</field>
+					/// <field name="businessHours" type="String">Business hours interval (e.g. &apos;9:00-17:00&apos;)</field>
 					/// <field name="businessDaysMask" type="number">Business days mask (the lowest bit is Sunday, the next Monday, ...)</field>
 					this.isEnabled = false;
 					this.realtimeFlushing = true;
@@ -3201,7 +3201,7 @@
 		MobileCRM.Platform._watchLocationHandlers = [];
 		MobileCRM.Platform.watchLocationUpdates = function (handler, bind, scope) {
 			/// <summary>[v18.2] Registers or unregisters a handler for location updates.</summary>
-			/// <remarks>When the location is updated, the handler is called with a <see cref="MobileCRM.Location"/> object having <b>latitude</b>, <b>longitude</b> and <b>timestamp</b> properties.</remarks>
+			/// <remarks>When the location is updated, the handler is called with a <see cref="MobileCRM.Location">MobileCRM.Location</see> object having <b>latitude</b>, <b>longitude</b> and <b>timestamp</b> properties.</remarks>
 			/// <param name="handler" type="function(location)">Handler function which will be called each time when the location is updated. The <b>location</b> argument will carry an object with <b>latitude</b>, <b>longitude</b> and <b>timestamp</b> properties.</param>
 			/// <param name="bind" type="Boolean">Indicates whether to bind or unbind handler.</param>
 			/// <param name="scope" type="">Optional scope for calling the handler; set &quot;null&quot; to call the handler in global scope.</param>
