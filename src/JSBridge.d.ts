@@ -512,6 +512,15 @@ declare namespace MobileCRM {
 		static loadDocumentBody(entityName: string, id: string, sucess: (base64: string) => void, failed?: (error: string) => void, scope?: any);
 		static loadDocumentBodyAsync(entityName: string, id: string): Promise<string>;
 		static unzipDocumentBody(entityName: string, id: string, targetDir: string, sucess?: () => void, failed?: (error: string) => void, scope?: any);
+		/**
+		 * Asynchronously loads the content of a file field.
+		 * @since 18.2
+		 * @param entityName Logical name of entity containing the file field.
+		 * @param id An ID of record containing the file field.
+		 * @param fileFieldName Logical name of the file field.
+		 * @param online Optional flag forcing the online or offline mode.
+		 */
+		static loadFileFieldContent(entityName: string, id: string, fileFieldName: string, online?: string): Promise<string>;
 		static downloadAttachment(entityName: string, id: string, sucess: (base64: string) => void, failed?: (error: string) => void, scope?: any);
 		static downloadAttachmentAsync(entityName: string, id: string): Promise<string>;
 		/**
@@ -2181,6 +2190,16 @@ declare module MobileCRM.UI {
 		 * @returns A promise resolved with boolean result of native field setter.
 		 */
 		public static setFieldValues(changes: { [fieldName: string]: any }): Promise<boolean>;
+		/**
+		 * Sets the file field content and file name on entity record shown on this EntityForm.
+		 * Setting file field content is possible only in offline mode. This method fails in online mode.
+		 * @since 18.2
+		 * @param fileFieldName Logical name of the file field that has to be changed.
+		 * @param documentFileName A file name that should be used when presenting the binary content.
+		 * @param documentContent Base64-encoded binary file content.
+		 * @returns A promise resolved with boolean result of native field setter.
+		 */
+		public static setFileFieldContent(fileFieldName: string, documentFileName: string, documentContent: string);
 		/**
 		 * Binds or unbinds the handler for EntityForm command.
 		 * @param command The name of the EntityForm command.

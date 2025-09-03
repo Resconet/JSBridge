@@ -2426,6 +2426,22 @@
 			/// <param name="scope" type="">A scope for calling the callbacks; set &quot;null&quot; to call the callbacks in global scope.</param>
 			MobileCRM.bridge.command("documentBodyUnzip", targetDir + ";" + JSON.stringify({ entity: entityName, id: id }), success, failed, scope);
 		};
+		MobileCRM.DynamicEntity.loadFileFieldContent = function (entityName, id, fileFieldName, online) {
+			/// <summary>[18.2] Asynchronously loads the content of a file field.
+			/// <param name="entityName" type="String">Logical name of entity containing the file field.</param>
+			/// <param name="id" type="String">An ID of record containing the file field.</param>
+			/// <param name="fileFieldName" type="String">Logical name of the file field.</param>
+			// <param name="online" type="boolean|undefined">Optional flag forcing the online or offline mode.</param>
+			return MobileCRM.bridge.invokeCommandPromise(
+				"loadFileFieldContent",
+				JSON.stringify({
+					entityName: entityName,
+					id: id,
+					fileField: fileFieldName,
+					online: online,
+				})
+			);
+		};
 		MobileCRM.DynamicEntity.downloadAttachment = function (entityName, id, success, failed, scope) {
 			/// <summary>[v9.1] Initiates the attachment download for specified entity.</summary>
 			/// <remarks>Function sends an asynchronous request to application, which downloads the document body (e.g. the annotation) from server and sends it back to the Javascript callback.</remarks>
@@ -5799,6 +5815,18 @@
 			/// <param name="changes" type="{ [fieldName: string]: any }">An object defining field changes that has to be done on form entity record.</param>
 			/// <returns type="Promise&lt;boolean&gt;">A promise resolved with boolean result of native field setter.</returns>
 			return MobileCRM.bridge.invokeCommandPromise("setFormEntityFields", JSON.stringify(changes));
+		};
+		MobileCRM.UI.EntityForm.setFileFieldContent = function (fileFieldName, documentFileName, documentContent) {
+			/// <summary>[v18.2] Sets the file field content and file name on entity record shown on this EntityForm.</summary>
+			/// <remarks>Setting file field content is possible only in offline mode. This method fails in online mode.</remarks>
+			/// <param name="fieldName" type="String">Logical name of the file field that has to be changed.</param>
+			/// <param name="documentFileName" type="String">A file name that should be used when presenting the binary content.</param>
+			/// <param name="documentContent" type="String">Base64-encoded binary file content.</param>
+			/// <returns type="Promise&lt;boolean&gt;">A promise resolved with boolean result of native field setter.</returns>
+			var obj = {};
+			obj[fileFieldName + "_name"] = documentFileName;
+			obj[fileFieldName] = documentContent;
+			return MobileCRM.UI.EntityForm.setFieldValues(obj);
 		};
 		MobileCRM.UI.EntityForm.requestObject = function (callback, errorCallback, scope) {
 			/// <summary>Requests the managed EntityForm object.</summary>
