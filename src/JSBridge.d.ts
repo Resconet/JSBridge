@@ -241,6 +241,8 @@ declare namespace MobileCRM {
 		syncFilterHash: string;
 		/**Gets or sets the current user GUID (given by the server).*/
 		systemUserId: string;
+		/**Gets or sets the current user name (given by the server).*/
+		systemUserName: string;
 		/**Gets or sets the last active entity in the Tourplan (Calendar).*/
 		tourplanInitialEntity: string;
 		/**Gets or sets whether to update entity objectypecodes on first sync.*/

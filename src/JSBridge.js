@@ -1805,6 +1805,7 @@
 			/// <field name="showPersonalContacts" type="Boolean">Gets or sets whether to show contacts from the user's personal address book.</field>
 			/// <field name="showSystemCalendars" type="Boolean">Gets or sets whether to show private calendars in calendars.</field>
 			/// <field name="systemUserId" type="String">Gets or sets the current user id (given by the server).</field>
+			/// <field name="systemUserName" type="String">Gets or sets the current user name (given by the server).</field>
 			/// <field name="teams" type="Array<String>">Gets the array of ids of teams the current user is member of.</field>
 			/// <field name="useCrmEmail" type="Boolean">Gets or sets whether to create a CRM email entity or use the platform email service.</field>
 			/// <field name="useDatabaseBlobStore" type="Boolean">Gets or sets whether to store attachment blobs in database or in files. If you change this setting you must perform a full sync!</field>
