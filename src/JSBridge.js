@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* globals MobileCRM:writable, MobileCrmException:writable, CrmBridge, webkit, chrome */
 (function () {
-	var _scriptVersion = 18.0;
+	var _scriptVersion = 19.0;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() {
@@ -6822,9 +6822,10 @@
 			} else {
 				if ("chrome" in window && "webview" in window["chrome"]) {
 					// Windows UWP with WebView2 (Edge)
+					var msgWindow = parent && "HiddenIframeContainer" in parent ? parent : chrome.webview;
 					MobileCRM.Bridge.prototype.command = function (command, params, success, failed, scope) {
 						var cmdId = this._createCmdObject(success, failed, scope);
-						chrome.webview.postMessage(cmdId + ";" + command + ":" + params);
+						msgWindow.postMessage(cmdId + ";" + command + ":" + params);
 					};
 					MobileCRM.Bridge.prototype.alert = function (text, callback, scope) {
 						MobileCRM.bridge.command("alert", text, callback, callback, scope);
