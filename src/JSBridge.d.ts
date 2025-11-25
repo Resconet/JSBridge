@@ -2733,6 +2733,13 @@ declare module MobileCRM.UI {
 		 */
 		public static repeatGroup(id: string, copyValues?: boolean, errorCallback?: (err: string) => void, scope?: any);
 		/**
+		 * Duplicates repeatable group with all its questions. The name of the group will contain the lowest available repeatIndex and suffix in form #00X.
+		 * @param id Id of the source group
+		 * @param copyValues Optional parameter determining whether the source group values should be copied to the new instance of the group.
+		 * @returns A promise resolved when the operation is completed.
+		 */
+		public static repeatGroupAsync(id: string, copyValues?: boolean): Promise<void>;
+		/**
 		 * Deletes an instance of repeatable group with all its questions and adjusts the repeatIndex for all instances of the same template group with higher index.
 		 * @param id Id of the source group
 		 * @param errorCallback A callback which is called in case of error.
@@ -2881,11 +2888,17 @@ declare module MobileCRM.UI {
 
 			/**
 			 * Duplicates repeatable group with all its questions. The name of the group will contain the lowest available repeatIndex and suffix in form #00X.
-			 * @param copyValues Optional paramater determining whether the group values should be copied to the new instance of this group.
+			 * @param copyValues Optional parameter determining whether the group values should be copied to the new instance of this group.
 			 * @param errorCallback A callback which is called in case of error.
 			 * @param scope A scope for calling the callbacks.
 			 */
 			repeatGroup(copyValues?: boolean, errorCallback?: (err: string) => void, scope?: any);
+			/**
+			 * Duplicates repeatable group with all its questions. The name of the group will contain the lowest available repeatIndex and suffix in form #00X.
+			 * @param copyValues Optional parameter determining whether the group values should be copied to the new instance of this group.
+			 * @returns A promise resolved when the operation is completed.
+			 */
+			repeatGroupAsync(copyValues?: boolean): Promise<void>;
 			/**
 			 * Deletes this instance of repeatable group with all its questions and adjusts the repeatIndex for all instances of the same template group with higher index.
 			 * @param errorCallback A callback which is called in case of error.
