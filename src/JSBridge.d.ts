@@ -1,7 +1,6 @@
 // JSBridge.js TypeScript definition file
 // (c) 2024 Resco
 
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/prefer-namespace-keyword */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-var */
@@ -72,12 +71,12 @@ declare namespace MobileCRM {
 
 	class GlobalConstants {
 		/**Gets the JSON object representing the GlobalConstants variables. */
-		public static getAllAsync(): Promise<Object>;
+		public static getAllAsync(): Promise<object>;
 		/**
 		 *Gets the constant associated with specified key in the GlobalConstants variables.
 		 * @param key The key of the constant to get.
 		 */
-		public static getAsync(key: String): Promise<Object>;
+		public static getAsync(key: string): Promise<object>;
 	}
 
 	class Settings {
@@ -1876,7 +1875,7 @@ declare module MobileCRM.UI {
 	interface _DetailItemDateTime extends _DetailItem {
 		maximum: Date;
 		minimum: Date;
-		parts: Number;
+		parts: number;
 		value: Date;
 	}
 	interface _DetailItemDuration extends _DetailItem {
@@ -3552,7 +3551,7 @@ declare module MobileCRM.UI.DetailViewItems {
 	class DateTimeItem extends Item {
 		maximum: Date;
 		minimum: Date;
-		parts: Number;
+		parts: number;
 		value: Date;
 	}
 	class DurationItem extends Item {}
