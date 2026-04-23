@@ -1912,6 +1912,18 @@ declare module MobileCRM.UI {
 		registerClickHandler(item: MobileCRM.UI._DetailItemLink, callback: (itemName: string, detailViewName: string) => void, scope?: any);
 		startEditItem(index: number);
 		/**
+		 * @since 19.1
+		 * Executes the detail item specific action, e.g. scan barcode.
+		 * @param index Selected item index.
+		 */
+		executeItemAction(index: number): void;
+		/**
+		 * @since 19.1
+		 * Gets the content of detail item as string, e.g. base64 encoded binary data of image item.
+		 * @param itemName The name of the detail item.
+		 */
+		getItemContentAsync(itemName: string): Promise<string>;
+		/**
 		 * @since 9.1
 		 * Changes the data source for ComboBoxItem {MobileCRM.UI.DetailViewItems.ComboBoxItem}.
 		 * @param index Item index on the view.
@@ -2691,6 +2703,14 @@ declare module MobileCRM.UI {
 		 * @param scope A scope for calling the callbacks.
 		 */
 		public static focusQuestion(questionName: string, errorCallback?: (err: string) => void, scope?: any);
+		/**
+		 * @since 19.1
+		 * Asynchronously focuses the question and executes its operations, e.g. Scan Barcode, Run OCR, etc...
+		 * @param questionName A name of the question.
+		 * @param errorCallback A callback which is called in case of error.
+		 * @param scope A scope for calling the callbacks.
+		 */
+		public static executeQuestionAction(questionName: string, errorCallback?: (err: string) => void, scope?: any);
 		/**
 		 * Overrides the list of options for given picklist question.
 		 * @param questionName The name of the picklist question.

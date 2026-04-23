@@ -3947,6 +3947,29 @@
 			};
 			MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
 		};
+		MobileCRM.UI._DetailView.prototype.executeItemAction = function (index) {
+			/// <summary>[v19.1] Executes the detail item specific action, e.g. scan barcode.</summary>
+			/// <param name="index" type="Number">Selected item index.</param>
+			if (index < 0) {
+				MobileCRM.bridge.log("DetailView.executeItemAction: Index must not be negative.");
+				return;
+			}
+			var data = {
+				action: "executeItemAction",
+				viewName: this.name,
+				index: index,
+			};
+			MobileCRM.bridge.command("detailViewAction", JSON.stringify(data));
+		};
+		MobileCRM.UI._DetailView.prototype.getItemContentAsync = async function (itemName) {
+			/// <summary>[v19.1] Gets the content of detail item as string, e.g. base64 encoded binary data of image item.</summary>
+			/// <param name="itemName" type="String">The name of the detail item.</param>
+			var data = {
+				viewName: this.name,
+				itemName: itemName,
+			};
+			return await MobileCRM.bridge.invokeCommandPromise("getDetailItemContent", JSON.stringify(data));
+		};
 		MobileCRM.UI._DetailView.prototype.updateComboItemDataSource = function (index, listDataSource, valueType, defaultValue) {
 			/// <summary>[v9.1] Changes the data source for CombobBoxitem <see cref="MobileCRM.UI.DetailViewItems.Item">MobileCRM.UI.DetailViewItems.ComboBoxItem</see>.</summary>
 			/// <param name="index" type="Number">Item index on the view.</param>
@@ -5329,6 +5352,13 @@
 			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>
 			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "FocusQuestion", [questionName], null, errorCallback, scope);
+		};
+		MobileCRM.UI.QuestionnaireForm.executeQuestionAction = function (questionName, errorCallback, scope) {
+			/// <summary>[v19.1] Asynchronously focuses the question and executes its operations, e.g. Scan Barcode, Run OCR, etc...</summary>
+			/// <param name="questionName" type="String">A name of the question.</param>
+			/// <param name="errorCallback" type="function(errorMsg)">The errorCallback which is called in case of error.</param>
+			/// <param name="scope" type="Object">The scope for callbacks.</param>
+			MobileCRM.bridge.invokeMethodAsync("QuestionnaireForm", "ExecuteQuestionAction", [questionName], null, errorCallback, scope);
 		};
 		MobileCRM.UI.QuestionnaireForm.overridePicklistOptions = function (questionName, allowNull, options, errorCallback, scope) {
 			/// <summary>Overrides the list of options for given picklist question.</summary>
