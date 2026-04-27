@@ -887,6 +887,12 @@ declare namespace MobileCRM {
 		 * @param scope A scope in which the handler should be called.
 		 */
 		static onSyncFinished(handler: (homeForm: HomeForm) => void, scope?: any);
+		/** Starts pre-defined or custom SmartSync definition.
+		 * @since 19.1
+		 * @param name The name of SmartSync configuration as defined in Woodford.
+		 * @returns A Promise resolved when the SmartSync was initiated.
+		 */
+		static startSmartSync(name: string): Promise<void>;
 		static getAppColor(colName: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
 		static getAppImage(imageName: string, colorize: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
 		/** Display application login form. */

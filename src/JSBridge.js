@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* globals MobileCRM:writable, MobileCrmException:writable, CrmBridge, webkit, chrome */
 (function () {
-	var _scriptVersion = 19.0;
+	var _scriptVersion = 19.1;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() {
@@ -3302,7 +3302,12 @@
 			/// <param name="scope" type="Object">A scope in which the handler should be called.</param>
 			MobileCRM.UI.HomeForm.onSyncFinished(handler, scope);
 		};
-
+		MobileCRM.Application.startSmartSync = function (smartSyncName) {
+			/// <summary>[v19.1] Starts pre-defined or custom SmartSync definition.
+			/// <param name="smartSyncName" type="String">The name of SmartSync configuration as defined in Woodford.</param>
+			/// <returns type="Promise">A Promise resolved when the SmartSync was initiated.</returns>
+			return MobileCRM.bridge.invokeCommandPromise("startSmartSync", JSON.stringify({ name: smartSyncName }));
+		};
 		MobileCRM.Application.showAppLogin = function () {
 			/// <summary>Causes that the password is forgotten and user is required to type it again to make the app running.</summary>
 			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.SecurityManager", "OpenLoginForm", []);
