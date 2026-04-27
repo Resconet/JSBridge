@@ -624,7 +624,7 @@
 				FormManager: {},
 				EntityForm: function () {
 					/// <summary>Represents the Javascript equivalent of native entity form object.</summary>
-					/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">MobileCRM.UI.EntityForm.requestObject</see> function.</remarks>
+					/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">MobileCRM.UI.EntityForm.requestObject</see> function.<br/>This object is not available under Essential license.</remarks>
 					/// <field name="associatedViews" type="Array">Gets the associated views as an array of <see cref="MobileCRM.UI._EntityList">MobileCRM.UI._EntityList</see> objects.</field>
 					/// <field name="bulkUpdateItems" type="Array">A list of entity records editted on this bulk update form.</field>
 					/// <field name="canEdit" type="Boolean">Gets whether the form can be edited.</field>
@@ -644,6 +644,7 @@
 				},
 				QuestionnaireForm: function () {
 					/// <summary>[v10.3] Represents the Javascript equivalent of native questionnaire form object.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="form" type="MobileCRM.UI.Form">Gets the form which hosts the questionnaire.</field>
 					/// <field name="groups" type="MobileCRM.UI.QuestionnaireForm.Group[]">A list of <see cref="MobileCRM.UI.QuestionnaireForm.Group">QuestionnaireForm.Group</see> objects.</field>
 					/// <field name="questions" type="MobileCRM.UI.QuestionnaireForm.Question[]">A list of <see cref="MobileCRM.UI.QuestionnaireForm.Question">QuestionnaireForm.Question</see> objects.</field>
@@ -652,10 +653,12 @@
 				},
 				EntityChart: function () {
 					/// <summary>[13.0] Represents the Javascript equivalent of native entity chart object.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					MobileCRM.UI.EntityChart.superproto.constructor.apply(this, arguments);
 				},
 				EntityList: function () {
 					/// <summary>[v9.2] Represents the Javascript equivalent of native entity list object.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="allowAddExisting" type="Boolean">Gets or sets whether adding an existing entity is allowed.</field>
 					/// <field name="allowCreateNew" type="Boolean">Gets or sets whether create a new entity (or managing the N:N entities in the case of N:N list) is allowed.</field>
 					/// <field name="allowedDocActions" type="Number">Gets or sets a mask of document actions (for Note and Sharepoint document lists).</field>
@@ -684,7 +687,7 @@
 				},
 				HomeForm: function () {
 					/// <summary>[v8.0] Represents the Javascript equivalent of the home form object which contains the Home/UI replacement iFrame.</summary>
-					/// <remarks><p>This class works only from Home/UI replacement iFrame.</p><p>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.HomeForm.requestObject">MobileCRM.UI.HomeForm.requestObject</see> function.</p></remarks>
+					/// <remarks><p>This class works only from Home/UI replacement iFrame.</p><p>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.HomeForm.requestObject">MobileCRM.UI.HomeForm.requestObject</see> function.</p><p>This object is not available under Essential license.</p></remarks>
 					/// <field name="form" type="MobileCRM.UI.Form">Gets the top level form.</field>
 					/// <field name="items" type="Array">Gets the list of the home items.</field>
 					/// <field name="listView" type="MobileCRM.UI._ListController">Gets the list view with home items.</field>
@@ -695,6 +698,7 @@
 				},
 				ReportForm: function () {
 					/// <summary>[v8.1] Represents the Dynamics CRM report form object.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="allowedReportIds" type="Array">The list of report entity ids that has to be included in the report form selector.</field>
 					/// <field name="allowedLanguages" type="Array">The list of LCID codes of the languages that has to be included into the report form selector. The number -1 stands for "Any language".</field>
 					/// <field name="defaultReport" type="String">The primary name of the report entity that should be pre-selected on the report form.</field>
@@ -704,6 +708,7 @@
 				},
 				RoutePlan: function () {
 					/// <summary>[v14.2] Represents the Javascript equivalent view of RoutePlan form object.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="myRoute" type="DynamicEntity[]">A list of route entities.</field>
 					/// <field name="completedEntities" type="DynamicEntity[]"> A list of completed entities that are about to be removed from route plan.</field>
 					/// <field name="routeEntityName" type="String">Logical name of the route visit entity.</field>
@@ -713,6 +718,7 @@
 				},
 				IFrameForm: function () {
 					/// <summary>[v9.0] Represents the iFrame form object.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="form" type="MobileCRM.UI.Form">Gets the form hosting the iFrame.</field>
 					/// <field name="isDirty" type="Boolean">[v10.0] Controls whether the form is dirty and requires save, or whether it can be closed.</field>
 					/// <field name="options" type="Object">Carries the custom parameters that can be specified when opening the form using <see cref="MobileCRM.UI.IFrameForm.show">MobileCRM.UI.IFrameForm.show</see> function.</field>
@@ -722,6 +728,7 @@
 				},
 				Form: function (props) {
 					/// <summary>[v8.0] Represents the Javascript equivalent of the form object.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="canMaximize" type="Boolean">Gets or sets whether form can be maximized to fullscreen (full application frame).</field>
 					/// <field name="isMaximized" type="Boolean">Gets or sets whether form is currently maximized to fullscreen (full application frame).</field>
 					/// <field name="isModal" type="Boolean">Indicates whether this form is presented as modal window.</field>
@@ -734,10 +741,11 @@
 				},
 				ViewController: function () {
 					/// <summary>Represents the Javascript equivalent of view controller (map/web content).</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 				},
 				ProcessController: function () {
 					/// <summary>[v8.2] Represents the Javascript equivalent of view process controller.</summary>
-					/// <remarks>It is not intended to create an instance of this class. To obtain this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">EntityForm.requestObject</see> function and locate the controller in form&apos;s "controllers" list.</remarks>
+					/// <remarks>It is not intended to create an instance of this class. To obtain this object, use <see cref="MobileCRM.UI.EntityForm.requestObject">EntityForm.requestObject</see> function and locate the controller in form&apos;s "controllers" list.<p>This object is not available under Essential license.</p></remarks>
 					/// <field name="currentStateInfo" type="Object">Gets the information about the current process flow state (active stage, visible stage and process).</field>
 					MobileCRM.UI.ProcessController.superproto.constructor.apply(this, arguments);
 				},
@@ -773,6 +781,7 @@
 				},
 				LookupForm: function () {
 					/// <summary>This object allows user to select an entity from a configurable list of entity types.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="entities" type="Array">An array of allowed entity kinds (schema names).</field>
 					/// <field name="allowedViews" type="String">OBSOLETE: Allowed views, or null if all are allowed.</field>
 					/// <field name="source" type="MobileCRM.Relationship">The entity whose property will be set to the chosen value.</field>
@@ -794,6 +803,7 @@
 				},
 				MultiLookupForm: function () {
 					/// <summary>[v9.3] This object allows user to select a list of entities from a configurable list of entity types. Derived from LookupForm so you can use the addView() and addEntityFilter() methods.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="entities" type="Array">An array of allowed entity kinds (schema names).</field>
 					/// <field name="source" type="MobileCRM.Relationship">The entity whose property will be set to the chosen value.</field>
 					/// <field name="dataSource" type="MobileCRM.Reference[]">The list of entities that should be displayed as selected.</field>
@@ -804,7 +814,7 @@
 				},
 				TourplanForm: function (props) {
 					/// <summary>Represents the Javascript equivalent tourplan form object.</summary>
-					/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.TourplanForm.requestObject">MobileCRM.UI.TourplanForm.requestObject</see> function.</remarks>
+					/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.UI.TourplanForm.requestObject">MobileCRM.UI.TourplanForm.requestObject</see> function.<p>This object is not available under Essential license.</p></remarks>
 					/// <field name="isDirty" type="Boolean">Indicates whether the form has been modified.</field>
 					/// <field name="isLoaded" type="Boolean">Gets or sets whether the form is loaded.</field>
 					/// <field name="view" type="MobileCRM.UI._AppointmentView">Gets tourplan form view <see cref="MobileCRM.UI._AppointmentView">MobileCRM.UI.AppointmentView</see>.</field>
@@ -812,6 +822,7 @@
 				},
 				_DetailView: function (props) {
 					/// <summary>Represents the Javascript equivalent of detail view with set of items responsible for fields editing.</summary>
+					/// <remarks>This object is not available under Essential license.</remarks>
 					/// <field name="isDirty" type="Boolean">Indicates whether the value of an item has been modified.</field>
 					/// <field name="isEnabled" type="Boolean">Gets or sets whether the all items are enabled or disabled.</field>
 					/// <field name="isVisible" type="Boolean">Gets or sets whether the view is visible.</field>
@@ -2870,7 +2881,7 @@
 			if (output) {
 				format += output;
 			}
-			this.execute("Offline." + output, success, failed, scope);
+			this.execute(format, success, failed, scope);
 		};
 		MobileCRM.FetchXml.Fetch.prototype.executeAsync = function (output, online) {
 			/// <summary>Performs the asynchronous CRM Fetch request.</summary>
@@ -3237,7 +3248,7 @@
 		};
 		MobileCRM.Platform.preventBackButton = function (handler, scope) {
 			/// <summary>Prevents application to close when HW back button is pressed and installs handler which is called instead.</summary>
-			/// <remarks><p>Pass &quot;null&quot; handler to allow the HW back button.</p><p>Works only under OS having HW back button (Android, Windows 10).</p></remarks>
+			/// <remarks><p>Pass &quot;null&quot; handler to allow the HW back button.</p><p>Works only under OS having HW back button (Android).</p></remarks>
 			/// <param name="handler" type="function()">Handler function which will be called each time when user presses the Android HW back button.</param>
 			MobileCRM.bridge.command(
 				"setBackButtonHandler",
@@ -3245,6 +3256,28 @@
 				handler,
 				null,
 				scope
+			);
+		};
+		MobileCRM.Platform.showToast = function (message, icon) {
+			/// <summary>Shows a platform-specific toast window over the app window which is dismissed after a few seconds.</summary>
+			/// <param name="message" type="String">A toast content message.</param>
+			/// <param name="icon" type="String">Valid app image name (e.g. Home.Now.png).</param>
+			return MobileCRM.bridge.invokeStaticMethodPromise("Resco.UI", "Resco.UI.FormFactory", "ShowToastInfo.Invoke", [message, icon]);
+		};
+		MobileCRM.Platform.showAlert = function (text, multiLine, defaultButton, buttons) {
+			/// <summary>Shows a platform-specific alert window with specified text and buttons. Resolves to the pressed button name.</summary>
+			/// <param name="text" type="String">A message to show.</param>
+			/// <param name="multiLine" type="Boolean">If true, the message text will be displayed with larger height and the text will be wrapped.</param>
+			/// <param name="defaultButton" type="String">The default button caption. If not specified, there is no default button.</param>
+			/// <param name="buttons" type="Array">An array of button captions to display. If not specified, only default button or OK button is shown.</param>
+			return MobileCRM.bridge.invokeCommandPromise(
+				"messageBox",
+				JSON.stringify({
+					title: text || "",
+					multiLine: !!multiLine,
+					defaultText: defaultButton,
+					items: buttons || [],
+				})
 			);
 		};
 		// MobileCRM.Application
@@ -3263,9 +3296,20 @@
 			/// <param name="forceLogin" type="Boolean">if true, the sync dialog with URL and credentials will be opened; otherwise it is opened only if the password is not saved.</param>
 			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.Synchronize", [forceLogin, false]);
 		};
+		MobileCRM.Application.onSyncFinished = function (handler, scope) {
+			/// <summary>[v8.1] Binds the new handler to the synchronization finish event.</summary>
+			/// <param name="handler" type="function(homeForm)">A function which will be called when the synchronization finished event occurs with current instance of the MobileCRM.UI.HomeForm as parameter.</param>
+			/// <param name="scope" type="Object">A scope in which the handler should be called.</param>
+			MobileCRM.UI.HomeForm.onSyncFinished(handler, scope);
+		};
+
 		MobileCRM.Application.showAppLogin = function () {
 			/// <summary>Causes that the password is forgotten and user is required to type it again to make the app running.</summary>
 			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.SecurityManager", "OpenLoginForm", []);
+		};
+		MobileCRM.Application.showSetup = function () {
+			/// <summary>Closes all forms and shows the setup screen.</summary>
+			MobileCRM.bridge.invokeStaticMethodAsync("MobileCrm", "MobileCrm.Controllers.HomeForm", "Instance.ShowSetup", [0, null]);
 		};
 		MobileCRM.Application.getAppColor = function (colName, success, failed, scope) {
 			/// <summary>Gets the customized color by its name.</summary>
@@ -3551,6 +3595,7 @@
 			);
 		};
 		MobileCRM.Application.getAccessToken = function (resourceUrl, successCallback, failureCallback, scope) {
+			/// <summary>[v12.3]Asynchronously gets the access token for the specified resource URL (limited to Microsoft environment without MSAL).</summary>
 			/// <param name="resourceUrl" type="String">The resource.</param>
 			/// <param name="successCallback" type="function(textAccessToken)">A callback function what is called asynchronously with serialized <b>access token</b> as argument.</param>
 			/// <param name="failureCallback" type="function(error)">A callback function for command failure. The <b>error</b> argument will carry the error message.</param>
@@ -3565,7 +3610,7 @@
 			MobileCRM.bridge.command("getLastSignificantTimeChange", null, success, failed);
 		};
 		MobileCRM.Integration.getOAuthAccessToken = function (configurationName, oauthSettings, prompt, successCallback, failureCallback, scope) {
-			/// <summary>[12.3]Asynchronously gets the token using passed OAuth settings and parameters. Configuration name is used to find already settings.</summary>
+			/// <summary>[12.3]Asynchronously gets the token using passed OAuth settings and parameters. Configuration name is used to find already existing settings.</summary>
 			/// <param name="configurationName" type="String">Define the name of oauth configuration, what is key for saved setting if any.</param>
 			/// <param name="oauthSettings" type="MobileCRM.OAuthSettings">Defines the OAuth settings for authentication.</param>
 			/// <param name="prompt" type="Boolean">Whether to force the user to enter credentials again.</param>
@@ -4622,7 +4667,7 @@
 
 		MobileCRM.MobileReport.showForm = function (report, source, fetchXml, failed, scope) {
 			/// <summary>[v10.1] Shows new MobileReport form. Source for the report can be defined either as list of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> objects or as FetchXML query.</summary>
-			/// <remarks>If both types of source are passed, user can select which one to use.</remarks>
+			/// <remarks><p>If both types of source are passed, user can select which one to use.</p><p>This method is not available under Essential license.</p></remarks>
 			/// <param name="report" type="MobileCRM.Reference">Optional reference to the resco_mobilereport entity that will be pre-selected.</param>
 			/// <param name="source" type="MobileCRM.Reference[]">The list of entity references used as report input.</param>
 			/// <param name="fetchXML" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
@@ -4633,7 +4678,7 @@
 		};
 		MobileCRM.MobileReport.showFormWithConfiguration = function (report, source, fetchXml, paramString, failed, scope) {
 			/// <summary>[v16.0] Shows new MobileReport form. Source for the report can be defined either as list of <see cref="MobileCRM.Reference">MobileCRM.Reference</see> objects or as FetchXML query.</summary>
-			/// <remarks>If both types of source are passed, user can select which one to use.</remarks>
+			/// <remarks><p>If both types of source are passed, user can select which one to use.</p><p>This method is not available under Essential license.</p></remarks>
 			/// <param name="report" type="MobileCRM.Reference">Optional reference to the resco_mobilereport entity that will be pre-selected.</param>
 			/// <param name="source" type="MobileCRM.Reference[]">The list of entity references used as report input.</param>
 			/// <param name="fetchXML" type="String">The fetch XML defining the entity (entities) query used as report input.</param>
@@ -4646,6 +4691,7 @@
 		// MobileCRM.UI.Questionnaire
 		MobileCRM.Questionnaire.showForm = function (id, failed, scope, relationship, modal, version) {
 			/// <summary>[v10.2] Shows the questionnaire form.</summary>
+			/// <remarks>This method is not available under Essential license.</remarks>
 			/// <param name="id" type="String">Id (guid) of the questionnaire.</param>
 			/// <param name="failed" type="function(errorMsg)">A callback which is called in case of error.</param>
 			/// <param name="scope" type="Object">The scope for callbacks.</param>

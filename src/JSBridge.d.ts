@@ -731,6 +731,21 @@ declare namespace MobileCRM {
 		 * @param scope Handler scope
 		 */
 		public static preventBackButton(handler: () => void, scope?: any);
+		/**
+		 * Shows a platform-specific toast window over the app window which is dismissed after a few seconds.
+		 * @param message A toast content message.
+		 * @param icon Valid app image name (e.g. Home.Now.png).
+		 */
+		public static showToast(message: string, icon: string): Promise<void>;
+		/**
+		 * Shows a platform-specific alert window with specified text and buttons. Resolves to the pressed button name.
+		 * @param text The message text to display.
+		 * @param multiLine If true, the message text will be displayed with larger height and the text will be wrapped.
+		 * @param defaultButton The default button caption. If not specified, there is no default button.
+		 * @param buttons An array of button captions to display. If not specified, only default button or OK button is shown.
+		 */
+		public static showAlert(text: string, multiLine?: boolean, defaultButton?: string, buttons?: Array<string>): Promise<string>;
+
 		public static scanBarCode(success: (barCode: string) => void, failed?: (error: string) => void, scope?: any);
 		/**
 		 * Gets current geo-location from platform-specific location service.
@@ -854,12 +869,30 @@ declare namespace MobileCRM {
 	}
 
 	class Application {
+		/**
+		 * Starts background/foreground sync if not synchronized or the last sync was before desired limit.
+		 * @param backgroundOnly if true, only the background sync is allowed; otherwise it can also run the foreground sync.
+		 * @param ifNotSyncedBefore Defines a time limit required for the last sync. Starts the sync only if wasn&quot;t done yet or if it was before this limit. If it is null or undefined, sync is done always.
+		 */
 		static synchronize(backgroundOnly: boolean, ifNotSyncedBefore: Date);
+		/**
+		 * Starts the synchronization on foreground (closes all form if possible and showing the standard progress).
+		 * @param forceLogin if true, the sync dialog with URL and credentials will be opened; otherwise it is opened only if the password is not saved.
+		 */
 		static synchronizeOnForeground(forceLogin: boolean);
+		/**
+		 * Binds the new handler to the synchronization finish event.
+		 * @since 8.1
+		 * @param handler A function which will be called when the synchronization finished event occurs.
+		 * @param scope A scope in which the handler should be called.
+		 */
+		static onSyncFinished(handler: (homeForm: HomeForm) => void, scope?: any);
 		static getAppColor(colName: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
 		static getAppImage(imageName: string, colorize: string, success: (url: string) => void, failed?: (err: string) => void, scope?: any);
 		/** Display application login form. */
 		static showAppLogin();
+		/** Closes all forms and shows the setup screen. */
+		static showSetup();
 		/**
 		 * Sets the application colors.
 		 * @since 11.2.2
@@ -1112,6 +1145,7 @@ declare namespace MobileCRM {
 		/**
 		 * @since 10.1
 		 * Shows new MobileReport form. Source for the report can be defined either as list of MobileCRM.Reference objects or as FetchXML query.
+		 * This method is not available under Essential license.
 		 * @param report Optional reference to the resco_mobilereport entity that will be pre-selected.
 		 * @param source The list of entity references used as report input.
 		 * @param fetchXml The fetch XML defining the entity (entities) query used as report input.
@@ -1122,6 +1156,7 @@ declare namespace MobileCRM {
 		/**
 		 * @since 16.0
 		 * Shows new MobileReport form. Source for the report can be defined either as list of MobileCRM.Reference objects or as FetchXML query.
+		 * This method is not available under Essential license.
 		 * @param report Optional reference to the resco_mobilereport entity that will be pre-selected.
 		 * @param source The list of entity references used as report input.
 		 * @param fetchXml The fetch XML defining the entity (entities) query used as report input.
@@ -1141,6 +1176,17 @@ declare namespace MobileCRM {
 	class Questionnaire {
 		static getQuestionName(name: string, repeatIndex: number): string;
 		static getGroupName(name: string, repeatIndex: number): string;
+		/**
+		 * Shows the questionnaire form.
+		 * This method is not available under Essential license.
+		 * @since 10.2
+		 * @param id The ID of the questionnaire record to show.
+		 * @param failed A callback which is called in case of error.
+		 * @param scope The scope for callbacks.
+		 * @param relationship Optional relationship with the parent record.
+		 * @param modal Indicates whether to open the form as modal. The default is false.
+		 * @param version Optional parameter for setting the Questionnaire player version to execute the questionnaire. Default is 1.
+		 */
 		static showForm(
 			id: string,
 			failed?: (err: string) => void,
