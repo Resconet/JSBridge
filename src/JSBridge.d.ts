@@ -65,6 +65,8 @@ declare namespace MobileCRM {
 		settings: MobileCRM.Settings;
 		storageDirectory: string;
 		licenseAlert: string;
+		/**Gets or sets customer-defined project version.*/
+		projectVersion: string;
 
 		public static requestObject(callback: (config: Configuration) => void, erroCallback?: (error: string) => void, scope?: any);
 	}
@@ -82,15 +84,17 @@ declare namespace MobileCRM {
 	class Settings {
 		/**Gets the absolute URL (including the CrmOrganization).*/
 		absoluteUrl: string;
-		/**Gets or sets the currently selected Application ID.*/
+		/**Gets the currently selected Application ID. @ means default app. Null or empty string means that user hasn't chosen app yet.*/
 		activeAppID: string;
+		/**Gets the list of Application IDs available for current user.*/
+		appIDs: string[];
 		/**Gets or sets the last active entity in the ActivityList.*/
 		activityListInitialEntity: number;
 		/**Gets or sets the application lock state (0=None, 1=Soft, 2=Permanent).*/
 		applicationLock: number;
 		/**Gets or sets the last active view mode in Calendar view.*/
 		appointmentViewMode: number;
-		/**Gets or sets the CRM server authentication method (0=ActiveDirectory, 1=CRM Online, 2=Internet facing., 3=CRM Online EMEA, 4=CRM Online APAC).*/
+		/**Gets the CRM server authentication method (0=ActiveDirectory, 1=CRM Online, 2=Internet facing., 3=CRM Online EMEA, 4=CRM Online APAC).*/
 		authenticationType: number;
 		/**Gets or sets when the application starts to sync on the background (0=Never, 1=OnStart, 2=OnChange, 3=OnStartAndChange).*/
 		autoSync: number;
@@ -106,28 +110,32 @@ declare namespace MobileCRM {
 		clientCustomize: boolean;
 		/**Gets or sets whether to create the call entity after a call has been made from MobileCRM.*/
 		createCallEntity: boolean;
-		/**Gets or sets the discovered CRM service authentication server url.*/
+		/**Gets the discovered CRM service authentication server url.*/
 		crm2011AuthUrl: string;
-		/**Gets or sets the discovered CRM service authentication type.*/
+		/**Gets the discovered CRM service authentication type.*/
 		crm2011AuthType: string;
-		/**Gets or sets the token (cookie) issued by LiveId services identifying this device.*/
+		/**Gets the token (cookie) issued by LiveId services identifying this device.*/
 		crmOnlineDeviceToken: Date;
-		/**Gets or sets when the "CrmOnlineDeviceToken" expires (in UTC).*/
+		/**Gets when the "CrmOnlineDeviceToken" expires (in UTC).*/
 		crmOnlineDeviceTokenExpires: Date;
 		/**Gets or sets the CRM organization (Absolute path in org url).*/
 		crmOrganization: string;
-		/**Gets or sets the discovered CRM service version (4 or 5).*/
+		/**Gets the discovered CRM service version (4 or 5).*/
 		crmWebServiceVersion: number;
-		/**Gets or sets the the discovered CRM service minor version (13 - for CRM 2011 Rollup 13 and up).*/
+		/**Gets the the discovered CRM service minor version (13 - for CRM 2011 Rollup 13 and up).*/
 		crmWebServiceMinorVersion: number;
 		/**Gets or sets the organization Pricing Decimal Precision configuration option (0..4).*/
 		currencyDecimalPrecision: number;
 		/**Gets or sets the currency field display option 0- Symbol ($), 1 - Code (USD).*/
-		currencyDisplayOption: string;
-		/**Gets or sets the customization directory.*/
+		currencyDisplayOption: 0 | 1;
+		/**Gets the customization directory.*/
 		customizationDirectory: string;
-		/**Gets or sets the database local language (for case-insensitive and language dependent compare). E.g. "en-US".*/
+		/**Gets the database local language (for case-insensitive and language dependent compare). E.g. "en-US".*/
 		databaseLocale: string;
+		/**Gets or sets whether Dataverse can use TDS (Tabular Data Stream) queries for downloads.*/
+		dataverseCanUseTDS: boolean;
+		/**Gets or sets the default fetch page size (#records downloaded in 1 request). Range 100-5000, default = 1000.*/
+		defaultFetchPageSize: number;
 		/**Gets the database schema hash.*/
 		databaseSchemaHash: string;
 		/**(Android only) Gets or sets the application Density (120=Low, 160=Medium, 240=High, 320=ExtraHigh, 480=ExtraExtraHigh).*/
@@ -136,7 +144,7 @@ declare namespace MobileCRM {
 		deviceFriendlyName: string;
 		/**Gets or sets the hardware unique id.*/
 		deviceIdentifier: string;
-		/**Gets or sets the device system an hw information (OS, etc.)*/
+		/**Gets or sets the device system and hardware information (OS, etc.)*/
 		deviceInfo: string;
 		/**Gets or sets the device name (Base64 encoded "InternalDeviceId").*/
 		deviceName: string;
@@ -144,17 +152,26 @@ declare namespace MobileCRM {
 		disabledEntities: boolean;
 		/**Gets or sets the user domain.*/
 		domain: string;
+		/**Indicates whether to use metric system, imperial system or default device system (0=System default, 1=Metric, 2=Imperial).*/
+		distanceUnits: 0 | 1 | 2;
+		/**Gets or sets whether to download multiple attachments in one batch request. Default false.*/
+		downloadMultipleAttachments: boolean;
 		/**Gets or sets the email signature.*/
 		emailSignature: string;
-		/**(Android, WIndows Mobile)Enables the Call Import form (appears on the Home form)*/
-		enableCallImport: boolean;
 		/**Enables the Dashboard form (appears on the Home form).*/
 		enableDashboard: boolean;
+		/**Allows user to multi-select in lists and calculate aggregates or execute custom commands.*/
+		enableListMultiSelect: boolean;
+		/**Enables list buttons. Default is true.*/
 		enableListButtons: boolean;
 		/**Enables the Map form (appears on the Home form).*/
+		enableMapForm: boolean;
+		/**Gets or sets the date when the device must be full synced. If the last sync was before this date, the next sync must be full.*/
 		forcedFullSyncDate: Date;
 		/**Prevents remembered password to be used for next login.*/
 		forgetPassword: boolean;
+		/**Determines form caching policy (whether to cache no forms, default forms-only or also FormSelectRule forms (0=NoCaching, 1=DefaultFormCaching, 2=AllFormsCaching).*/
+		formCachePolicy: number;
 		/**Gets or sets the option for generating the entity full name (contact, lead)
 		e.g. how to combine the first, middle and last name (0="L,F", 1="F L", 2="L,F m", 3="F m L", 4="L,F M", 5="F M L", 6="L F", 7="LF").*/
 		fullNameConventionCode: number;
@@ -164,6 +181,8 @@ declare namespace MobileCRM {
 		hasTaskReminder: boolean;
 		/**Gets or sets the URL of the authentication server (ADFS) in case of multi domain deployment.*/
 		homeRealm: string;
+		/**Defines the GPS location of the user's home. Must be in the form [latitude,longitude], e.g. 48.3,17.2*/
+		homeLocation: string;
 		/**Gets or sets whether to ignore HTTPS certificate errors. (Should be used for evaluation and DEBUG only!)*/
 		ignoreCertificateErrors: boolean;
 		/**Gets or sets the invalid login count.*/
@@ -196,27 +215,45 @@ declare namespace MobileCRM {
 		legacyPassword: string;
 		/**Gets or sets the reason of the application lock.*/
 		lockReason: string;
+		/**Gets or sets whether the synchronization log should include low level messages.*/
+		logSyncDetails: boolean;
 		/**Gets or sets the time in seconds after which the password expires and application login is required.*/
 		loginTimeout: number;
 		/**Gets or sets the maximum attachment size to sync (in KB).*/
 		maxAttachmentSize: number;
+		/**Gets or sets the maximum number of records to process in a single ExecuteMultiple request.*/
+		maxExecuteMultiple: number;
+		/**Gets or sets the maximum size (in bytes) of records to upload in one request.*/
+		maxExecuteMultipleDataSize: number;
+		/**Gets or sets the maximum size of the captured image. Bigger images are resized to this size (0=Default, 1=640x480, 2=1024x768, 3=1600x1200, 4=2048x1536, 5=2592x1936).*/
+		maxImageSize: 0 | 1 | 2 | 3 | 4 | 5;
 		/**Gets or sets the maximum number of records (per entity) to download.*/
 		maxSyncCount: number;
+		/**Gets or sets the maximum size (in bytes) of attachments created by app.*/
+		maxUploadAttachmentSize: number;
+		/**Gets or sets the maximum size of the uploaded image. Bigger images are resized to this size just after being captured/selected. (0=Default, 1=640x480, 2=1024x768, 3=1600x1200, 4=2048x1536, 5=2592x1936).*/
+		maxUploadImageSize: 0 | 1 | 2 | 3 | 4 | 5;
 		/**Gets or sets whether to use multi-threaded synchronization. Default true.*/
 		multiThreadSync: boolean;
 		/**Gets or sets when and how the application is switched to online mode (0=Always, 1=WifiOnly, 2=Manual, 3=Never).*/
 		onlineMode: number;
-		/**Gets or sets the organization name. Obsolete, only for compatibility.*/
-		organization: string;
-		/**	Gets or sets the current user's organization GUID (given by the server).*/
+		/**Gets or sets whether to show a notification after sync finishes and app is not on foreground.*/
+		notifySyncFinish: boolean;
+		/**Indicates whether to speed up hidden iFrames in Windows Store app by placing them into pre-loaded WebView container.*/
+		optimizeHiddenIframes: boolean;
+		/**	Gets the current user's organization GUID (given by the server).*/
 		organizationId: string;
+		/**Gets the current user's organization name (given by the server).*/
+		organizationName: string;
+		/**Gets the current user's organization server URL.*/
+		organizationUrl: string;
 		/**Gets or sets the synchronization service password.*/
 		password: string;
 		/**Gets or sets the password hash.*/
 		passwordHash: string;
 		/**Gets or sets the URL scheme of application used for making calls.*/
 		phoneApplication: string;
-		/**Gets or sets the push id used for push notification send to this device.(Android, iOS)*/
+		/**Gets the push id used for push notification send to this device.*/
 		pushId: string;
 		/**Gets the list of read-only settings.*/
 		readonlySettings: Array<string>;
@@ -230,7 +267,7 @@ declare namespace MobileCRM {
 		secRulesHash: number;
 		/**Gets the CRM server host name.*/
 		serverHostName: string;
-		/**Gets or sets the version of the settings file as send with the customization.*/
+		/**Gets or sets the version of the settings file as sent with the customization.*/
 		serverSettingsVersion: string;
 		/**Gets or sets the server version, either 4 for CRM 4.0 or 5 for CRM 2011.*/
 		serverVersion: number;
@@ -238,10 +275,14 @@ declare namespace MobileCRM {
 		syncCount: number;
 		/**Gets or sets the sync filter file hash code.*/
 		syncFilterHash: string;
-		/**Gets or sets the current user GUID (given by the server).*/
+		/**Gets the current user GUID (given by the server).*/
 		systemUserId: string;
-		/**Gets or sets the current user name (given by the server).*/
+		/**Gets the current user email (given by the server).*/
+		systemUserEmail: string;
+		/**Gets the current user name (given by the server).*/
 		systemUserName: string;
+		/**Gets or sets app theme - system, light or dark. 0=Light, 1=Dark, 2=System*/
+		themeType: 0 | 1 | 2;
 		/**Gets or sets the last active entity in the Tourplan (Calendar).*/
 		tourplanInitialEntity: string;
 		/**Gets or sets whether to update entity objectypecodes on first sync.*/
@@ -252,12 +293,16 @@ declare namespace MobileCRM {
 		useDatabaseBlobStore: boolean;
 		/**Gets or sets whether the database is encrypted. Only used when the database is created (full sync). Default true.*/
 		useDatabaseEncryption: boolean;
+		/**Gets or sets whether flexi forms (New UI) are enabled.*/
+		useFlexiForms: boolean;
 		/**Gets or sets the user's default currency GUID. If not set use the organization default.*/
 		userDefaultCurrencyId: string;
 		/**Gets or sets the full user name (domain slash name).*/
 		userLogin: string;
 		/**Gets or sets the user name.*/
 		userName: string;
+		/**Defines the GPS location of the user's work. Must be in the form [latitude,longitude], e.g. 48.3,17.2*/
+		workLocation: string;
 		/**Gets or sets whether to use RowVersion or ModifiedOn based sync. Default is true.*/
 		useRowVersionChangeTracking: boolean;
 		/**Gets or sets the web service URL used for synchronization.*/

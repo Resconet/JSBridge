@@ -216,6 +216,7 @@
 				/// <field name="isOnline" type="Boolean">Gets or sets whether the online mode is currently active.</field>
 				/// <field name="legacyVersion" type="String">Gets or sets the legacy redirect folder.</field>
 				/// <field name="licenseAlert" type="String">Gets the flag set during sync indicating that the user&apos;s license has expired.</field>
+				/// <field name="projectVersion" type="String">Gets customer-defined project version.</field>
 				/// <field name="settings" type="MobileCRM._Settings">Gets the application settings.</field>
 				/// <field name="storageDirectory" type="String">Gets the root folder of the application storage.</field>
 			},
@@ -1771,57 +1772,84 @@
 		// MobileCRM._Settings
 		MobileCRM._Settings = {
 			/// <summary>MobileCRM configuration settings class.</summary>
+			/// <remarks>This object cannot be created directly. To obtain/modify this object, use <see cref="MobileCRM.Configuration.requestObject">MobileCRM.Configuration.requestObject</see> function. See <see cref="MobileCRM.Configuration">MobileCRM.Configuration</see></remarks>
+			/// <field name="activeAppID" type="String">Gets currently selected Application ID. &amp; means default app. Null or empty string means that user hasn&apos;t chosen app yet.</field>
 			/// <field name="afterSaveReload" type="Number">Gets options for default after save behavior &quot;None = 0, New = 1,Always = 2&quot;</field>
+			/// <field name="appIDs" type="String[]">Gets the list of Application IDs available for current user.</field>
 			/// <field name="authenticationType" type="Number">Gets possible CRM server authentication methods. &quot;AD = 0, PassPort = 1,SPLA = 2,PassportEMEA = 3,PassportAPAC = 4 &quot;</field>
-			/// <field name="businessUnitId" type="String">Gets or sets the current user's business unit id.</field>
+			/// <field name="businessUnitId" type="String">Gets the current user&apos;s business unit id.</field>
 			/// <field name="canUsePassword" type="Boolean">Gets whether there is a valid password and whether it can be used.</field>
-			/// <field name="crm2011AuthId" type="String">Gets or sets the discovered CRM service authentication server identifier.</field>
-			/// <field name="crm2011AuthType" type="String">Gets or sets the discovered CRM service authentication server type.</field>
-			/// <field name="crm2011AuthUrl" type="String">Gets or sets the discovered CRM service authentication server url.</field>
-			/// <field name="crmOnlineDeviceToken" type="String">Gets or sets the token (cookie) issued by LiveId services identifying this device.</field>
+			/// <field name="crm2011AuthId" type="String">Gets the discovered CRM service authentication server identifier.</field>
+			/// <field name="crm2011AuthType" type="String">Gets the discovered CRM service authentication server type.</field>
+			/// <field name="crm2011AuthUrl" type="String">Gets the discovered CRM service authentication server url.</field>
+			/// <field name="crmOnlineDeviceToken" type="String">Gets the token (cookie) issued by LiveId services identifying this device.</field>
 			/// <field name="crmOnlineDeviceTokenExpires" type="Date">Gets when CrmOnlineDeviceToken expires (UTC).</field>
-			/// <field name="crmWebServiceMinorVersion" type="Number">Gets or sets the discovered CRM service minor version (13 - for CRM 2011 Rollup 13 and up).</field>
-			/// <field name="crmWebServiceVersion" type="Number">Gets or sets the discovered CRM service version (4,5).</field>
+			/// <field name="crmWebServiceMinorVersion" type="Number">Gets the discovered CRM service minor version (13 - for CRM 2011 Rollup 13 and up).</field>
+			/// <field name="crmWebServiceVersion" type="Number">Gets the discovered CRM service version (4,5).</field>
 			/// <field name="currencyDecimalPrecision" type="Number">Gets or sets the organization Pricing Decimal Precision configuration option (0..4).</field>
 			/// <field name="currencyDisplayOption" type="Number">Gets or sets the currency field display option 0- Symbol ($), 1 - Code (USD).</field>
 			/// <field name="currencyFormatCode" type="Number">Gets or sets the currency field display option 0- $123, 1-123$, 2-$ 123, 3-123 $.</field>
-			/// <field name="customerId" type="MobileCRM.Reference">Gets or sets the customer when application is running in customer mode. <see cref="MobileCRM.Reference">MobileCRM.Reference</see> object instance as argument</field>
-			/// <field name="customerUserId" type="MobileCRM.Reference">Gets or sets the CustomerUserId when application is running in customer mode. <see cref="MobileCRM.Reference">MobileCRM.Reference</see> object instance as argument</field>
-			/// <field name="deviceFriendlyName" type="String">Gets or sets the device friendly name e.g. &quot;Steve's iPhone&quot;.</field>
+			/// <field name="customerId" type="MobileCRM.Reference">Gets the customer when application is running in customer mode. <see cref="MobileCRM.Reference">MobileCRM.Reference</see> object instance as argument</field>
+			/// <field name="customerUserId" type="MobileCRM.Reference">Gets the CustomerUserId when application is running in customer mode. <see cref="MobileCRM.Reference">MobileCRM.Reference</see> object instance as argument</field>
+			/// <field name="dataverseCanUseTDS" type="Boolean">Gets or sets whether Dataverse can use TDS (Tabular Data Stream) queries for downloads.</field>
+			/// <field name="defaultFetchPageSize" type="Number">Gets or sets the default fetch page size (#records downloaded in 1 request). Range 100-5000, default = 1000.</field>
+			/// <field name="deviceFriendlyName" type="String">Gets or sets the device friendly name e.g. &quot;Steve&apos;s iPhone&quot;.</field>
 			/// <field name="deviceIdentifier" type="String">Gets or sets the hardware unique id.</field>
-			/// <field name="deviceInfo" type="String">Gets or sets the device system an hardware information e.g. &quot;Hewlett-Packard HP ProBook 6450b\tMicrosoft Windows NT 6.1.7600.0&quot;</field>
-			/// <field name="internalDeviceId" type="String">Gets the device id.</field>
+			/// <field name="deviceInfo" type="String">Gets the device system and hardware information e.g. &quot;Hewlett-Packard HP ProBook 6450b\tMicrosoft Windows NT 6.1.7600.0&quot;</field>
 			/// <field name="disableSyncAnalyzer" type="Boolean">Gets or sets whether the synchronization should use the SyncAnalyzer step.</field>
 			/// <field name="discountCalculationMethod" type="Number">Gets or sets the option for calculating the discount 0 - apply after (Price*Quantity)-Discount , 1- apply before (Price-Discount)*Quantity.</field>
+			/// <field name="distanceUnits" type="Number">Indicates whether to use metric system, imperial system or default device system (0=System default, 1=Metric, 2=Imperial).</field>
+			/// <field name="downloadMultipleAttachments" type="Boolean">Gets or sets whether to download multiple attachments in one batch request. Default false.</field>
 			/// <field name="duplicateDetection" type="Number">Gets whether duplicate detection is enabled and whether to detect against the local database, online, or always online. &quot;Disabled = 0, Enabled = 1,AlwaysOnline = 2&quot;</field>
-			/// <field name="enableAdvancedFind" type="Boolean">Gets or sets whether to enabled advanced find functionality. Default true.</field>
-			/// <field name="enableListButtons" type="Boolean">Enables list buttons. Default is true.</field>
+			/// <field name="emailSignature" type="String">Gets or sets the email signature.</field>
+			/// <field name="enableAdvancedFind" type="Boolean">Gets or sets whether to enable advanced find functionality. Default true.</field>
+			/// <field name="enableListMultiSelect" type="Boolean">Allows user to multi-select in lists and calculate aggregates or execute custom commands.</field>
 			/// <field name="enableListSearchButtons" type="Boolean">Gets or sets whether to allow list search buttons.</field>
 			/// <field name="forceCustomizationDownload" type="Boolean">Gets or sets a value indicating whether the customization download is forced.</field>
 			/// <field name="forcedFullSyncDate" type="Date">Gets or sets the date when the device must be full synced. If the last sync was before this date, the next sync must be full.</field>
 			/// <field name="forgetPassword" type="Boolean">Gets or sets whether password can be used for next login.</field>
+			/// <field name="formCachePolicy" type="Number">Determines form caching policy (whether to cache no forms, default forms-only or also FormSelectRule forms (0=NoCaching, 1=DefaultFormCaching, 2=AllFormsCaching).</field>
 			/// <field name="fullScreenForms" type="Boolean">Gets or sets whether to show forms maximized by default. Can be overridden per form in Woodford.</field>
-			/// <field name="googleEmail" type="String">Gets or sets the Google account email.</field>
 			/// <field name="gPSAccuracy" type="Number">Gets or sets the default accuracy (in meters) when resolving the current position.</field>
 			/// <field name="gPSMaxAge" type="Number">Gets or sets the default maximum age (in seconds) of the last result when resolving the current position.</field>
+			/// <field name="hasSyncErrors" type="Boolean">Indicates whether there were any synchronization errors encountered.</field>
+			/// <field name="homeLocation" type="String">Defines the GPS location of the user&apos;s home. Must be in the form [latitude,longitude], e.g. 48.3,17.2</field>
 			/// <field name="isOnlineCrm" type="Boolean">Gets whether the last login was for a CRM Online instance.</field>
+			/// <field name="language" type="String">Gets the language of the application (e.g. en-US).</field>
+			/// <field name="lastSyncDate" type="Date">Gets the last synchronization end date.</field>
+			/// <field name="logSyncDetails" type="Boolean">Gets or sets whether the synchronization log should include low level messages.</field>
 			/// <field name="maxAttachmentSize" type="Number">Gets or sets the maximum attachment size to sync (in bytes).</field>
+			/// <field name="maxExecuteMultiple" type="Number">Gets or sets the maximum number of records to process in a single ExecuteMultiple request.</field>
+			/// <field name="maxExecuteMultipleDataSize" type="Number">Gets or sets the maximum size (in bytes) of records to upload in one request.</field>
+			/// <field name="maxImageSize" type="Number">Gets or sets the maximum size of the captured image. Bigger images are resized to this size (0=Default, 1=640x480, 2=1024x768, 3=1600x1200, 4=2048x1536, 5=2592x1936).</field>
+			/// <field name="maxSyncCount" type="Number">Gets or sets the maximum number of records (per entity) to download.</field>
+			/// <field name="maxUploadAttachmentSize" type="Number">Gets or sets the maximum size (in bytes) of attachments created by app.</field>
+			/// <field name="maxUploadImageSize" type="Number">Gets or sets the maximum size of the uploaded image. Bigger images are resized to this size just after being captured/selected. (0=Default, 1=640x480, 2=1024x768, 3=1600x1200, 4=2048x1536, 5=2592x1936).</field>
+			/// <field name="notifySyncFinish" type="Boolean">Gets or sets whether to show a notification after sync finishes and app is not on foreground.</field>
 			/// <field name="onlineNoLock" type="Boolean">Gets or sets whether to use "no-lock" in fetchXml during online mode.</field>
-			/// <field name="organizationId" type="String">Gets or sets the current user's organization id (given by the server).</field>
+			/// <field name="optimizeHiddenIframes" type="Boolean">Indicates whether to speed up hidden iFrames in Windows Store app by placing them into pre-loaded WebView container. </field>
+			/// <field name="organizationId" type="String">Gets the current user&apos;s organization id (given by the server).</field>
+			/// <field name="organizationName" type="String">Gets the current user&apos;s organization name (given by the server).</field>
+			/// <field name="organizationUrl" type="String">Gets the current user&apos;s organization server URL.</field>
+			/// <field name="pushId" type="String">Gets platform-specific identifier for push notifications.</field>
 			/// <field name="saveBehavior" type="Number">Gets options for default after save behavior &quot;Default = 0, SaveOnly = 1,SaveAndClose = 2&quot;</field>
 			/// <field name="saveSignatureAsImage" type="Boolean">Gets or sets whether to store signature attachments as SVG (vector) or PNG (image).</field>
 			/// <field name="serverHostName" type="String">Gets the server host name.</field>
-			/// <field name="serverSettingsVersion" type="String">Gets the version of the settings file as send with the customization.</field>
+			/// <field name="serverSettingsVersion" type="String">Gets the version of the settings file as sent with the customization.</field>
 			/// <field name="serverVersion" type="Number">Gets or sets the server version, either 4 for CRM 4.0 or 5 for CRM 2011.</field>
-			/// <field name="showPersonalContacts" type="Boolean">Gets or sets whether to show contacts from the user's personal address book.</field>
+			/// <field name="showPersonalContacts" type="Boolean">Gets or sets whether to show contacts from the user&apos;s personal address book.</field>
 			/// <field name="showSystemCalendars" type="Boolean">Gets or sets whether to show private calendars in calendars.</field>
-			/// <field name="systemUserId" type="String">Gets or sets the current user id (given by the server).</field>
-			/// <field name="systemUserName" type="String">Gets or sets the current user name (given by the server).</field>
-			/// <field name="teams" type="Array<String>">Gets the array of ids of teams the current user is member of.</field>
+			/// <field name="systemUserEmail" type="String">Gets the current user email (given by the server).</field>
+			/// <field name="systemUserId" type="String">Gets the current user id (given by the server).</field>
+			/// <field name="systemUserName" type="String">Gets the current user name (given by the server).</field>
+			/// <field name="teams" type="String[]">Gets the array of ids of teams the current user is member of.</field>
+			/// <field name="themeType" type="Number">Gets or sets app theme - system, light or dark. 0=Light, 1=Dark, 2=System</field>
 			/// <field name="useCrmEmail" type="Boolean">Gets or sets whether to create a CRM email entity or use the platform email service.</field>
 			/// <field name="useDatabaseBlobStore" type="Boolean">Gets or sets whether to store attachment blobs in database or in files. If you change this setting you must perform a full sync!</field>
-			/// <field name="useFlexiForms" type="Boolean">Gets or sets whether flexi forms (New UI).</field>
-			/// <field name="googleApiKey" type="String">Gets or sets the google API key.</field>
+			/// <field name="useFlexiForms" type="Boolean">Gets or sets whether flexi forms (New UI) are enabled.</field>
+			/// <field name="userDefaultCurrencyId" type="String">Gets the user&apos;s default currency id. If not set use the organization default.</field>
+			/// <field name="userName" type="String">Gets the current user&apos;s name.</field>
+			/// <field name="workLocation" type="String">Defines the GPS location of the user&apos;s work. Must be in the form [latitude,longitude], e.g. 48.3,17.2</field>
 		};
 		MobileCRM.CultureInfo.currentCulture = null;
 		MobileCRM.CultureInfo.initialize = function (callback, errorCallback, scope) {
