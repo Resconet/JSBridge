@@ -2342,12 +2342,16 @@
 			var cmdParams = JSON.stringify(request);
 			MobileCRM.bridge.command("entitydelete", cmdParams, success, failed, scope);
 		};
-		MobileCRM.DynamicEntity.deleteAsync = function (entityName, id) {
-			/// <summary>Asynchronously deletes the CRM entity.</summary>
+		MobileCRM.DynamicEntity.deleteAsync = function (entityName, id, forceMode) {
+			/// <summary>Asynchronously deletes the CRM entity record.</summary>
 			/// <param name="entityName" type="String">The logical name of the entity, e.g. "account".</param>
 			/// <param name="id" type="String">GUID of the existing entity or null for new one.</param>
+			/// <param name="forceMode" type="Boolean">(Optional) Whether to force the online or offline deletion regardless of current app mode.</param>
 			/// <returns type="Promise&lt;void&gt;">A Promise object which will be resolved after the entity record is deleted.</returns>
 			var request = { entity: entityName, id: id };
+			if (forceMode === true || forceMode === false) {
+				request.isOnlineForce = forceMode;
+			}
 			var cmdParams = JSON.stringify(request);
 			return MobileCRM.bridge.invokeCommandPromise("entitydelete", cmdParams);
 		};

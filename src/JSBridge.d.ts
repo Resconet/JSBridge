@@ -529,7 +529,13 @@ declare namespace MobileCRM {
 		update(callback: (error: string) => void);
 		static createNew: (entityName: string, id?: string, primaryName?: string, properties?: any) => MobileCRM.DynamicEntity;
 		static deleteById(entityName: string, id: string, sucess?: () => void, failed?: (error: string) => void, scope?: any);
-		static deleteAsync(entityName: string, id: string): Promise<void>;
+		/**
+		 * Asynchronously deletes the CRM entity record.
+		 * @param entityName The logical name of the entity, e.g. "account".
+		 * @param id GUID of the existing entity or null for new one.
+		 * @param forceMode Whether to force the online or offline deletion regardless of current app mode.
+		 */
+		static deleteAsync(entityName: string, id: string, forceMode?: boolean): Promise<void>;
 		static loadById(
 			entityName: string,
 			id: string,
