@@ -1,8 +1,9 @@
 // JSBridge.js TypeScript definition file
 // (c) 2024 Resco
 
+/* eslint-disable @typescript-eslint/prefer-namespace-keyword */
 /* eslint-disable @typescript-eslint/naming-convention */
-
+/* eslint-disable no-var */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare namespace MobileCRM {

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
+/* eslint-disable no-var */
 /* globals MobileCRM:writable, MobileCrmException:writable, CrmBridge, webkit, chrome */
 (function () {
 	var _scriptVersion = 19.1;
@@ -1200,7 +1201,7 @@
 			/// <param name="handler" type="function(data)">The handler function that is called when the scan event is raised.</param>
 			/// <param name="bind" type="Boolean">Indicates whether to bind the handler to the event.</param>
 			/// <param name="scope" type="Object">The scope in which the handler function is called.</param>
-			let handlerName = "onScan";
+			const handlerName = "onScan";
 			let handlers = MobileCRM.Services.ZebraScanner._handlers[handlerName];
 
 			if (!handlers) {
