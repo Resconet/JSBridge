@@ -2,7 +2,7 @@
 /* eslint-disable no-var */
 /* globals MobileCRM:writable, MobileCrmException:writable, CrmBridge, webkit, chrome */
 (function () {
-	var _scriptVersion = 19.1;
+	var _scriptVersion = 19.2;
 	// Private objects & functions
 	var _inherit = (function () {
 		function _() {
@@ -242,6 +242,7 @@
 				/// <field name="abbreviatedMonthNames" type="String[]">Gets a string array that contains the culture-specific abbreviated names of the months.</field>
 				/// <field name="aMDesignator" type="String">Gets the string designator for hours that are "ante meridiem" (before noon).</field>
 				/// <field name="dayNames" type="String[]">Gets a string array that contains the culture-specific full names of the days of the week.</field>
+				/// <field name="dateSeparator" type="String">Gets the culture-specific date separator.</field>
 				/// <field name="firstDayOfWeek" type="Number">Gets the first day of the week (0=Sunday, 1=Monday, ...)</field>
 				/// <field name="fullDateTimePattern" type="String">Gets the custom format string for a long date and long time value.</field>
 				/// <field name="longDatePattern" type="String">Gets the custom format string for a long date value.</field>
@@ -254,6 +255,7 @@
 				/// <field name="shortestDayNames" type="String[]">Gets a string array of the shortest unique abbreviated day names associated with the current DateTimeFormat object.</field>
 				/// <field name="shortTimePattern" type="String">Gets the custom format string for a short time value.</field>
 				/// <field name="sortableDateTimePattern" type="String">Gets the custom format string for a sortable date and time value.</field>
+				/// <field name="timeSeparator" type="String">Gets the culture-specific time separator.</field>
 				/// <field name="universalSortableDateTimePattern" type="String">Gets the custom format string for a universal, sortable date and time string.</field>
 				/// <field name="yearMonthPattern" type="String">Gets the custom format string for a year and month value.</field>
 			},

@@ -363,54 +363,105 @@ declare namespace MobileCRM {
 		static formatDate(date: Date, format: string): string;
 	}
 
+	/** Defines the culturally appropriate format of displaying dates and times. */
 	interface DateTimeFormat {
+		/** Gets a string array containing the culture-specific abbreviated names of the days of the week.*/
 		abbreviatedDayNames: string[];
+		/** Gets a string array of abbreviated month names associated with the current DateTimeFormat object.*/
 		abbreviatedMonthGenitiveNames: string[];
+		/** Gets a string array that contains the culture-specific abbreviated names of the months.*/
 		abbreviatedMonthNames: string[];
+		/** Gets the string designator for hours that are "ante meridiem" (before noon).*/
 		aMDesignator: string;
+		/** Gets the rule used to determine the first week of the year.*/
 		calendarWeekRule: number;
+		/** Gets a string array that contains the culture-specific full names of the days of the week.*/
 		dayNames: string[];
+		/** Gets the culture-specific date separator.*/
+		dateSeparator: string;
+		/** Gets the first day of the week (0=Sunday, 1=Monday, ...).*/
 		firstDayOfWeek: number;
+		/** Gets the custom format string for a long date and long time value.*/
 		fullDateTimePattern: string;
+		/** Gets the custom format string for a long date value.*/
 		longDatePattern: string;
+		/** Gets the custom format string for a long time value.*/
 		longTimePattern: string;
+		/** Gets the custom format string for a month and day value.*/
 		monthDayPattern: string;
+		/** Gets a string array of month names associated with the current DateTimeFormat object.*/
 		monthGenitiveNames: string[];
+		/** Gets a string array containing the culture-specific full names of the months.*/
 		monthNames: string[];
+		/** Gets the string designator for hours that are "post meridiem" (after noon).*/
 		pMDesignator: string;
+		/** Gets the custom format string for a short date value.*/
 		shortDatePattern: string;
+		/** Gets a string array of the shortest unique abbreviated day names associated with the current DateTimeFormat object.*/
 		shortestDayNames: string[];
+		/** Gets the custom format string for a short time value.*/
 		shortTimePattern: string;
+		/** Gets the custom format string for a sortable date and time value.*/
 		sortableDateTimePattern: string;
+		/** Gets the culture-specific time separator.*/
+		timeSeparator: string;
+		/** Gets the custom format string for a universal, sortable date and time string.*/
 		universalSortableDateTimePattern: string;
+		/** Gets the custom format string for a year and month value.*/
 		yearMonthPattern: string;
 	}
 
+	/** Defines the culturally appropriate format of displaying numbers. */
 	interface NumberFormat {
+		/** Gets the number of decimal places to use in currency values. */
 		currencyDecimalDigits: number;
+		/** Gets the string that separates the integral and decimal parts of currency values. */
 		currencyDecimalSeparator: string;
+		/** Gets the string that separates groups of digits to the left of the decimal in currency values. */
 		currencyGroupSeparator: string;
+		/** Gets the number of digits in each group to the left of the decimal in currency values. */
 		currencyGroupSizes: number[];
+		/** Gets the format pattern for negative currency values. */
 		currencyNegativePattern: number;
+		/** Gets the format pattern for positive currency values. */
 		currencyPositivePattern: number;
+		/** Gets the currency symbol. */
 		currencySymbol: string;
+		/** Gets the string representation of NaN (Not a Number). */
 		naNSymbol: string;
+		/** Gets the string representation of negative infinity. */
 		negativeInfinitySymbol: string;
+		/** Gets the string used to represent a negative sign. */
 		negativeSign: string;
+		/** Gets the number of decimal places to use in numeric values. */
 		numberDecimalDigits: number;
+		/** Gets the string that separates the integral and decimal parts of numeric values. */
 		numberDecimalSeparator: string;
+		/** Gets the string that separates groups of digits to the left of the decimal in numeric values. */
 		numberGroupSeparator: string;
+		/** Gets the number of digits in each group to the left of the decimal in numeric values. */
 		numberGroupSizes: number[];
+		/** Gets the format pattern for negative numeric values. */
 		numberNegativePattern: number;
+		/** Gets the number of decimal places to use in percent values. */
 		percentDecimalDigits: number;
+		/** Gets the string that separates the integral and decimal parts of percent values. */
 		percentDecimalSeparator: string;
+		/** Gets the string that separates groups of digits to the left of the decimal in percent values. */
 		percentGroupSeparator: string;
+		/** Gets the number of digits in each group to the left of the decimal in percent values. */
 		percentGroupSizes: number[];
+		/** Gets the format pattern for negative percent values. */
 		percentNegativePattern: number;
+		/** Gets the format pattern for positive percent values. */
 		percentPositivePattern: number;
+		/** Gets the percent symbol. */
 		percentSymbol: string;
+		/** Gets the per mille symbol. */
 		perMilleSymbol: string;
+		/** Gets the string representation of positive infinity. */
 		positiveInfinitySymbol: string;
+		/** Gets the string used to represent a positive sign. */
 		positiveSign: string;
 	}
 
